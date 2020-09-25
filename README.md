@@ -155,9 +155,10 @@ APIs for cinema applications including buying tickets, admin panel...
 ## II. Technlogies Using
 
 <br />
-<img src="https://nodejs.org/static/images/logo.svg" height=50/>
+<img src="https://icon-library.com/images/nodejs-icon/nodejs-icon-24.jpg" height=50/>
 <img src="https://expressjs.com/images/express-facebook-share.png" height=50/>
 <img src="https://webassets.mongodb.com/_com_assets/cms/mongodb_logo1-76twgcu2dm.png" height=50/>
 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Npm-logo.svg/800px-Npm-logo.svg.png" height=50/>
 <img src="https://ucarecdn.com/e6a83674-f37e-453b-98e0-90b5c3193046/" height=80/>
 <img src="https://fastnetmon.com/wp-content/uploads/2019/04/DO.png" height=100/>
+
