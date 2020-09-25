@@ -1,10 +1,15 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const colors = require('colors');
+const connectDB = require('./config/db');
+
+// Load env variables
+dotenv.config({ path: './config/.env' });
 
 const app = express();
 
-dotenv.config({ path: './config/.env' });
+// Connect to database
+connectDB();
 
 const port = process.env.PORT || 6000;
 
