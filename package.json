@@ -1,0 +1,32 @@
+{
+    "name": "cinema_api",
+    "version": "1.0.0",
+    "description": "Node.js backend APIs for managing cinema",
+    "main": "server.js",
+    "scripts": {
+        "dev": "nodemon server.js",
+        "start": "node server.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/TVYDev/cinema_api.git"
+    },
+    "keywords": [
+        "cinema"
+    ],
+    "author": "Vannyou TANG",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/TVYDev/cinema_api/issues"
+    },
+    "homepage": "https://github.com/TVYDev/cinema_api#readme",
+    "dependencies": {
+        "colors": "^1.4.0",
+        "dotenv": "^8.2.0",
+        "express": "^4.17.1",
+        "mongoose": "^5.10.7"
+    },
+    "devDependencies": {
+        "nodemon": "^2.0.4"
+    }
+}
