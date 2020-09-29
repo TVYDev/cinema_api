@@ -1,4 +1,5 @@
 # Cinema APIs
+
 APIs for cinema applications including buying tickets, admin panel...
 
 ## I. Features
@@ -12,6 +13,7 @@ APIs for cinema applications including buying tickets, admin panel...
 -   [Admin] Delete a cinema
 -   [Admin] Add new hall to a cinema
 -   [Admin] Add cinema layout
+-   [Admin] Upload photo of cinema
 
 > **Challenges**
 >
@@ -161,4 +163,3 @@ APIs for cinema applications including buying tickets, admin panel...
 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Npm-logo.svg/800px-Npm-logo.svg.png" height=50/>
 <img src="https://ucarecdn.com/e6a83674-f37e-453b-98e0-90b5c3193046/" height=80/>
 <img src="https://fastnetmon.com/wp-content/uploads/2019/04/DO.png" height=100/>
-
