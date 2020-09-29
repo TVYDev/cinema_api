@@ -5,6 +5,7 @@ const morgan = require('morgan');
 const connectDB = require('./config/db');
 const jsonResponse = require('./middlewares/jsonResponse');
 const errorHandler = require('./middlewares/errorHandler');
+const swagger = require('./config/swagger');
 
 // Load env variables
 dotenv.config({ path: './config/.env' });
@@ -32,7 +33,10 @@ app.use('/api/v1/cinemas', cinemas);
 // Add error handler
 app.use(errorHandler);
 
-const port = process.env.PORT || 6000;
+// Generate API documentation
+swagger(app);
+
+const port = process.env.PORT || 5000;
 
 const server = app.listen(port, () =>
     console.log(
