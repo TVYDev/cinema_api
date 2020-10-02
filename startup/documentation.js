@@ -1,7 +1,7 @@
 const swaggerJsDoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
 
-const swagger = (app) => {
+module.exports = function (app) {
     //Reference: https://swagger.io/specification/#info-object
     const swaggerOptions = {
         openapi: '3.0.0',
@@ -21,5 +21,3 @@ const swagger = (app) => {
 
     app.use('/api-docs/v1', swaggerUi.serve, swaggerUi.setup(swagerDocs));
 };
-
-module.exports = swagger;

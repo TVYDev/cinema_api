@@ -1,25 +1,31 @@
 {
-    "name": "cinema_api",
+    "name": "movieer_api",
     "version": "1.0.0",
-    "description": "Node.js backend APIs for managing cinema",
+    "description": "Node.js backend APIs for managing cinema, halls, movies, tickets",
     "main": "server.js",
     "scripts": {
         "dev": "nodemon server.js",
-        "start": "node server.js"
+        "start": "node server.js",
+        "test": "jest"
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/TVYDev/cinema_api.git"
+        "url": "git+https://github.com/TVYDev/movieer_api.git"
     },
     "keywords": [
         "cinema"
     ],
+    "config": {
+        "mongodbMemoryServer": {
+            "version": "latest"
+        }
+    },
     "author": "Vannyou TANG",
     "license": "ISC",
     "bugs": {
-        "url": "https://github.com/TVYDev/cinema_api/issues"
+        "url": "https://github.com/TVYDev/movieer_api/issues"
     },
-    "homepage": "https://github.com/TVYDev/cinema_api#readme",
+    "homepage": "https://github.com/TVYDev/movieer_api#readme",
     "dependencies": {
         "colors": "^1.4.0",
         "dotenv": "^8.2.0",
@@ -30,6 +36,8 @@
         "swagger-ui-express": "^4.1.4"
     },
     "devDependencies": {
-        "nodemon": "^2.0.4"
+        "jest": "^26.4.2",
+        "nodemon": "^2.0.4",
+        "supertest": "^5.0.0"
     }
 }
