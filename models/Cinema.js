@@ -32,6 +32,10 @@ const cinemaSchema = new mongoose.Schema({
         type: String,
         default: 'no-photo.png'
     },
+    openingHours: {
+        type: String,
+        required: [true, 'Please provide opening hours e.g. 7AM - 10PM']
+    },
     createdAt: {
         type: Date,
         default: Date.now
