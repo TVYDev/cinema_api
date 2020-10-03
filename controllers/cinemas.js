@@ -13,9 +13,9 @@ const asyncHandler = require('../middlewares/asyncHandler');
  *          '200':
  *              description: Successful response
  */
-exports.getCinemas = (req, res, next) => {
-    res.standard(200, true, 'success');
-};
+exports.getCinemas = asyncHandler(async (req, res, next) => {
+    res.standard(200, true, 'Success', res.listJsonData);
+});
 
 /**
  * @swagger
