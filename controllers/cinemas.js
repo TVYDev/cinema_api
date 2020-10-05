@@ -1,5 +1,6 @@
 const Cinema = require('../models/Cinema');
 const asyncHandler = require('../middlewares/asyncHandler');
+const ErrorResponse = require('../utils/ErrorResponse');
 
 /**
  * @swagger
@@ -8,7 +9,7 @@ const asyncHandler = require('../middlewares/asyncHandler');
  *      tags:
  *          - 🎥 Cinemas
  *      summary: Get all cinemas
- *      description: Retrieve all cinemas with filtering, sorting & pagination
+ *      description: (PUBLIC) Retrieve all cinemas with filtering, sorting & pagination
  *      responses:
  *          200:
  *              description: OK
@@ -19,12 +20,45 @@ exports.getCinemas = asyncHandler(async (req, res, next) => {
 
 /**
  * @swagger
+ * /cinemas/{id}:
+ *  get:
+ *      tags:
+ *          - 🎥 Cinemas
+ *      summary: Get a single cinema by id
+ *      description: (PUBLIC) Retrieve a single cinema by its ID
+ *      parameters:
+ *          -   in: path
+ *              name: id
+ *              schema: string
+ *              required: true
+ *              description: Object ID of cinema
+ *              example: 5f7ae01bc3c24b4c6c328d03
+ *      responses:
+ *          200:
+ *              description: OK
+ *          404:
+ *              description: Cinema is not found
+ */
+exports.getCinema = asyncHandler(async (req, res, next) => {
+    const cinema = await Cinema.findById(req.params.id);
+
+    if (!cinema) {
+        return next(
+            new ErrorResponse('Cinema with given ID is not found', 404)
+        );
+    }
+
+    res.standard(200, true, 'Success', cinema);
+});
+
+/**
+ * @swagger
  * /cinemas:
  *  post:
  *      tags:
  *          - 🎥 Cinemas
  *      summary: Create a new cinema
- *      description: Create a new cinema (Admin Only)
+ *      description: (ADMIN) Create a new cinema
  *      parameters:
  *          -   in: body
  *              name: cinema

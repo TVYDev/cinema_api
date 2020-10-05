@@ -4,6 +4,12 @@ const colors = require('colors');
 const errorHandler = (err, req, res, next) => {
     let data = {};
     let error = { ...err };
+    error.message = err.message;
+
+    // Mongoose bad object ID
+    if (err.name === 'CastError' && err.kind === 'ObjectId') {
+        error = new ErrorResponse('Resource not found', 404);
+    }
 
     // Mongoose duplicated field error
     if (err.code === 11000) {
@@ -16,8 +22,6 @@ const errorHandler = (err, req, res, next) => {
         const message = Object.values(err.errors).map((val) => val.message);
         error = new ErrorResponse(message, 400);
     }
-
-    console.log(err.message.red);
 
     res.standard(
         error.httpStatusCode || 500,
