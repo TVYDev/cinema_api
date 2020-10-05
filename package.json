@@ -32,6 +32,7 @@
         "express": "^4.17.1",
         "mongoose": "^5.10.7",
         "morgan": "^1.10.0",
+        "node-geocoder": "^3.27.0",
         "swagger-jsdoc": "^4.2.0",
         "swagger-ui-express": "^4.1.4"
     },

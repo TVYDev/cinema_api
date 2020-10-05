@@ -1,4 +1,5 @@
 const ErrorResponse = require('../utils/ErrorResponse');
+const colors = require('colors');
 
 const errorHandler = (err, req, res, next) => {
     let data = {};
@@ -15,6 +16,9 @@ const errorHandler = (err, req, res, next) => {
         const message = Object.values(err.errors).map((val) => val.message);
         error = new ErrorResponse(message, 400);
     }
+
+    console.log(err.message.red);
+
     res.standard(
         error.httpStatusCode || 500,
         false,

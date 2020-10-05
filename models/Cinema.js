@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const geocoder = require('../utils/geocoder');
 
 const cinemaSchema = new mongoose.Schema({
     name: {
@@ -43,6 +44,24 @@ const cinemaSchema = new mongoose.Schema({
     updatedAt: {
         type: Date
     }
+});
+
+// Geocode & create location field
+cinemaSchema.pre('save', async function (next) {
+    const res = await geocoder.geocode(this.address);
+    const loc = res[0];
+    this.location = {
+        type: 'Point',
+        coordinates: [loc.longitude, loc.latitude],
+        formattedAddress: loc.formattedAddress,
+        street: loc.streetName,
+        city: loc.city,
+        state: loc.stateCode,
+        zipcode: loc.zipcode,
+        country: loc.countryCode
+    };
+
+    next();
 });
 
 module.exports = mongoose.model('Cinema', cinemaSchema);
