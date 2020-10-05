@@ -12,7 +12,7 @@ module.exports = function (app) {
                 description:
                     'API for cinemas, halls, movies, tickets management'
             },
-            host: 'https://movieer.knowlegdecampground.com/api/v1'
+            host: 'localhost:5000/api/v1'
         },
         apis: ['./controllers/*.js']
     };

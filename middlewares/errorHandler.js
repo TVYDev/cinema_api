@@ -10,6 +10,11 @@ const errorHandler = (err, req, res, next) => {
         data.duplicates = err.keyValue;
     }
 
+    // Mongoose validation error
+    if (err.name === 'ValidationError') {
+        const message = Object.values(err.errors).map((val) => val.message);
+        error = new ErrorResponse(message, 400);
+    }
     res.standard(
         error.httpStatusCode || 500,
         false,
