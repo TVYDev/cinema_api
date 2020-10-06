@@ -1,21 +1,20 @@
-const express = require('express');
-const dotenv = require('dotenv');
-const colors = require('colors');
-const connectDB = require('./config/db');
+const app = require('./app');
 
-// Load env variables
-dotenv.config({ path: './config/.env' });
+const port = process.env.PORT || 5000;
 
-const app = express();
-
-// Connect to database
-connectDB();
-
-const port = process.env.PORT || 6000;
-
-app.listen(port, () =>
+const server = app.listen(port, () =>
     console.log(
-        `Application is running in ${process.env.NODE_ENV} mode on port ${port}`
-            .cyan.inverse
+        `Server is running in ${process.env.NODE_ENV} mode on port ${port}`.cyan
+            .inverse
     )
 );
+
+// Global handler of unhandled promise rejection
+process.on('unhandledRejection', (error) => {
+    console.log(`Error: ${error.message}`.red);
+
+    // Close the server and exit process with failure (Prevent the server to crash)
+    server.close(() => process.exit(1));
+});
+
+module.exports = server;

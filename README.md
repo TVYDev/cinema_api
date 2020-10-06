@@ -1,22 +1,21 @@
 # Cinema APIs
-APIs for cinema applications including buying tickets, admin panel...
+
+> 🏗 **Currently in development**
+
+APIs for cinema management including CRUD on cinemas, halls, movies, buying tickets, admin panel...
 
 ## I. Features
 
 ### 🎥 Cinemas
 
--   [Admin] Create a new branch
--   [Admin] Update branch basic info (name, location, open hours)
--   [Public] Get all cinemas
--   [Public] Get a single cinema
--   [Admin] Delete a cinema
+-   ✅ [Admin] Create a new branch
+-   ✅ [Admin] Update branch basic info (name, location, opening hours => 7AM - 10PM)
+-   ✅ [Public] Get all cinemas
+-   ✅ [Public] Get a single cinema
+-   ✅ [Admin] Delete a cinema
 -   [Admin] Add new hall to a cinema
--   [Admin] Add cinema layout
-
-> **Challenges**
->
-> -   In frontend, there will be an interactive cinema layout design with
->     pocessions of cinema (halls, entrances, exits, seats, counter desk, Snacks & drinks stalls)
+-   ✅ [Admin] Upload layout image of cinema ((halls, entrances, exits, seats, counter desk, Snacks & drinks stalls))
+-   ✅ [Admin] Upload photo of cinema
 
 ### 🎪 Halls
 
@@ -161,4 +160,3 @@ APIs for cinema applications including buying tickets, admin panel...
 <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/Npm-logo.svg/800px-Npm-logo.svg.png" height=50/>
 <img src="https://ucarecdn.com/e6a83674-f37e-453b-98e0-90b5c3193046/" height=80/>
 <img src="https://fastnetmon.com/wp-content/uploads/2019/04/DO.png" height=100/>
-
