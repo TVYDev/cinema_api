@@ -8,14 +8,14 @@ APIs for cinema management including CRUD on cinemas, halls, movies, buying tick
 
 ### 🎥 Cinemas
 
--   [Admin] Create a new branch
--   [Admin] Update branch basic info (name, location, opening hours => 7AM - 10PM)
--   [Public] Get all cinemas
--   [Public] Get a single cinema
--   [Admin] Delete a cinema
+-   ✅ [Admin] Create a new branch
+-   ✅ [Admin] Update branch basic info (name, location, opening hours => 7AM - 10PM)
+-   ✅ [Public] Get all cinemas
+-   ✅ [Public] Get a single cinema
+-   ✅ [Admin] Delete a cinema
 -   [Admin] Add new hall to a cinema
--   [Admin] Upload photo of cinema layout ((halls, entrances, exits, seats, counter desk, Snacks & drinks stalls))
--   [Admin] Upload photo of cinema
+-   ✅ [Admin] Upload layout image of cinema ((halls, entrances, exits, seats, counter desk, Snacks & drinks stalls))
+-   ✅ [Admin] Upload photo of cinema
 
 ### 🎪 Halls
 
