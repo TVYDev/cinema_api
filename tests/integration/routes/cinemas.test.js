@@ -79,6 +79,15 @@ describe('/api/v1/cinemas', () => {
             expect(res.status).toBe(400);
         });
 
+        it('should return 400 if name is less than 5 characters', async () => {
+            const curData = { ...data };
+            curData.name = 'aaaa';
+
+            const res = await exec().send(curData);
+
+            expect(res.status).toBe(400);
+        });
+
         it('should return 400 if name is more than 100 characters', async () => {
             const curData = { ...data };
             curData.name = new Array(102).join('a'); // this will generate a string of 'a' with 101 characters
@@ -86,6 +95,14 @@ describe('/api/v1/cinemas', () => {
             const res = await exec().send(curData);
 
             expect(res.status).toBe(400);
+        });
+
+        it('should return 400 if name is duplicated', async () => {
+            const res1 = await exec().send(data);
+            const res2 = await exec().send(data);
+
+            expect(res1.status).toBe(201);
+            expect(res2.status).toBe(400);
         });
 
         it('should return 400 if address is not provided', async () => {
