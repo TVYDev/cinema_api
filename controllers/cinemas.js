@@ -1,6 +1,9 @@
+const path = require('path');
 const Cinema = require('../models/Cinema');
 const asyncHandler = require('../middlewares/asyncHandler');
 const ErrorResponse = require('../utils/ErrorResponse');
+const validateFileUpload = require('../helpers/validateFileUpload');
+const storeFileUpload = require('../helpers/storeFileUpload');
 
 /**
  * @swagger
@@ -188,4 +191,57 @@ exports.deleteCinema = asyncHandler(async (req, res, next) => {
     await cinema.remove();
 
     res.standard(200, true, 'Cinema is deleted successfully', cinema);
+});
+
+/**
+ * @swagger
+ * /cinemas/{id}/photo:
+ *  put:
+ *      tags:
+ *          - 🎥 Cinemas
+ *      summary: Upload photo of a cinema
+ *      description: (ADMIN) Upload photo of a cinema by cinema ID
+ *      parameters:
+ *          -   in: path
+ *              name: id
+ *              schema: string
+ *              required: true
+ *              description: Object ID of cinema
+ *              example: 5f7ae01bc3c24b4c6c328d03
+ *          -   in: formData
+ *              name: file
+ *              type: file
+ *              description: Image file to be uploaded as photo of cinema
+ *      responses:
+ *          200:
+ *              description: OK
+ *          404:
+ *              description: Cinema is not found
+ *          400:
+ *              description: Validation error
+ *          500:
+ *              description: Unable to upload file | Internal server error
+ */
+exports.uploadPhotoCinema = asyncHandler(async (req, res, next) => {
+    const cinemaId = req.params.id;
+    let cinema = await Cinema.findById(cinemaId);
+
+    if (!cinema) {
+        return next(
+            new ErrorResponse('Cinema with given ID is not found', 404)
+        );
+    }
+
+    const file = validateFileUpload(req, next, 'image');
+    const fileName = storeFileUpload('cinema_photo', cinemaId, file);
+
+    cinema = await Cinema.findByIdAndUpdate(
+        cinemaId,
+        {
+            photo: fileName
+        },
+        { new: true }
+    );
+
+    res.standard(200, true, 'Upload photo for cinema successfully', cinema);
 });
