@@ -407,4 +407,83 @@ describe('/api/v1/cinemas', () => {
             expect(res.body.data.photo).not.toBe('no-photo.png');
         });
     });
+
+    describe('PUT /:id/layout-image', () => {
+        let cinema;
+        let cinemaId;
+        let imageFileUrl = './tests/test_files/test_image_valid.jpg';
+        let textFileUrl = './tests/test_files/test_text.txt';
+        let imageFileExceeds1MBUrl =
+            './tests/test_files/test_image_exceeds_1MB.jpg';
+        let createdFileUrl = undefined;
+
+        beforeEach(async () => {
+            cinema = await Cinema.create({
+                name: 'Delee Cinma Phnom Penh',
+                address: 'Toul Kork, Phnom Penh, Cambodia',
+                openingHours: '7AM - 10PM'
+            });
+
+            cinemaId = cinema._id;
+        });
+
+        afterEach(async () => {
+            await cinema.remove();
+            if (createdFileUrl !== undefined) {
+                fs.unlinkSync(createdFileUrl);
+            }
+        });
+
+        const exec = () =>
+            request(server).put(`/api/v1/cinemas/${cinemaId}/layout-image`);
+
+        it('should return 404 if object ID provided is invalid', async () => {
+            cinemaId = 1;
+            const res = await exec().attach('file', imageFileUrl);
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 404 if cinema ID provided does not exists', async () => {
+            cinemaId = mongoose.Types.ObjectId();
+            const res = await exec().attach('file', imageFileUrl);
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 400 if there is no uploaded file', async () => {
+            const res = await exec();
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 400 if uploaded file is not an image file', async () => {
+            const res = await exec().attach('file', textFileUrl);
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 400 if uploaded file exceed maximum size set in config', async () => {
+            const res = await exec().attach('file', imageFileExceeds1MBUrl);
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 200, and save the image file to uploads directory', async () => {
+            const res = await exec().attach('file', imageFileUrl);
+            createdFileUrl = `${process.env.FILE_UPLOAD_PATH}/${res.body.data.layoutImage}`;
+
+            expect(res.status).toBe(200);
+            expect(fs.existsSync(createdFileUrl)).toBeTruthy();
+        });
+
+        it('should return 200, and the cinema with photo field with updated value', async () => {
+            const res = await exec().attach('file', imageFileUrl);
+            createdFileUrl = `${process.env.FILE_UPLOAD_PATH}/${res.body.data.layoutImage}`;
+
+            expect(res.status).toBe(200);
+            expect(res.body.data).toHaveProperty('layoutImage');
+            expect(res.body.data.layoutImage).not.toBe('no-photo.png');
+        });
+    });
 });
