@@ -6,7 +6,8 @@
     "scripts": {
         "dev": "nodemon server.js",
         "start": "node server.js",
-        "test": "jest --verbose --runInBand --watchAll"
+        "test": "jest --verbose --runInBand --watchAll",
+        "coverage": "jest --collectCoverage"
     },
     "repository": {
         "type": "git",
