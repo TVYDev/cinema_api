@@ -6,7 +6,8 @@ const {
     getCinema,
     updateCinema,
     deleteCinema,
-    uploadPhotoCinema
+    uploadPhotoCinema,
+    uploadLayoutImageCinema
 } = require('../controllers/cinemas');
 const listJsonResponse = require('../middlewares/listJsonResponse');
 const Cinema = require('../models/Cinema');
@@ -19,5 +20,7 @@ router
 router.route('/:id').get(getCinema).put(updateCinema).delete(deleteCinema);
 
 router.route('/:id/photo').put(uploadPhotoCinema);
+
+router.route('/:id/layout-image').put(uploadLayoutImageCinema);
 
 module.exports = router;

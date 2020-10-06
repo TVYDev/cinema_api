@@ -245,3 +245,59 @@ exports.uploadPhotoCinema = asyncHandler(async (req, res, next) => {
 
     res.standard(200, true, 'Upload photo for cinema successfully', cinema);
 });
+
+/**
+ * @swagger
+ * /cinemas/{id}/layout-image:
+ *  put:
+ *      tags:
+ *          - 🎥 Cinemas
+ *      summary: Upload layout image of a cinema
+ *      description: (ADMIN) Upload layout image of a cinema by cinema ID
+ *      parameters:
+ *          -   in: path
+ *              name: id
+ *              schema: string
+ *              required: true
+ *              description: Object ID of cinema
+ *              example: 5f7ae01bc3c24b4c6c328d03
+ *          -   in: formData
+ *              name: file
+ *              type: file
+ *              description: Image file to be uploaded as layout image of cinema
+ *      responses:
+ *          200:
+ *              description: OK
+ *          404:
+ *              description: Cinema is not found
+ *          400:
+ *              description: Validation error
+ *          500:
+ *              description: Unable to upload file | Internal server error
+ */
+exports.uploadLayoutImageCinema = asyncHandler(async (req, res, next) => {
+    const cinemaId = req.params.id;
+    let cinema = await Cinema.findById(cinemaId);
+
+    if (!cinema) {
+        return next(
+            new ErrorResponse('Cinema with given ID is not found', 404)
+        );
+    }
+
+    const file = validateFileUpload(req, next, 'image');
+    const fileName = storeFileUpload('cinema_layout_image', cinemaId, file);
+
+    cinema = await Cinema.findByIdAndUpdate(
+        cinemaId,
+        { layoutImage: fileName },
+        { new: true }
+    );
+
+    res.standard(
+        200,
+        true,
+        'Upload layout image of cinema successfully',
+        cinema
+    );
+});
