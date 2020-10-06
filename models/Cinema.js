@@ -7,6 +7,7 @@ const cinemaSchema = new mongoose.Schema({
         required: [true, 'Please provide a name'],
         unique: true,
         trim: true,
+        minlength: [5, 'Name must not be less than 5 characters'],
         maxlength: [100, 'Name must not be more than 100 characters']
     },
     address: {
@@ -55,12 +56,14 @@ cinemaSchema.pre('save', async function (next) {
 
 // Update `location` field and create `updatedAt` field
 cinemaSchema.pre('findOneAndUpdate', async function () {
-    const location = await getLocationData(this.getUpdate().address);
+    let dataForAutoUpdate = { updatedAt: Date.now() };
 
-    this.set({
-        location,
-        updatedAt: Date.now()
-    });
+    if (this.getUpdate().address !== undefined) {
+        const location = await getLocationData(this.getUpdate().address);
+        dataForAutoUpdate.location = location;
+    }
+
+    this.set(dataForAutoUpdate);
 });
 
 module.exports = mongoose.model('Cinema', cinemaSchema);

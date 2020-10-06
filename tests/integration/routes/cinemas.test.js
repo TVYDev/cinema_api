@@ -170,4 +170,80 @@ describe('/api/v1/cinemas', () => {
             expect(res.body.data).toHaveProperty('location');
         });
     });
+
+    describe('PUT /:id', () => {
+        let cinema;
+        let cinemaId;
+
+        beforeEach(async () => {
+            cinema = await Cinema.create({
+                name: 'Delee Cinma Phnom Penh',
+                address: 'Toul Kork, Phnom Penh, Cambodia',
+                openingHours: '7AM - 10PM'
+            });
+
+            cinemaId = cinema._id;
+        });
+
+        const exec = () => request(server).put(`/api/v1/cinemas/${cinemaId}`);
+
+        it('should return 400 if name provided is less than 5 characters', async () => {
+            const res = await exec().send({ name: 'aaaa' });
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 400 if name provided is more than 100 characters', async () => {
+            const name = new Array(102).join('a');
+            const res = await exec().send({ name });
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 404 if object id provided is invalid', async () => {
+            cinemaId = 1;
+            const res = await exec().send({});
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 404 if cinema id provided does not exist', async () => {
+            cinemaId = mongoose.Types.ObjectId();
+            const res = await exec().send({});
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 200, and update the cinema if request is valid', async () => {
+            const res = await exec().send({
+                name: 'test123',
+                address: 'Takhmao, Cambodia',
+                openingHours: '8AM - 9PM'
+            });
+
+            const cinemaInDb = await Cinema.findById(cinemaId);
+
+            expect(res.status).toBe(200);
+            expect(cinemaInDb.name).toBe('test123');
+            expect(cinemaInDb.address).toBe('Takhmao, Cambodia');
+            expect(cinemaInDb.openingHours).toBe('8AM - 9PM');
+            expect(cinemaInDb.location).not.toEqual(res.body.data.location);
+        });
+
+        it('should return 200, and return the updated cinema if request is valid', async () => {
+            const res = await exec().send({
+                name: 'test123',
+                address: 'Takhmao, Cambodia',
+                openingHours: '8AM - 9PM'
+            });
+
+            expect(res.status).toBe(200);
+            expect(res.body.data).toHaveProperty('name', 'test123');
+            expect(res.body.data).toHaveProperty(
+                'address',
+                'Takhmao, Cambodia'
+            );
+            expect(res.body.data).toHaveProperty('openingHours', '8AM - 9PM');
+        });
+    });
 });
