@@ -4,7 +4,8 @@ const {
     getCinemas,
     createCinema,
     getCinema,
-    updateCinema
+    updateCinema,
+    deleteCinema
 } = require('../controllers/cinemas');
 const listJsonResponse = require('../middlewares/listJsonResponse');
 const Cinema = require('../models/Cinema');
@@ -14,6 +15,6 @@ router
     .get(listJsonResponse(Cinema, null), getCinemas)
     .post(createCinema);
 
-router.route('/:id').get(getCinema).put(updateCinema);
+router.route('/:id').get(getCinema).put(updateCinema).delete(deleteCinema);
 
 module.exports = router;

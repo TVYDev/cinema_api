@@ -15,7 +15,7 @@ describe('/api/v1/cinemas', () => {
     });
 
     describe('GET /', () => {
-        it('should return all cinemas', async () => {
+        it('should return 200, and return all cinemas', async () => {
             await Cinema.create([
                 {
                     name: 'Delee Cinma Phnom Penh',
@@ -106,19 +106,21 @@ describe('/api/v1/cinemas', () => {
             expect(res.status).toBe(400);
         });
 
-        it('should save the cinema if request body is valid', async () => {
-            await exec().send(data);
+        it('should return 201, and save the cinema if request body is valid', async () => {
+            const res = await exec().send(data);
 
             const cinema = await Cinema.find({
                 name: 'Delee Cinma Phnom Penh'
             });
 
+            expect(res.status).toBe(201);
             expect(cinema).not.toBeNull();
         });
 
-        it('should return cinema and status 200 if operation is successful', async () => {
+        it('should return 201, and return cinema and status 200 if operation is successful', async () => {
             const res = await exec().send(data);
 
+            expect(res.status).toBe(201);
             expect(res.body.data).toHaveProperty('_id');
             expect(res.body.data).toHaveProperty(
                 'name',
@@ -145,7 +147,7 @@ describe('/api/v1/cinemas', () => {
             expect(res.status).toBe(404);
         });
 
-        it('should return a cinema if valid id is passed', async () => {
+        it('should return 200, and return a cinema if valid id is passed', async () => {
             const cinema = await Cinema.create({
                 name: 'Delee Cinma Phnom Penh',
                 address: 'Toul Kork, Phnom Penh, Cambodia',
@@ -157,7 +159,10 @@ describe('/api/v1/cinemas', () => {
             );
 
             expect(res.status).toBe(200);
-            expect(res.body.data).toHaveProperty('_id');
+            expect(res.body.data).toHaveProperty(
+                '_id',
+                cinema._id.toHexString()
+            );
             expect(res.body.data).toHaveProperty(
                 'name',
                 'Delee Cinma Phnom Penh'
@@ -183,6 +188,10 @@ describe('/api/v1/cinemas', () => {
             });
 
             cinemaId = cinema._id;
+        });
+
+        afterEach(async () => {
+            await cinema.remove();
         });
 
         const exec = () => request(server).put(`/api/v1/cinemas/${cinemaId}`);
@@ -244,6 +253,61 @@ describe('/api/v1/cinemas', () => {
                 'Takhmao, Cambodia'
             );
             expect(res.body.data).toHaveProperty('openingHours', '8AM - 9PM');
+        });
+    });
+
+    describe('DELETE /:id', () => {
+        let cinemaId;
+
+        beforeEach(async () => {
+            cinema = await Cinema.create({
+                name: 'Delee Cinma Phnom Penh',
+                address: 'Toul Kork, Phnom Penh, Cambodia',
+                openingHours: '7AM - 10PM'
+            });
+
+            cinemaId = cinema._id;
+        });
+
+        afterEach(async () => {
+            await cinema.remove();
+        });
+
+        const exec = () =>
+            request(server).delete(`/api/v1/cinemas/${cinemaId}`);
+
+        it('should return 404 if object ID provided is invalid', async () => {
+            cinemaId = 1;
+            const res = await exec();
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 404 if cinema provided does not exist', async () => {
+            cinemaId = mongoose.Types.ObjectId();
+            const res = await exec();
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 200, and delete the cinema if ID provided is valid and exists', async () => {
+            const res = await exec();
+
+            const cinemaInDb = await Cinema.findById(cinemaId);
+
+            expect(res.status).toBe(200);
+            expect(cinemaInDb).toBeNull();
+        });
+
+        it('should return 200, and return the deleted cinema if ID provided is valid and exists', async () => {
+            const res = await exec();
+
+            expect(res.status).toBe(200);
+            expect(res.body.data).toHaveProperty('_id', cinemaId.toHexString());
+            expect(res.body.data).toHaveProperty(
+                'name',
+                'Delee Cinma Phnom Penh'
+            );
         });
     });
 });
