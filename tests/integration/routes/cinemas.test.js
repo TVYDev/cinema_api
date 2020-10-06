@@ -61,44 +61,6 @@ describe('/api/v1/cinemas', () => {
         });
     });
 
-    describe('GET /:id', () => {
-        it('should return 404 if object id is invalid', async () => {
-            const res = await request(server).get('/api/v1/cinemas/1');
-            expect(res.status).toBe(404);
-        });
-
-        it('should return 404 if id given does not exist', async () => {
-            const id = mongoose.Types.ObjectId();
-            const res = await request(server).get(`/api/v1/cinemas/${id}`);
-            expect(res.status).toBe(404);
-        });
-
-        it('should return a cinema if valid id is passed', async () => {
-            const cinema = await Cinema.create({
-                name: 'Delee Cinma Phnom Penh',
-                address: 'Toul Kork, Phnom Penh, Cambodia',
-                openingHours: '7AM - 10PM'
-            });
-
-            const res = await request(server).get(
-                `/api/v1/cinemas/${cinema._id}`
-            );
-
-            expect(res.status).toBe(200);
-            expect(res.body.data).toHaveProperty('_id');
-            expect(res.body.data).toHaveProperty(
-                'name',
-                'Delee Cinma Phnom Penh'
-            );
-            expect(res.body.data).toHaveProperty(
-                'address',
-                'Toul Kork, Phnom Penh, Cambodia'
-            );
-            expect(res.body.data).toHaveProperty('openingHours', '7AM - 10PM');
-            expect(res.body.data).toHaveProperty('location');
-        });
-    });
-
     describe('POST /', () => {
         const data = {
             name: 'Delee Cinma Phnom Penh',
@@ -157,6 +119,44 @@ describe('/api/v1/cinemas', () => {
         it('should return cinema and status 200 if operation is successful', async () => {
             const res = await exec().send(data);
 
+            expect(res.body.data).toHaveProperty('_id');
+            expect(res.body.data).toHaveProperty(
+                'name',
+                'Delee Cinma Phnom Penh'
+            );
+            expect(res.body.data).toHaveProperty(
+                'address',
+                'Toul Kork, Phnom Penh, Cambodia'
+            );
+            expect(res.body.data).toHaveProperty('openingHours', '7AM - 10PM');
+            expect(res.body.data).toHaveProperty('location');
+        });
+    });
+
+    describe('GET /:id', () => {
+        it('should return 404 if object id is invalid', async () => {
+            const res = await request(server).get('/api/v1/cinemas/1');
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 404 if id given does not exist', async () => {
+            const id = mongoose.Types.ObjectId();
+            const res = await request(server).get(`/api/v1/cinemas/${id}`);
+            expect(res.status).toBe(404);
+        });
+
+        it('should return a cinema if valid id is passed', async () => {
+            const cinema = await Cinema.create({
+                name: 'Delee Cinma Phnom Penh',
+                address: 'Toul Kork, Phnom Penh, Cambodia',
+                openingHours: '7AM - 10PM'
+            });
+
+            const res = await request(server).get(
+                `/api/v1/cinemas/${cinema._id}`
+            );
+
+            expect(res.status).toBe(200);
             expect(res.body.data).toHaveProperty('_id');
             expect(res.body.data).toHaveProperty(
                 'name',

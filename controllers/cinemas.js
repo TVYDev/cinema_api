@@ -89,3 +89,58 @@ exports.createCinema = asyncHandler(async (req, res, next) => {
     const cinema = await Cinema.create(req.body);
     res.standard(201, true, 'Cinema is created successfully', cinema);
 });
+
+/**
+ * @swagger
+ * /cinemas/{id}:
+ *  put:
+ *      tags:
+ *          - 🎥 Cinemas
+ *      summary: Update a cinema
+ *      description: (ADMIN) Update a cinema
+ *      parameters:
+ *          -   in: path
+ *              name: id
+ *              schema: string
+ *              required: true
+ *              description: Object ID of cinema
+ *              example: 5f7ae01bc3c24b4c6c328d03
+ *          -   in: body
+ *              name: cinema
+ *              description: The cinema data to be updated
+ *              schema:
+ *                  type: object
+ *                  properties:
+ *                      name:
+ *                          type: string
+ *                          example: Delee Cinema
+ *                      address:
+ *                          type: string
+ *                          example: Phnom Penh
+ *                      openingHours:
+ *                          type: string
+ *                          example: 7AM - 9PM
+ *      responses:
+ *          200:
+ *              description: OK
+ *          400:
+ *              description: Validation Error
+ *          404:
+ *              description: Cinema is not found
+ */
+exports.updateCinema = asyncHandler(async (req, res, next) => {
+    let cinema = await Cinema.findById(req.params.id);
+
+    if (!cinema) {
+        return next(
+            new ErrorResponse('Cinema with given ID is not found', 404)
+        );
+    }
+
+    cinema = await Cinema.findByIdAndUpdate(req.params.id, req.body, {
+        new: true,
+        runValidators: true
+    });
+
+    res.standard(200, true, 'Cinema is updated successfully', cinema);
+});

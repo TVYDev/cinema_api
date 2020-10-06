@@ -3,7 +3,8 @@ const router = express.Router();
 const {
     getCinemas,
     createCinema,
-    getCinema
+    getCinema,
+    updateCinema
 } = require('../controllers/cinemas');
 const listJsonResponse = require('../middlewares/listJsonResponse');
 const Cinema = require('../models/Cinema');
@@ -13,6 +14,6 @@ router
     .get(listJsonResponse(Cinema, null), getCinemas)
     .post(createCinema);
 
-router.route('/:id').get(getCinema);
+router.route('/:id').get(getCinema).put(updateCinema);
 
 module.exports = router;

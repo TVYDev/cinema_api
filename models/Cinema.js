@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const geocoder = require('../utils/geocoder');
+const getLocationData = require('../helpers/getLocationData');
 
 const cinemaSchema = new mongoose.Schema({
     name: {
@@ -19,7 +19,7 @@ const cinemaSchema = new mongoose.Schema({
             enum: ['Point']
         },
         coordinates: {
-            type: Number,
+            type: [Number],
             index: '2dsphere'
         },
         formattedAddress: String,
@@ -46,22 +46,21 @@ const cinemaSchema = new mongoose.Schema({
     }
 });
 
-// Geocode & create location field
+// Create `location` field
 cinemaSchema.pre('save', async function (next) {
-    const res = await geocoder.geocode(this.address);
-    const loc = res[0];
-    this.location = {
-        type: 'Point',
-        coordinates: [loc.longitude, loc.latitude],
-        formattedAddress: loc.formattedAddress,
-        street: loc.streetName,
-        city: loc.city,
-        state: loc.stateCode,
-        zipcode: loc.zipcode,
-        country: loc.countryCode
-    };
-
+    const location = await getLocationData(this.address);
+    this.location = location;
     next();
+});
+
+// Update `location` field and create `updatedAt` field
+cinemaSchema.pre('findOneAndUpdate', async function () {
+    const location = await getLocationData(this.getUpdate().address);
+
+    this.set({
+        location,
+        updatedAt: Date.now()
+    });
 });
 
 module.exports = mongoose.model('Cinema', cinemaSchema);
