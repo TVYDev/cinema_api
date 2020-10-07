@@ -31,20 +31,32 @@ const hallSchema = new mongoose.Schema({
     }
 });
 
-async function validateHall(hall) {
-    const schema = Joi.object({
-        name: Joi.string().min(5).max(100).required(),
-        seatRows: Joi.array().items(
-            Joi.alternatives().try(Joi.string(), Joi.number())
-        ),
-        seatColumns: Joi.array().items(
-            Joi.alternatives().try(Joi.string(), Joi.number())
-        ),
-        locationImage: Joi.string()
-    });
+const validationSchema = {
+    name: Joi.string().min(5).max(100),
+    seatRows: Joi.array().items(
+        Joi.alternatives().try(Joi.string(), Joi.number())
+    ),
+    seatColumns: Joi.array().items(
+        Joi.alternatives().try(Joi.string(), Joi.number())
+    ),
+    locationImage: Joi.string()
+};
+
+function validateOnCreateHall(hall) {
+    const tmpValidationSchema = { ...validationSchema };
+    tmpValidationSchema.name = tmpValidationSchema.name.required();
+    const schema = Joi.object(tmpValidationSchema);
+
+    return schema.validate(hall);
+}
+
+function validateOnUpdateHall(hall) {
+    const tmpValidationSchema = { ...validationSchema };
+    const schema = Joi.object(tmpValidationSchema);
 
     return schema.validate(hall);
 }
 
 exports.Hall = mongoose.model('Hall', hallSchema);
-exports.validateHall = validateHall;
+exports.validateOnCreateHall = validateOnCreateHall;
+exports.validateOnUpdateHall = validateOnUpdateHall;

@@ -1,6 +1,6 @@
 const request = require('supertest');
 const mongoose = require('mongoose');
-const Cinema = require('../../../models/Cinema');
+const { Cinema } = require('../../../models/Cinema');
 const fs = require('fs');
 let server;
 

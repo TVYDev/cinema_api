@@ -6,7 +6,7 @@ const colors = require('colors');
 // Load env variables
 dotenv.config({ path: './config/.env' });
 
-const Cinema = require('../models/Cinema');
+const { Cinema } = require('../models/Cinema');
 
 // Connect database
 mongoose.connect(process.env.MONGODB_URI, {

@@ -1,5 +1,5 @@
 const path = require('path');
-const Cinema = require('../models/Cinema');
+const { Cinema } = require('../models/Cinema');
 const asyncHandler = require('../middlewares/asyncHandler');
 const ErrorResponse = require('../utils/ErrorResponse');
 const validateFileUpload = require('../helpers/validateFileUpload');

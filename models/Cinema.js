@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Joi = require('joi');
 const getLocationData = require('../helpers/getLocationData');
 
 const cinemaSchema = new mongoose.Schema({
@@ -70,4 +71,30 @@ cinemaSchema.pre('findOneAndUpdate', async function () {
     this.set(dataForAutoUpdate);
 });
 
-module.exports = mongoose.model('Cinema', cinemaSchema);
+const validationSchema = {
+    name: Joi.string().min(5).max(100),
+    address: Joi.string(),
+    openingHours: Joi.string()
+};
+
+function validateOnCreateCinema(cinema) {
+    const tmpValidationSchema = { ...validationSchema };
+    tmpValidationSchema.name = tmpValidationSchema.name.required();
+    tmpValidationSchema.address = tmpValidationSchema.address.required();
+
+    const schema = Joi.object(tmpValidationSchema);
+
+    return schema.validate(cinema);
+}
+
+function validateOnUpdateCinema(cinema) {
+    const tmpValidationSchema = { ...validationSchema };
+
+    const schema = Joi.object(tmpValidationSchema);
+
+    return schema.validate(cinema);
+}
+
+exports.Cinema = mongoose.model('Cinema', cinemaSchema);
+exports.validateOnCreateCinema = validateOnCreateCinema;
+exports.validateOnUpdateCinema = validateOnUpdateCinema;
