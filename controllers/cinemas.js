@@ -69,7 +69,7 @@ exports.getCinema = asyncHandler(async (req, res, next) => {
  *      parameters:
  *          -   in: body
  *              name: cinema
- *              description: The cinema to create
+ *              description: The cinema to be created
  *              schema:
  *                  type: object
  *                  required:
@@ -88,7 +88,7 @@ exports.getCinema = asyncHandler(async (req, res, next) => {
  *                          example: 7AM - 9PM
  *      responses:
  *          201:
- *              description: OK
+ *              description: Created
  *          400:
  *              description: Validation Error
  *          500:

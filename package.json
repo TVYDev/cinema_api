@@ -6,7 +6,10 @@
     "scripts": {
         "dev": "nodemon server.js",
         "start": "node server.js",
-        "test": "jest --verbose --runInBand",
+        "test": "jest",
+        "test-w": "jest --verbose --runInBand --watchAll",
+        "test-cinemas": "jest --verbose --runInBand ./tests/integration/routes/cinemas.test.js",
+        "test-halls": "jest --verbose --runInBand ./tests/integration/routes/halls.test.js",
         "coverage": "jest --collectCoverage"
     },
     "repository": {

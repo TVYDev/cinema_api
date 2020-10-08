@@ -7,6 +7,7 @@ const colors = require('colors');
 dotenv.config({ path: './config/.env' });
 
 const { Cinema } = require('../models/Cinema');
+const { Hall } = require('../models/Hall');
 
 // Connect database
 mongoose.connect(process.env.MONGODB_URI, {
@@ -20,10 +21,14 @@ mongoose.connect(process.env.MONGODB_URI, {
 const cinemas = JSON.parse(
     fs.readFileSync(`${__dirname}/data/cinemas.json`, 'utf8')
 );
+const halls = JSON.parse(
+    fs.readFileSync(`${__dirname}/data/halls.json`, 'utf-8')
+);
 
 const importData = async () => {
     try {
         await Cinema.create(cinemas);
+        await Hall.create(halls);
 
         console.log('Data imported'.blue.inverse);
         process.exit();
@@ -35,6 +40,7 @@ const importData = async () => {
 const destroyData = async () => {
     try {
         await Cinema.deleteMany();
+        await Hall.deleteMany();
 
         console.log('Data destroyed'.red.inverse);
         process.exit();

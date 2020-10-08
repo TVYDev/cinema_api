@@ -12,11 +12,13 @@ const hallSchema = new mongoose.Schema({
     },
     seatRows: {
         type: [String],
-        required: [true, 'Please define rows of hall seats']
+        required: [true, 'Please define rows of hall seats'],
+        validate: (v) => Array.isArray(v) && v.length > 0
     },
     seatColumns: {
         type: [String],
-        required: [true, 'Please define columns of hall seats']
+        required: [true, 'Please define columns of hall seats'],
+        validate: (v) => Array.isArray(v) && v.length > 0
     },
     locationImage: {
         type: String,
@@ -45,6 +47,8 @@ const validationSchema = {
 function validateOnCreateHall(hall) {
     const tmpValidationSchema = { ...validationSchema };
     tmpValidationSchema.name = tmpValidationSchema.name.required();
+    tmpValidationSchema.seatRows = tmpValidationSchema.seatRows.required();
+    tmpValidationSchema.seatColumns = tmpValidationSchema.seatColumns.required();
     const schema = Joi.object(tmpValidationSchema);
 
     return schema.validate(hall);
