@@ -219,4 +219,111 @@ describe('/api/v1/halls', () => {
             ]);
         });
     });
+
+    describe('PUT /:id', () => {
+        let hall;
+        let hallId;
+
+        beforeEach(async () => {
+            hall = await Hall.create({
+                name: 'Hall One',
+                seatRows: ['A', 'B', 'C', 'D'],
+                seatColumns: [1, 2, 3, 4]
+            });
+
+            hallId = hall._id;
+        });
+
+        afterEach(async () => {
+            await hall.remove();
+        });
+
+        const exec = () => request(server).put(`/api/v1/halls/${hallId}`);
+
+        it('should return 400 if name is less than 5 characters', async () => {
+            const res = await exec().send({ name: 'aaaa' });
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 400 if name is more than 100 characters', async () => {
+            const name = new Array(102).join('a');
+            const res = await exec().send({ name });
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 400 if seatRows is an empty array', async () => {
+            const res = await exec().send({ seatRows: [] });
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 400 if seatRows is not an array of only string or numnber', async () => {
+            const res = await exec().send({ seatRows: [1, '2', true] });
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 400 if seatColumns is an empty array', async () => {
+            const res = await exec().send({ seatColumns: [] });
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 400 if seatColumns is not an array of only string or number', async () => {
+            const res = await exec().send({ seatColumns: [1, '2', true] });
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 404 if object ID is not valid', async () => {
+            hallId = 1;
+            const res = await exec().send({});
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 404 if hall ID does not exists', async () => {
+            hallId = mongoose.Types.ObjectId();
+            const res = await exec().send({});
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 200, and update the hall if the request is valid', async () => {
+            const res = await exec().send({
+                name: 'Hall qwe',
+                seatRows: ['A', 'B'],
+                seatColumns: ['I', 'II', 'III']
+            });
+
+            const hallInDb = await Hall.findById(hallId);
+
+            expect(res.status).toBe(200);
+            expect(hallInDb.name).toBe('Hall qwe');
+            expect(hallInDb.seatRows).toHaveLength(2);
+            expect(hallInDb.seatRows).not.toEqual(res.body.data.seatRows);
+            expect(hallInDb.seatColumns).toHaveLength(3);
+            expect(hallInDb.seatColumns).not.toEqual(res.body.data.seatColumns);
+        });
+
+        it('should return 200, and return the updated hall if the request is valid', async () => {
+            const res = await exec().send({
+                name: 'Hall qwe',
+                seatRows: ['A', 'B'],
+                seatColumns: ['I', 'II', 'III']
+            });
+
+            expect(res.status).toBe(200);
+            expect(res.body.data).toHaveProperty('_id', hallId.toHexString());
+            expect(res.body.data).toHaveProperty('name', 'Hall qwe');
+            expect(res.body.data).toHaveProperty('seatRows', ['A', 'B']);
+            expect(res.body.data).toHaveProperty('seatColumns', [
+                'I',
+                'II',
+                'III'
+            ]);
+        });
+    });
 });
