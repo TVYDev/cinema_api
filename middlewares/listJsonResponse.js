@@ -2,8 +2,11 @@ const listJsonResponse = (model, populate = null) => async (req, res, next) => {
     // Copy query params
     const reqQuery = { ...req.query };
 
+    // Check query params if there is `paging` param
+    const hasPaging = reqQuery.paging === 'false' ? false : true;
+
     // Excluded fields
-    const excludedFields = ['select', 'sort', 'limit', 'page'];
+    const excludedFields = ['select', 'sort', 'limit', 'page', 'paging'];
     excludedFields.forEach((param) => delete reqQuery[param]);
 
     // String of query params
@@ -31,36 +34,45 @@ const listJsonResponse = (model, populate = null) => async (req, res, next) => {
         query = query.sort('-createdAt');
     }
 
-    // Pagination
-    const page = parseInt(req.query.page, 10) || 1;
-    const limit = parseInt(req.query.limit, 10) || 20;
-    const startIndex = (page - 1) * limit;
-    const endIndex = page * limit;
+    if (hasPaging) {
+        // Pagination
+        const page = parseInt(req.query.page, 10) || 1;
+        const limit = parseInt(req.query.limit, 10) || 20;
+        const startIndex = (page - 1) * limit;
+        const endIndex = page * limit;
 
-    const totalCount = await model.countDocuments();
+        const totalCount = await model.countDocuments();
 
-    query = query.skip(startIndex).limit(limit);
+        query = query.skip(startIndex).limit(limit);
 
-    const items = await query;
+        const items = await query;
 
-    let pagination = {
-        count: items.length,
-        totalCount,
-        limit,
-        currentPage: page
-    };
+        let pagination = {
+            count: items.length,
+            totalCount,
+            limit,
+            currentPage: page
+        };
 
-    if (startIndex > 0) {
-        pagination.prevPage = page - 1;
+        if (startIndex > 0) {
+            pagination.prevPage = page - 1;
+        }
+        if (endIndex < totalCount) {
+            pagination.nextPage = page + 1;
+        }
+
+        res.listJsonData = {
+            items,
+            pagination
+        };
+    } else {
+        const items = await query;
+
+        res.listJsonData = {
+            items,
+            count: items.length
+        };
     }
-    if (endIndex < totalCount) {
-        pagination.nextPage = page + 1;
-    }
-
-    res.listJsonData = {
-        items,
-        pagination
-    };
 
     next();
 };

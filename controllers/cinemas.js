@@ -28,7 +28,7 @@ const storeFileUpload = require('../helpers/storeFileUpload');
  *          -   in: query
  *              name: limit
  *              schema:
- *                  type: number
+ *                  type: string
  *              default: 20
  *              description: Limit numbers of record for a page
  *              example: 10
@@ -36,9 +36,16 @@ const storeFileUpload = require('../helpers/storeFileUpload');
  *              name: page
  *              default: 1
  *              schema:
- *                  type: number
+ *                  type: string
  *              description: Certain page index for records to be retrieved
  *              example: 1
+ *          -   in: query
+ *              name: paging
+ *              default: true
+ *              schema:
+ *                  type: string
+ *              description: Define whether need records in pagination
+ *              example: false
  *      responses:
  *          200:
  *              description: OK
