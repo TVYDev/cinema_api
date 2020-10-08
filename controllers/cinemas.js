@@ -276,7 +276,7 @@ exports.uploadPhotoCinema = asyncHandler(async (req, res, next) => {
         { new: true }
     );
 
-    res.standard(200, true, 'Upload photo for cinema successfully', cinema);
+    res.standard(200, true, 'Photo of cinema is uploaded successfully', cinema);
 });
 
 /**
@@ -330,7 +330,7 @@ exports.uploadLayoutImageCinema = asyncHandler(async (req, res, next) => {
     res.standard(
         200,
         true,
-        'Upload layout image of cinema successfully',
+        'Layout image of cinema is uploaded successfully',
         cinema
     );
 });

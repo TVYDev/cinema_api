@@ -1,6 +1,8 @@
 const asyncHandler = require('../middlewares/asyncHandler');
 const ErrorResponse = require('../utils/ErrorResponse');
 const { Hall } = require('../models/Hall');
+const validateFileUpload = require('../helpers/validateFileUpload');
+const storeFileUpload = require('../helpers/storeFileUpload');
 
 /**
  * @swagger
@@ -226,4 +228,61 @@ exports.deleteHall = asyncHandler(async (req, res, next) => {
     await hall.remove();
 
     res.standard(200, true, 'Hall is deleted succesfully', hall);
+});
+
+/**
+ * @swagger
+ * /halls/{id}/location-image:
+ *  put:
+ *      tags:
+ *          - 🎪 Halls
+ *      summary: Upload location image of a hall
+ *      description: (ADMIN) Upload location image of a hall by id
+ *      parameters:
+ *          -   in: path
+ *              name: id
+ *              required: true
+ *              schema:
+ *                  type: string
+ *              description: Object ID of hall
+ *              example: 5f7e6fa36e1f822e0800184a
+ *          -   in: formData
+ *              name: file
+ *              type: file
+ *              description: Image file to be uploaed as location image of hall
+ *      responses:
+ *          200:
+ *              description: OK
+ *          400:
+ *              description: Validation error
+ *          404:
+ *              description: Hall is not found
+ *          500:
+ *              description: Internal server error
+ */
+exports.uploadLocationImageHall = asyncHandler(async (req, res, next) => {
+    const hallId = req.params.id;
+    let hall = await Hall.findById(hallId);
+
+    if (!hall) {
+        return next(new ErrorResponse('Hall with given ID is not found', 404));
+    }
+
+    const file = validateFileUpload(req, next, 'image');
+    const fileName = storeFileUpload('hall_location_image', hallId, file);
+
+    hall = await Hall.findByIdAndUpdate(
+        hallId,
+        {
+            locationImage: fileName
+        },
+        { new: true }
+    );
+
+    res.standard(
+        200,
+        true,
+        'Location image of hall is uploaded successfully',
+        hall
+    );
 });

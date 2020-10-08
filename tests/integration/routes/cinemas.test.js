@@ -403,7 +403,7 @@ describe('/api/v1/cinemas', () => {
             expect(fs.existsSync(createdFileUrl)).toBeTruthy();
         });
 
-        it('should return 200, and the cinema with photo field with updated value', async () => {
+        it('should return 200, and return the cinema with photo field with updated value', async () => {
             const res = await exec().attach('file', imageFileUrl);
             createdFileUrl = `${process.env.FILE_UPLOAD_PATH}/${res.body.data.photo}`;
 
@@ -468,7 +468,7 @@ describe('/api/v1/cinemas', () => {
             expect(res.status).toBe(400);
         });
 
-        it('should return 400 if uploaded file exceed maximum size set in config', async () => {
+        it('should return 400 if uploaded file exceed 1MB maximum size', async () => {
             const res = await exec().attach('file', imageFileExceeds1MBUrl);
 
             expect(res.status).toBe(400);

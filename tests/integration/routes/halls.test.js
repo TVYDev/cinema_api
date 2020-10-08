@@ -1,6 +1,7 @@
 const request = require('supertest');
 const { Hall } = require('../../../models/Hall');
 const mongoose = require('mongoose');
+const fs = require('fs');
 let server;
 
 describe('/api/v1/halls', () => {
@@ -375,6 +376,84 @@ describe('/api/v1/halls', () => {
             expect(res.status).toBe(200);
             expect(res.body.data).toHaveProperty('_id', hallId.toHexString());
             expect(res.body.data).toHaveProperty('name', 'Hall One');
+        });
+    });
+
+    describe('PUT /:id/location-image', () => {
+        let hall;
+        let hallId;
+        let imageFileUrl = './tests/test_files/test_image_valid.jpg';
+        let textFileUrl = './tests/test_files/test_text.txt';
+        let imageFileExceeds1MBUrl =
+            './tests/test_files/test_image_exceeds_1MB.jpg';
+        let createdFileUrl = undefined;
+
+        beforeEach(async () => {
+            hall = await Hall.create({
+                name: 'Hall One',
+                seatRows: ['A', 'B', 'C', 'D'],
+                seatColumns: [1, 2, 3, 4]
+            });
+
+            hallId = hall._id;
+        });
+        afterEach(async () => {
+            await hall.remove();
+            if (createdFileUrl !== undefined) {
+                fs.unlinkSync(createdFileUrl);
+            }
+        });
+
+        const exec = () =>
+            request(server).put(`/api/v1/halls/${hallId}/location-image`);
+
+        it('should return 404 if object id is not valid', async () => {
+            hallId = 1;
+            const res = await exec();
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 404 if hall id does not exists', async () => {
+            hallId = mongoose.Types.ObjectId();
+            const res = await exec();
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 400 if there is no uploaded file', async () => {
+            const res = await exec();
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 400 if uploaded file is not an image file', async () => {
+            const res = await exec().attach('file', textFileUrl);
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 400 if uploaded file exceeds 1MB maximum size', async () => {
+            const res = await exec().attach('file', imageFileExceeds1MBUrl);
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 200, and save the image to the uploads directory', async () => {
+            const res = await exec().attach('file', imageFileUrl);
+            createdFileUrl = `${process.env.FILE_UPLOAD_PATH}/${res.body.data.locationImage}`;
+
+            expect(res.status).toBe(200);
+            expect(fs.existsSync(createdFileUrl)).toBeTruthy();
+        });
+
+        it('should return 200, and return the hall with location image field with updated value', async () => {
+            const res = await exec().attach('file', imageFileUrl);
+            createdFileUrl = `${process.env.FILE_UPLOAD_PATH}/${res.body.data.locationImage}`;
+
+            expect(res.status).toBe(200);
+            expect(res.body.data).toHaveProperty('locationImage');
+            expect(res.body.data.locationImage).not.toBe('no-photo.jpg');
         });
     });
 });

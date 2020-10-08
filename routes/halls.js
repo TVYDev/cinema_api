@@ -5,7 +5,8 @@ const {
     getHalls,
     getHall,
     updateHall,
-    deleteHall
+    deleteHall,
+    uploadLocationImageHall
 } = require('../controllers/halls');
 const validateRequestBody = require('../middlewares/validateRequestBody');
 const {
@@ -25,5 +26,7 @@ router
     .delete(deleteHall)
     .get(getHall)
     .put(validateRequestBody(validateOnUpdateHall), updateHall);
+
+router.route('/:id/location-image').put(uploadLocationImageHall);
 
 module.exports = router;
