@@ -191,3 +191,39 @@ exports.updateHall = asyncHandler(async (req, res, next) => {
 
     res.standard(200, true, 'Hall is updated successfully', hall);
 });
+
+/**
+ * @swagger
+ * /halls/{id}:
+ *  delete:
+ *      tags:
+ *          - 🎪 Halls
+ *      summary: Delete a hall
+ *      description: (ADMIN) Delete a hall from database by its ID
+ *      parameters:
+ *          -   in: path
+ *              name: id
+ *              schema:
+ *                  type: string
+ *              required: true
+ *              description: Object ID of hall
+ *              example: 5f7e6fa36e1f822e0800184a
+ *      responses:
+ *          200:
+ *              description: OK
+ *          404:
+ *              description: Hall is not found
+ *          500:
+ *              description: Internal server error
+ */
+exports.deleteHall = asyncHandler(async (req, res, next) => {
+    let hall = await Hall.findById(req.params.id);
+
+    if (!hall) {
+        return next(new ErrorResponse('Hall with given ID is not found', 404));
+    }
+
+    await hall.remove();
+
+    res.standard(200, true, 'Hall is deleted succesfully', hall);
+});

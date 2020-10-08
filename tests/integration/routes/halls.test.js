@@ -326,4 +326,55 @@ describe('/api/v1/halls', () => {
             ]);
         });
     });
+
+    describe('DELETE /:id', () => {
+        let hall;
+        let hallId;
+
+        beforeEach(async () => {
+            hall = await Hall.create({
+                name: 'Hall One',
+                seatRows: ['A', 'B', 'C', 'D'],
+                seatColumns: [1, 2, 3, 4]
+            });
+
+            hallId = hall._id;
+        });
+        afterEach(async () => {
+            await hall.remove();
+        });
+
+        const exec = () => request(server).delete(`/api/v1/halls/${hallId}`);
+
+        it('should return 404 if object id is valid', async () => {
+            hallId = 1;
+            const res = await exec();
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 404 if hall id does not exist', async () => {
+            hallId = mongoose.Types.ObjectId();
+            const res = await exec();
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 200, and delete the hall if the request is valid', async () => {
+            const res = await exec();
+
+            const hallInDb = await Hall.findById(hallId);
+
+            expect(res.status).toBe(200);
+            expect(hallInDb).toBeNull();
+        });
+
+        it('should return 200, and return the deleted hall if the request is valid', async () => {
+            const res = await exec();
+
+            expect(res.status).toBe(200);
+            expect(res.body.data).toHaveProperty('_id', hallId.toHexString());
+            expect(res.body.data).toHaveProperty('name', 'Hall One');
+        });
+    });
 });

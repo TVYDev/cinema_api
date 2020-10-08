@@ -4,7 +4,8 @@ const {
     createHall,
     getHalls,
     getHall,
-    updateHall
+    updateHall,
+    deleteHall
 } = require('../controllers/halls');
 const validateRequestBody = require('../middlewares/validateRequestBody');
 const {
@@ -21,6 +22,7 @@ router
 
 router
     .route('/:id')
+    .delete(deleteHall)
     .get(getHall)
     .put(validateRequestBody(validateOnUpdateHall), updateHall);
 
