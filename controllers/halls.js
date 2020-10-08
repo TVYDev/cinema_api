@@ -1,6 +1,7 @@
 const asyncHandler = require('../middlewares/asyncHandler');
 const ErrorResponse = require('../utils/ErrorResponse');
 const { Hall } = require('../models/Hall');
+const { Cinema } = require('../models/Cinema');
 const validateFileUpload = require('../helpers/validateFileUpload');
 const storeFileUpload = require('../helpers/storeFileUpload');
 
@@ -91,13 +92,20 @@ exports.getHall = asyncHandler(async (req, res, next) => {
 
 /**
  * @swagger
- * /halls:
+ * /cinemas/{cinemaId}/halls:
  *  post:
  *      tags:
  *          - 🎪 Halls
- *      summary: Create a new hall
- *      description: (ADMIN) Create a new hall
+ *      summary: Add a new hall to a cinema
+ *      description: (ADMIN) Add a new hall to a cinema
  *      parameters:
+ *          -   in: path
+ *              name: cinemaId
+ *              required: true
+ *              schema:
+ *                  type: string
+ *              description: Object Id of cinema for adding a new hall into
+ *              example: 5f7ae01bc3c24b4c6c328d03
  *          -   in: body
  *              name: hall
  *              description: The hall to be created
@@ -129,10 +137,20 @@ exports.getHall = asyncHandler(async (req, res, next) => {
  *          500:
  *              description: Internal server error
  */
-exports.createHall = asyncHandler(async (req, res, next) => {
+exports.addHall = asyncHandler(async (req, res, next) => {
+    const cinemaId = req.params.cinemaId;
+    const cinema = await Cinema.findById(cinemaId);
+    req.body.cinema = cinemaId;
+
+    if (!cinema) {
+        return next(
+            new ErrorResponse('Cinema with given ID is not found', 404)
+        );
+    }
+
     const hall = await Hall.create(req.body);
 
-    res.standard(201, true, 'Hall is created successfully', hall);
+    res.standard(201, true, 'Hall is added to cinema successfully', hall);
 });
 
 /**

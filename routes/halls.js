@@ -1,7 +1,8 @@
 const express = require('express');
-const router = express.Router();
+// Set `mergeParams: true` to allow re-route router resource, e.g. from cinemas routes in this case
+const router = express.Router({ mergeParams: true });
 const {
-    createHall,
+    addHall,
     getHalls,
     getHall,
     updateHall,
@@ -19,7 +20,7 @@ const listJsonResponse = require('../middlewares/listJsonResponse');
 router
     .route('/')
     .get(listJsonResponse(Hall), getHalls)
-    .post(validateRequestBody(validateOnCreateHall), createHall);
+    .post(validateRequestBody(validateOnCreateHall), addHall);
 
 router
     .route('/:id')

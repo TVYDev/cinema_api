@@ -16,6 +16,10 @@ const {
     validateOnUpdateCinema
 } = require('../models/Cinema');
 const validateRequestBody = require('../middlewares/validateRequestBody');
+const hallsRouter = require('./halls');
+
+// Re-route to other resource routers
+router.use('/:cinemaId/halls', hallsRouter);
 
 router
     .route('/')

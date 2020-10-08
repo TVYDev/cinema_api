@@ -3,18 +3,21 @@
         "_id": "5f7e6fa36e1f822e0800184a",
         "name": "Hall One",
         "seatRows": ["A", "B", "C", "D"],
-        "seatColumns": [1, 2, 3, 4]
+        "seatColumns": [1, 2, 3, 4],
+        "cinema": "5d713995b721c3bb38c1f5d0"
     },
     {
         "_id": "5f7e6fc7b2784c41dc7c7091",
         "name": "Hall Two",
         "seatRows": ["A", "B", "C", "D", "E", "F", "G", "H"],
-        "seatColumns": [1, 2, 3, 4, 5, 6, 7]
+        "seatColumns": [1, 2, 3, 4, 5, 6, 7],
+        "cinema": "5d713995b721c3bb38c1f5d0"
     },
     {
         "_id": "5f7e6fe396f1a141f0633a68",
         "name": "Hall Three",
         "seatRows": ["A", "B", "C", "D"],
-        "seatColumns": ["I", "II", "III", "IV", "V"]
+        "seatColumns": ["I", "II", "III", "IV", "V"],
+        "cinema": "5d713a66ec8f2b88b8f830b8"
     }
 ]

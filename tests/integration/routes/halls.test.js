@@ -1,10 +1,11 @@
 const request = require('supertest');
 const { Hall } = require('../../../models/Hall');
+const { Cinema } = require('../../../models/Cinema');
 const mongoose = require('mongoose');
 const fs = require('fs');
 let server;
 
-describe('/api/v1/halls', () => {
+describe('Halls', () => {
     beforeAll(() => {
         server = require('../../../server');
     });
@@ -15,18 +16,20 @@ describe('/api/v1/halls', () => {
         await Hall.deleteMany();
     });
 
-    describe('GET /', () => {
+    describe('GET /api/v1/halls', () => {
         it('should return 200, and return all the halls', async () => {
             await Hall.create([
                 {
                     name: 'Hall One',
                     seatRows: ['A', 'B', 'C', 'D'],
-                    seatColumns: [1, 2, 3, 4]
+                    seatColumns: [1, 2, 3, 4],
+                    cinema: mongoose.Types.ObjectId()
                 },
                 {
                     name: 'Hall Two',
                     seatRows: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'],
-                    seatColumns: [1, 2, 3, 4, 5, 6, 7]
+                    seatColumns: [1, 2, 3, 4, 5, 6, 7],
+                    cinema: mongoose.Types.ObjectId()
                 }
             ]);
 
@@ -46,7 +49,7 @@ describe('/api/v1/halls', () => {
         });
     });
 
-    describe('GET /:id', () => {
+    describe('GET /api/v1/halls/:id', () => {
         let hallId;
         const exec = () => request(server).get(`/api/v1/halls/${hallId}`);
 
@@ -68,7 +71,8 @@ describe('/api/v1/halls', () => {
             const hall = await Hall.create({
                 name: 'Hall One',
                 seatRows: ['A', 'B', 'C', 'D'],
-                seatColumns: [1, 2, 3, 4]
+                seatColumns: [1, 2, 3, 4],
+                cinema: mongoose.Types.ObjectId()
             });
 
             hallId = hall._id;
@@ -92,14 +96,32 @@ describe('/api/v1/halls', () => {
         });
     });
 
-    describe('POST /', () => {
+    describe('POST /api/v1/cinemas/:cinemaId/halls', () => {
+        let cinema;
+        let cinemaId;
+
+        beforeEach(async () => {
+            cinema = await Cinema.create({
+                name: 'Delee Cinma Phnom Penh',
+                address: 'Toul Kork, Phnom Penh, Cambodia',
+                openingHours: '7AM - 10PM'
+            });
+
+            cinemaId = cinema._id;
+        });
+
+        afterEach(async () => {
+            await cinema.remove();
+        });
+
         const data = {
             name: 'Hall One',
             seatRows: ['A', 'B', 'C', 'D'],
             seatColumns: [1, 2, 3, 4]
         };
 
-        const exec = () => request(server).post('/api/v1/halls');
+        const exec = () =>
+            request(server).post(`/api/v1/cinemas/${cinemaId}/halls`);
 
         it('should return 400 if name is not provided', async () => {
             const curData = { ...data };
@@ -191,10 +213,28 @@ describe('/api/v1/halls', () => {
             expect(res.status).toBe(400);
         });
 
-        it('should return 201, and save the hall if the request body is valid', async () => {
+        it('should return 404 if cinema object id is not valid', async () => {
+            cinemaId = 1;
             const res = await exec().send(data);
 
-            const hall = await Hall.find({ name: 'Hall One' });
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 404 if cinema id does not exists', async () => {
+            cinemaId = mongoose.Types.ObjectId();
+            const res = await exec().send(data);
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 201, and save the hall to the cinema if the request body is valid', async () => {
+            const res = await exec().send(data);
+            console.log(res);
+
+            const hall = await Hall.find({
+                name: 'Hall One',
+                cinema: cinemaId
+            });
 
             expect(res.status).toBe(201);
             expect(hall).not.toBeNull();
@@ -218,10 +258,14 @@ describe('/api/v1/halls', () => {
                 '3',
                 '4'
             ]);
+            expect(res.body.data).toHaveProperty(
+                'cinema',
+                cinemaId.toHexString()
+            );
         });
     });
 
-    describe('PUT /:id', () => {
+    describe('PUT /api/v1/halls/:id', () => {
         let hall;
         let hallId;
 
@@ -229,7 +273,8 @@ describe('/api/v1/halls', () => {
             hall = await Hall.create({
                 name: 'Hall One',
                 seatRows: ['A', 'B', 'C', 'D'],
-                seatColumns: [1, 2, 3, 4]
+                seatColumns: [1, 2, 3, 4],
+                cinema: mongoose.Types.ObjectId()
             });
 
             hallId = hall._id;
@@ -328,7 +373,7 @@ describe('/api/v1/halls', () => {
         });
     });
 
-    describe('DELETE /:id', () => {
+    describe('DELETE /api/v1/halls/:id', () => {
         let hall;
         let hallId;
 
@@ -336,7 +381,8 @@ describe('/api/v1/halls', () => {
             hall = await Hall.create({
                 name: 'Hall One',
                 seatRows: ['A', 'B', 'C', 'D'],
-                seatColumns: [1, 2, 3, 4]
+                seatColumns: [1, 2, 3, 4],
+                cinema: mongoose.Types.ObjectId()
             });
 
             hallId = hall._id;
@@ -379,7 +425,7 @@ describe('/api/v1/halls', () => {
         });
     });
 
-    describe('PUT /:id/location-image', () => {
+    describe('PUT /api/v1/halls/:id/location-image', () => {
         let hall;
         let hallId;
         let imageFileUrl = './tests/test_files/test_image_valid.jpg';
@@ -392,7 +438,8 @@ describe('/api/v1/halls', () => {
             hall = await Hall.create({
                 name: 'Hall One',
                 seatRows: ['A', 'B', 'C', 'D'],
-                seatColumns: [1, 2, 3, 4]
+                seatColumns: [1, 2, 3, 4],
+                cinema: mongoose.Types.ObjectId()
             });
 
             hallId = hall._id;

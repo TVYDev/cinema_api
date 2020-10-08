@@ -30,6 +30,11 @@ const hallSchema = new mongoose.Schema({
     },
     updatedAt: {
         type: Date
+    },
+    cinema: {
+        type: mongoose.Schema.ObjectId,
+        ref: 'Cinema',
+        required: true
     }
 });
 

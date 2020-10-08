@@ -4,7 +4,7 @@ const { Cinema } = require('../../../models/Cinema');
 const fs = require('fs');
 let server;
 
-describe('/api/v1/cinemas', () => {
+describe('Cinemas', () => {
     beforeAll(() => {
         server = require('../../../server');
     });
@@ -15,7 +15,7 @@ describe('/api/v1/cinemas', () => {
         await Cinema.deleteMany();
     });
 
-    describe('GET /', () => {
+    describe('GET /api/v1/cinemas', () => {
         it('should return 200, and return all cinemas', async () => {
             await Cinema.create([
                 {
@@ -62,7 +62,7 @@ describe('/api/v1/cinemas', () => {
         });
     });
 
-    describe('POST /', () => {
+    describe('POST /api/v1/cinemas', () => {
         const data = {
             name: 'Delee Cinma Phnom Penh',
             address: 'Toul Kork, Phnom Penh, Cambodia',
@@ -153,7 +153,7 @@ describe('/api/v1/cinemas', () => {
         });
     });
 
-    describe('GET /:id', () => {
+    describe('GET /api/v1/cinemas/:id', () => {
         let cinemaId;
 
         const exec = () => request(server).get(`/api/v1/cinemas/${cinemaId}`);
@@ -199,7 +199,7 @@ describe('/api/v1/cinemas', () => {
         });
     });
 
-    describe('PUT /:id', () => {
+    describe('PUT /api/v1/cinemas/:id', () => {
         let cinema;
         let cinemaId;
 
@@ -279,7 +279,7 @@ describe('/api/v1/cinemas', () => {
         });
     });
 
-    describe('DELETE /:id', () => {
+    describe('DELETE /api/v1/cinemas/:id', () => {
         let cinemaId;
 
         beforeEach(async () => {
@@ -334,7 +334,7 @@ describe('/api/v1/cinemas', () => {
         });
     });
 
-    describe('PUT /:id/photo', () => {
+    describe('PUT /api/v1/cinemas/:id/photo', () => {
         let cinema;
         let cinemaId;
         let imageFileUrl = './tests/test_files/test_image_valid.jpg';
@@ -413,7 +413,7 @@ describe('/api/v1/cinemas', () => {
         });
     });
 
-    describe('PUT /:id/layout-image', () => {
+    describe('PUT /api/v1/cinemas/:id/layout-image', () => {
         let cinema;
         let cinemaId;
         let imageFileUrl = './tests/test_files/test_image_valid.jpg';
