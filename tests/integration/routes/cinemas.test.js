@@ -154,14 +154,19 @@ describe('/api/v1/cinemas', () => {
     });
 
     describe('GET /:id', () => {
+        let cinemaId;
+
+        const exec = () => request(server).get(`/api/v1/cinemas/${cinemaId}`);
+
         it('should return 404 if object id is invalid', async () => {
-            const res = await request(server).get('/api/v1/cinemas/1');
+            cinemaId = 1;
+            const res = await exec();
             expect(res.status).toBe(404);
         });
 
         it('should return 404 if id given does not exist', async () => {
-            const id = mongoose.Types.ObjectId();
-            const res = await request(server).get(`/api/v1/cinemas/${id}`);
+            cinemaId = mongoose.Types.ObjectId();
+            const res = await exec();
             expect(res.status).toBe(404);
         });
 
@@ -172,9 +177,9 @@ describe('/api/v1/cinemas', () => {
                 openingHours: '7AM - 10PM'
             });
 
-            const res = await request(server).get(
-                `/api/v1/cinemas/${cinema._id}`
-            );
+            cinemaId = cinema._id;
+
+            const res = await exec();
 
             expect(res.status).toBe(200);
             expect(res.body.data).toHaveProperty(

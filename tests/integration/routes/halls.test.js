@@ -1,5 +1,6 @@
 const request = require('supertest');
 const { Hall } = require('../../../models/Hall');
+const mongoose = require('mongoose');
 let server;
 
 describe('/api/v1/halls', () => {
@@ -41,6 +42,52 @@ describe('/api/v1/halls', () => {
             expect(items.some((h) => h.seatColumns.length === 7)).toBeTruthy();
 
             expect(items.length).toBe(2);
+        });
+    });
+
+    describe('GET /:id', () => {
+        let hallId;
+        const exec = () => request(server).get(`/api/v1/halls/${hallId}`);
+
+        it('should return 404 if object ID provided is not valid', async () => {
+            hallId = 1;
+            const res = await exec();
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 404 if hall ID provided does not exist', async () => {
+            hallId = mongoose.Types.ObjectId();
+            const res = await exec();
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 200, and return the hall if hall ID is valid and exists', async () => {
+            const hall = await Hall.create({
+                name: 'Hall One',
+                seatRows: ['A', 'B', 'C', 'D'],
+                seatColumns: [1, 2, 3, 4]
+            });
+
+            hallId = hall._id;
+            const res = await exec();
+
+            expect(res.status).toBe(200);
+            expect(res.body.data).toHaveProperty('_id', hallId.toHexString());
+            expect(res.body.data).toHaveProperty('name', 'Hall One');
+            expect(res.body.data).toHaveProperty('seatRows', [
+                'A',
+                'B',
+                'C',
+                'D'
+            ]);
+            expect(res.body.data).toHaveProperty('seatColumns', [
+                '1',
+                '2',
+                '3',
+                '4'
+            ]);
         });
     });
 

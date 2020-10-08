@@ -56,6 +56,39 @@ exports.getHalls = asyncHandler(async (req, res, next) => {
 
 /**
  * @swagger
+ * /halls/{id}:
+ *  get:
+ *      tags:
+ *          - 🎪 Halls
+ *      summary: Get a single hall by id
+ *      description: (PUBLIC) Retrieve a single hall from database by hall id
+ *      parameters:
+ *          -   in: path
+ *              name: id
+ *              schema: string
+ *              required: true
+ *              description: Object ID of hall
+ *              example: 5f7e6fa36e1f822e0800184a
+ *      responses:
+ *          200:
+ *              description: OK
+ *          404:
+ *              description: Hall is not found
+ *          500:
+ *              description: Internal server error
+ */
+exports.getHall = asyncHandler(async (req, res, next) => {
+    const hall = await Hall.findById(req.params.id);
+
+    if (!hall) {
+        return next(new ErrorResponse('Hall with given ID is not found', 404));
+    }
+
+    res.standard(200, true, 'Success', hall);
+});
+
+/**
+ * @swagger
  * /halls:
  *  post:
  *      tags:
