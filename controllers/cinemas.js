@@ -1,4 +1,3 @@
-const path = require('path');
 const { Cinema } = require('../models/Cinema');
 const asyncHandler = require('../middlewares/asyncHandler');
 const ErrorResponse = require('../utils/ErrorResponse');
@@ -13,6 +12,33 @@ const storeFileUpload = require('../helpers/storeFileUpload');
  *          - 🎥 Cinemas
  *      summary: Get all cinemas
  *      description: (PUBLIC) Retrieve all cinemas with filtering, sorting & pagination
+ *      parameters:
+ *          -   in: query
+ *              name: select
+ *              schema:
+ *                  type: string
+ *              description: Fields to be selected (Multiple fields separated by comma [,])
+ *              example: name,address
+ *          -   in: query
+ *              name: sort
+ *              schema:
+ *                  type: string
+ *              description: Sort by field (Prefix the field with minus [-] for descending ordering)
+ *              example: name,-createdAt
+ *          -   in: query
+ *              name: limit
+ *              schema:
+ *                  type: number
+ *              default: 20
+ *              description: Limit numbers of record for a page
+ *              example: 10
+ *          -   in: query
+ *              name: page
+ *              default: 1
+ *              schema:
+ *                  type: number
+ *              description: Certain page index for records to be retrieved
+ *              example: 1
  *      responses:
  *          200:
  *              description: OK

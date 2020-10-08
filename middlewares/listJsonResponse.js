@@ -1,4 +1,4 @@
-const listJsonResponse = (model, populate) => async (req, res, next) => {
+const listJsonResponse = (model, populate = null) => async (req, res, next) => {
     // Copy query params
     const reqQuery = { ...req.query };
 

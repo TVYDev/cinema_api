@@ -19,7 +19,7 @@ const validateRequestBody = require('../middlewares/validateRequestBody');
 
 router
     .route('/')
-    .get(listJsonResponse(Cinema, null), getCinemas)
+    .get(listJsonResponse(Cinema), getCinemas)
     .post(validateRequestBody(validateOnCreateCinema), createCinema);
 
 router

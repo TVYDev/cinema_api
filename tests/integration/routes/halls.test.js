@@ -13,6 +13,37 @@ describe('/api/v1/halls', () => {
         await Hall.deleteMany();
     });
 
+    describe('GET /', () => {
+        it('should return 200, and return all the halls', async () => {
+            await Hall.create([
+                {
+                    name: 'Hall One',
+                    seatRows: ['A', 'B', 'C', 'D'],
+                    seatColumns: [1, 2, 3, 4]
+                },
+                {
+                    name: 'Hall Two',
+                    seatRows: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'],
+                    seatColumns: [1, 2, 3, 4, 5, 6, 7]
+                }
+            ]);
+
+            const res = await request(server).get('/api/v1/halls');
+            const { items } = res.body.data;
+
+            expect(res.status).toBe(200);
+
+            expect(items.some((h) => h.name === 'Hall One')).toBeTruthy();
+            expect(items.some((h) => h.name === 'Hall Two')).toBeTruthy();
+            expect(items.some((h) => h.seatRows.length === 4)).toBeTruthy();
+            expect(items.some((h) => h.seatColumns.length === 4)).toBeTruthy();
+            expect(items.some((h) => h.seatRows.length === 8)).toBeTruthy();
+            expect(items.some((h) => h.seatColumns.length === 7)).toBeTruthy();
+
+            expect(items.length).toBe(2);
+        });
+    });
+
     describe('POST /', () => {
         const data = {
             name: 'Hall One',

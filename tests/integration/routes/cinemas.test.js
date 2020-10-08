@@ -36,26 +36,26 @@ describe('/api/v1/cinemas', () => {
             expect(res.status).toBe(200);
 
             expect(
-                items.some((g) => g.name === 'Delee Cinma Phnom Penh')
+                items.some((c) => c.name === 'Delee Cinma Phnom Penh')
             ).toBeTruthy();
             expect(
-                items.some((g) => g.name === 'Delee Cinma Takmao')
+                items.some((c) => c.name === 'Delee Cinma Takmao')
             ).toBeTruthy();
 
             expect(
                 items.some(
-                    (g) => g.address === 'Toul Kork, Phnom Penh, Cambodia'
+                    (c) => c.address === 'Toul Kork, Phnom Penh, Cambodia'
                 )
             ).toBeTruthy();
             expect(
-                items.some((g) => g.address === 'Takhmao, Cambodia')
+                items.some((c) => c.address === 'Takhmao, Cambodia')
             ).toBeTruthy();
 
             expect(
-                items.some((g) => g.openingHours === '7AM - 10PM')
+                items.some((c) => c.openingHours === '7AM - 10PM')
             ).toBeTruthy();
             expect(
-                items.some((g) => g.openingHours === '8AM - 9PM')
+                items.some((c) => c.openingHours === '8AM - 9PM')
             ).toBeTruthy();
 
             expect(items.length).toBe(2);
