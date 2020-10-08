@@ -33,6 +33,11 @@ const hallSchema = new mongoose.Schema({
     }
 });
 
+// Create `updatedAt` field
+hallSchema.pre('findOneAndUpdate', function () {
+    this.set({ updatedAt: Date.now() });
+});
+
 const validationSchema = {
     name: Joi.string().min(5).max(100),
     seatRows: Joi.array().items(

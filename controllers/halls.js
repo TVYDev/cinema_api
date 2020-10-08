@@ -132,3 +132,62 @@ exports.createHall = asyncHandler(async (req, res, next) => {
 
     res.standard(201, true, 'Hall is created successfully', hall);
 });
+
+/**
+ * @swagger
+ * /halls/{id}:
+ *  put:
+ *      tags:
+ *          - 🎪 Halls
+ *      summary: Update a hall
+ *      description: (ADMIN) Update information of a hall (name, seatRows, seatColumns)
+ *      parameters:
+ *          -   in: path
+ *              name: id
+ *              schema: string
+ *              require: true
+ *              description: Object ID of hall
+ *              example: 5f7e6fa36e1f822e0800184a
+ *          -   in: body
+ *              name: hall
+ *              description: The hall data to be updated
+ *              schema:
+ *                  type: object
+ *                  properties:
+ *                      name:
+ *                          type: string
+ *                          example: Hall one
+ *                      seatRows:
+ *                          type: array
+ *                          items:
+ *                              type: string | number
+ *                          example: ["A","B","C"]
+ *                      seatColumns:
+ *                          type: array
+ *                          items:
+ *                              type: string | number
+ *                          example: [1,2,3]
+ *      responses:
+ *          200:
+ *              description: OK
+ *          400:
+ *              description: Validation error
+ *          404:
+ *              description: Hall is not found
+ *          500:
+ *              description: Internal server error
+ */
+exports.updateHall = asyncHandler(async (req, res, next) => {
+    let hall = await Hall.findById(req.params.id);
+
+    if (!hall) {
+        return next(new ErrorResponse('Hall with given ID is not found', 404));
+    }
+
+    hall = await Hall.findByIdAndUpdate(req.params.id, req.body, {
+        new: true,
+        runValidators: true
+    });
+
+    res.standard(200, true, 'Hall is updated successfully', hall);
+});
