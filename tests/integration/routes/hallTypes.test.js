@@ -13,6 +13,41 @@ describe('Hall Types', () => {
         await HallType.deleteMany();
     });
 
+    describe('GET /api/v1/hall-types', () => {
+        it('should return 200, and return all the hall types', async () => {
+            await HallType.create([
+                {
+                    name: '2D/3D Hall',
+                    description: 'Equipped with 2D/3D technology'
+                },
+                {
+                    name: '4DX Hall',
+                    description: 'Equipped with motion and comfortable seats'
+                }
+            ]);
+
+            const res = await request(server).get('/api/v1/hall-types');
+            const { items } = res.body.data;
+
+            expect(res.status).toBe(200);
+            expect(items.some((h) => h.name === '2D/3D Hall')).toBeTruthy();
+            expect(items.some((h) => h.name === '4DX Hall')).toBeTruthy();
+            expect(
+                items.some(
+                    (h) => h.description === 'Equipped with 2D/3D technology'
+                )
+            ).toBeTruthy();
+            expect(
+                items.some(
+                    (h) =>
+                        h.description ===
+                        'Equipped with motion and comfortable seats'
+                )
+            ).toBeTruthy();
+            expect(items).toHaveLength(2);
+        });
+    });
+
     describe('POST /api/v1/hall-types', () => {
         const data = {
             name: '4DX Hall',
