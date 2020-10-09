@@ -49,6 +49,74 @@ describe('Halls', () => {
         });
     });
 
+    describe('GET /api/v1/cinemas/:cinemaId/halls', () => {
+        let cinema;
+        let cinemaId;
+
+        beforeEach(async () => {
+            cinema = await Cinema.create({
+                name: 'Delee Cinma Phnom Penh',
+                address: 'Toul Kork, Phnom Penh, Cambodia',
+                openingHours: '7AM - 10PM'
+            });
+
+            cinemaId = cinema._id;
+        });
+
+        afterEach(async () => {
+            await cinema.remove();
+        });
+
+        const exec = () =>
+            request(server).get(`/api/v1/cinemas/${cinemaId}/halls`);
+
+        it('should return 404 if object ID of cinema is not valid', async () => {
+            cinemaId = 1;
+            const res = await exec();
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 404 if object ID of cinema does not exists', async () => {
+            cinemaId = mongoose.Types.ObjectId();
+            const res = await exec();
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 200, and return all the halls of the cinema', async () => {
+            await Hall.create([
+                {
+                    name: 'Hall One',
+                    seatRows: ['A', 'B', 'C', 'D'],
+                    seatColumns: [1, 2, 3, 4],
+                    cinema: cinemaId
+                },
+                {
+                    name: 'Hall Two',
+                    seatRows: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'],
+                    seatColumns: [1, 2, 3, 4, 5, 6, 7],
+                    cinema: cinemaId
+                }
+            ]);
+
+            const res = await exec();
+            console.log(res);
+            const { items } = res.body.data;
+
+            expect(res.status).toBe(200);
+
+            expect(items.some((h) => h.name === 'Hall One')).toBeTruthy();
+            expect(items.some((h) => h.name === 'Hall Two')).toBeTruthy();
+            expect(items.some((h) => h.seatRows.length === 4)).toBeTruthy();
+            expect(items.some((h) => h.seatColumns.length === 4)).toBeTruthy();
+            expect(items.some((h) => h.seatRows.length === 8)).toBeTruthy();
+            expect(items.some((h) => h.seatColumns.length === 7)).toBeTruthy();
+
+            expect(items.length).toBe(2);
+        });
+    });
+
     describe('GET /api/v1/halls/:id', () => {
         let hallId;
         const exec = () => request(server).get(`/api/v1/halls/${hallId}`);
@@ -229,7 +297,6 @@ describe('Halls', () => {
 
         it('should return 201, and save the hall to the cinema if the request body is valid', async () => {
             const res = await exec().send(data);
-            console.log(res);
 
             const hall = await Hall.find({
                 name: 'Hall One',

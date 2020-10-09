@@ -15,11 +15,19 @@ const {
     validateOnCreateHall,
     validateOnUpdateHall
 } = require('../models/Hall');
+const { Cinema } = require('../models/Cinema');
+const pathParamsFilter = require('../middlewares/pathParamsFilter');
 const listJsonResponse = require('../middlewares/listJsonResponse');
 
 router
     .route('/')
-    .get(listJsonResponse(Hall), getHalls)
+    .get(
+        pathParamsFilter([
+            { field: 'cinema', param: 'cinemaId', model: Cinema }
+        ]),
+        listJsonResponse(Hall),
+        getHalls
+    )
     .post(validateRequestBody(validateOnCreateHall), addHall);
 
 router
