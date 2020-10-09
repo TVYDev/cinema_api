@@ -59,6 +59,12 @@ cinemaSchema.pre('save', async function (next) {
     next();
 });
 
+// Cascade delete halls of a cinema
+cinemaSchema.pre('remove', async function (next) {
+    await this.model('Hall').deleteMany({ cinema: this._id });
+    next();
+});
+
 // Update `location` field and create `updatedAt` field
 cinemaSchema.pre('findOneAndUpdate', async function () {
     let dataForAutoUpdate = { updatedAt: Date.now() };
