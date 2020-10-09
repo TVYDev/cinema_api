@@ -1,5 +1,5 @@
 const asyncHandler = require('../middlewares/asyncHandler');
-const ErrorHandler = require('../utils/ErrorResponse');
+const ErrorResponse = require('../utils/ErrorResponse');
 const { HallType } = require('../models/HallType');
 
 /**
@@ -45,14 +45,49 @@ const { HallType } = require('../models/HallType');
  *              description: Define whether need records in pagination
  *              example: false
  *      responses:
- *          200: 
+ *          200:
  *              description: OK
  *          500:
  *              description: Internal server error
- *      
+ *
  */
 exports.getHallTypes = asyncHandler(async (req, res, next) => {
     res.standard(200, true, 'Success', res.listJsonData);
+});
+
+/**
+ * @swagger
+ * /hall-types/{id}:
+ *  get:
+ *      tags:
+ *          - 🏙 Hall Types
+ *      summary: Get a single hall type by ID
+ *      description: (PUBLIC) Get a single hall type by its ID
+ *      parameters:
+ *          -   in: path
+ *              name: id
+ *              required: true
+ *              schema: string
+ *              description: Object ID of hall type
+ *              example: 5f80169afe932e3d4055d1ea
+ *      responses:
+ *          200:
+ *              description: OK
+ *          404:
+ *              description: Hall type is not found
+ *          500:
+ *              description: Internal server error
+ */
+exports.getHallType = asyncHandler(async (req, res, next) => {
+    const hallType = await HallType.findById(req.params.id);
+
+    if (!hallType) {
+        return next(
+            new ErrorResponse('Hall type with given ID is not found', 404)
+        );
+    }
+
+    res.standard(200, true, 'Success', hallType);
 });
 
 /**
