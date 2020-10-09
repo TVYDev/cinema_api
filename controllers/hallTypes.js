@@ -131,6 +131,60 @@ exports.createHallType = asyncHandler(async (req, res, next) => {
 /**
  * @swagger
  * /hall-types/{id}:
+ *  put:
+ *      tags:
+ *          - 🏙 Hall Types
+ *      summary: Update a hall type
+ *      description: (ADMIN) Update a hall type by its ID
+ *      parameters:
+ *          -   in: path
+ *              name: id
+ *              required: true
+ *              schema: string
+ *              description: Object ID of hall type to be updated
+ *              example: 5f80169afe932e3d4055d1ea
+ *          -   in: body
+ *              name: hallType
+ *              description: Hall type data to be updated
+ *              schema:
+ *                  type: object
+ *                  properties:
+ *                      name:
+ *                          type: string
+ *                          example: 2D/3D Hall
+ *                      description:
+ *                          type: string
+ *                          example: Hall with 2D/3D technology
+ *      responses:
+ *          200:
+ *              description: OK
+ *          400:
+ *              description: Validation error
+ *          404:
+ *              description: Hall type is not found
+ *          500:
+ *              description: Internal server error
+ */
+exports.updateHallType = asyncHandler(async (req, res, next) => {
+    let hallType = await HallType.findById(req.params.id);
+
+    if (!hallType) {
+        return next(
+            new ErrorResponse('Hall type with given ID is not found', 404)
+        );
+    }
+
+    hallType = await HallType.findByIdAndUpdate(req.params.id, req.body, {
+        new: true,
+        runValidators: true
+    });
+
+    res.standard(200, true, 'Hall type is updated successfully', hallType);
+});
+
+/**
+ * @swagger
+ * /hall-types/{id}:
  *  delete:
  *      tags:
  *          - 🏙 Hall Types
