@@ -13,25 +13,29 @@ APIs for cinema management including CRUD on cinemas, halls, movies, buying tick
 -   ✅ [Public] Get all cinemas
 -   ✅ [Public] Get a single cinema
 -   ✅ [Admin] Delete a cinema
--   [Admin] Add new hall to a cinema
 -   ✅ [Admin] Upload layout image of cinema ((halls, entrances, exits, seats, counter desk, Snacks & drinks stalls))
 -   ✅ [Admin] Upload photo of cinema
 
 ### 🎪 Halls
 
--   [Admin] Create a new hall (name, hall types: 2D/3D-4DX-VIP-Premium, seats, hall layout, compatible movie types)
--   [Admin] Update a hall
--   [Admin] Get all halls
--   [Admin] Get all halls of a cinema
+-   ✅ [Admin] Add a new hall to a cinema (name, cinema ID, ⌛ hall types ID, seats => JSON object, hall location image)
+-   ✅ [Admin] Update a hall
+-   ✅ [Admin] Get all halls
+-   ✅ [Admin] Get all halls of a cinema
 -   [Admin] Get all compatible halls for a movie type
 -   [Admin] Get all compatible halls for a movie type of a cinema
--   [Admin] Get a single hall
--   [Admin] Delete a hall
+-   ✅ [Admin] Get a single hall
+-   ✅ [Admin] Delete a hall
 
-> **Challenges**
->
-> -   In frontend, there will be an interactive hall layout design with
->     components of halls (screen, seats, entrance door, exit door, emergency exit door, hall dimensions (width, length))
+### 🏙 Hall Types
+
+-   [Admin] Create a hall type (name: 2D, 3D, 4D, IMAX, VIP, PREMIUM, description, compatible movie types)
+-   [Admin] Update a hall type
+-   [Admin] Get all hall type
+-   [Admin] Get all halls of a hall type
+-   [Admin] Get a single hall type
+-   [Admin] Delete a hall type
+-   [Admin] Get all compatible hall types for a movie type
 
 ### 🎬 Movies
 
@@ -41,15 +45,6 @@ APIs for cinema management including CRUD on cinemas, halls, movies, buying tick
 -   [Admin] Get a single movie
 -   [Admin] Delete a movie
 
-### 🎃 Genres
-
--   [Admin] Create a genre (name, description)
--   [Admin] Update a genre
--   [Admin] Get all genres
--   [Admin] Get all movies of a genre
--   [Admin] Get a single genre
--   [Admin] Delete a genre
-
 ### 🎦 Movie Types
 
 -   [Admin] Create a movie type (name: 2D, 3D, 4D, description)
@@ -58,6 +53,15 @@ APIs for cinema management including CRUD on cinemas, halls, movies, buying tick
 -   [Admin] Get all movies of a movie type
 -   [Admin] Get a single movie type
 -   [Admin] Delete a movie type
+
+### 🎃 Genres
+
+-   [Admin] Create a genre (name, description)
+-   [Admin] Update a genre
+-   [Admin] Get all genres
+-   [Admin] Get all movies of a genre
+-   [Admin] Get a single genre
+-   [Admin] Delete a genre
 
 ### ⏲ Showtimes
 

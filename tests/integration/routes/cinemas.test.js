@@ -1,10 +1,10 @@
 const request = require('supertest');
 const mongoose = require('mongoose');
-const Cinema = require('../../../models/Cinema');
+const { Cinema } = require('../../../models/Cinema');
 const fs = require('fs');
 let server;
 
-describe('/api/v1/cinemas', () => {
+describe('Cinemas', () => {
     beforeAll(() => {
         server = require('../../../server');
     });
@@ -15,7 +15,7 @@ describe('/api/v1/cinemas', () => {
         await Cinema.deleteMany();
     });
 
-    describe('GET /', () => {
+    describe('GET /api/v1/cinemas', () => {
         it('should return 200, and return all cinemas', async () => {
             await Cinema.create([
                 {
@@ -36,33 +36,33 @@ describe('/api/v1/cinemas', () => {
             expect(res.status).toBe(200);
 
             expect(
-                items.some((g) => g.name === 'Delee Cinma Phnom Penh')
+                items.some((c) => c.name === 'Delee Cinma Phnom Penh')
             ).toBeTruthy();
             expect(
-                items.some((g) => g.name === 'Delee Cinma Takmao')
+                items.some((c) => c.name === 'Delee Cinma Takmao')
             ).toBeTruthy();
 
             expect(
                 items.some(
-                    (g) => g.address === 'Toul Kork, Phnom Penh, Cambodia'
+                    (c) => c.address === 'Toul Kork, Phnom Penh, Cambodia'
                 )
             ).toBeTruthy();
             expect(
-                items.some((g) => g.address === 'Takhmao, Cambodia')
+                items.some((c) => c.address === 'Takhmao, Cambodia')
             ).toBeTruthy();
 
             expect(
-                items.some((g) => g.openingHours === '7AM - 10PM')
+                items.some((c) => c.openingHours === '7AM - 10PM')
             ).toBeTruthy();
             expect(
-                items.some((g) => g.openingHours === '8AM - 9PM')
+                items.some((c) => c.openingHours === '8AM - 9PM')
             ).toBeTruthy();
 
             expect(items.length).toBe(2);
         });
     });
 
-    describe('POST /', () => {
+    describe('POST /api/v1/cinemas', () => {
         const data = {
             name: 'Delee Cinma Phnom Penh',
             address: 'Toul Kork, Phnom Penh, Cambodia',
@@ -153,15 +153,20 @@ describe('/api/v1/cinemas', () => {
         });
     });
 
-    describe('GET /:id', () => {
+    describe('GET /api/v1/cinemas/:id', () => {
+        let cinemaId;
+
+        const exec = () => request(server).get(`/api/v1/cinemas/${cinemaId}`);
+
         it('should return 404 if object id is invalid', async () => {
-            const res = await request(server).get('/api/v1/cinemas/1');
+            cinemaId = 1;
+            const res = await exec();
             expect(res.status).toBe(404);
         });
 
         it('should return 404 if id given does not exist', async () => {
-            const id = mongoose.Types.ObjectId();
-            const res = await request(server).get(`/api/v1/cinemas/${id}`);
+            cinemaId = mongoose.Types.ObjectId();
+            const res = await exec();
             expect(res.status).toBe(404);
         });
 
@@ -172,9 +177,9 @@ describe('/api/v1/cinemas', () => {
                 openingHours: '7AM - 10PM'
             });
 
-            const res = await request(server).get(
-                `/api/v1/cinemas/${cinema._id}`
-            );
+            cinemaId = cinema._id;
+
+            const res = await exec();
 
             expect(res.status).toBe(200);
             expect(res.body.data).toHaveProperty(
@@ -194,7 +199,7 @@ describe('/api/v1/cinemas', () => {
         });
     });
 
-    describe('PUT /:id', () => {
+    describe('PUT /api/v1/cinemas/:id', () => {
         let cinema;
         let cinemaId;
 
@@ -274,7 +279,7 @@ describe('/api/v1/cinemas', () => {
         });
     });
 
-    describe('DELETE /:id', () => {
+    describe('DELETE /api/v1/cinemas/:id', () => {
         let cinemaId;
 
         beforeEach(async () => {
@@ -329,7 +334,7 @@ describe('/api/v1/cinemas', () => {
         });
     });
 
-    describe('PUT /:id/photo', () => {
+    describe('PUT /api/v1/cinemas/:id/photo', () => {
         let cinema;
         let cinemaId;
         let imageFileUrl = './tests/test_files/test_image_valid.jpg';
@@ -398,7 +403,7 @@ describe('/api/v1/cinemas', () => {
             expect(fs.existsSync(createdFileUrl)).toBeTruthy();
         });
 
-        it('should return 200, and the cinema with photo field with updated value', async () => {
+        it('should return 200, and return the cinema with photo field with updated value', async () => {
             const res = await exec().attach('file', imageFileUrl);
             createdFileUrl = `${process.env.FILE_UPLOAD_PATH}/${res.body.data.photo}`;
 
@@ -408,7 +413,7 @@ describe('/api/v1/cinemas', () => {
         });
     });
 
-    describe('PUT /:id/layout-image', () => {
+    describe('PUT /api/v1/cinemas/:id/layout-image', () => {
         let cinema;
         let cinemaId;
         let imageFileUrl = './tests/test_files/test_image_valid.jpg';
@@ -463,7 +468,7 @@ describe('/api/v1/cinemas', () => {
             expect(res.status).toBe(400);
         });
 
-        it('should return 400 if uploaded file exceed maximum size set in config', async () => {
+        it('should return 400 if uploaded file exceed 1MB maximum size', async () => {
             const res = await exec().attach('file', imageFileExceeds1MBUrl);
 
             expect(res.status).toBe(400);

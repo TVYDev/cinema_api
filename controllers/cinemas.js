@@ -1,5 +1,4 @@
-const path = require('path');
-const Cinema = require('../models/Cinema');
+const { Cinema } = require('../models/Cinema');
 const asyncHandler = require('../middlewares/asyncHandler');
 const ErrorResponse = require('../utils/ErrorResponse');
 const validateFileUpload = require('../helpers/validateFileUpload');
@@ -13,6 +12,40 @@ const storeFileUpload = require('../helpers/storeFileUpload');
  *          - 🎥 Cinemas
  *      summary: Get all cinemas
  *      description: (PUBLIC) Retrieve all cinemas with filtering, sorting & pagination
+ *      parameters:
+ *          -   in: query
+ *              name: select
+ *              schema:
+ *                  type: string
+ *              description: Fields to be selected (Multiple fields separated by comma [,])
+ *              example: name,address
+ *          -   in: query
+ *              name: sort
+ *              schema:
+ *                  type: string
+ *              description: Sort by field (Prefix the field with minus [-] for descending ordering)
+ *              example: name,-createdAt
+ *          -   in: query
+ *              name: limit
+ *              schema:
+ *                  type: string
+ *              default: 20
+ *              description: Limit numbers of record for a page
+ *              example: 10
+ *          -   in: query
+ *              name: page
+ *              default: 1
+ *              schema:
+ *                  type: string
+ *              description: Certain page index for records to be retrieved
+ *              example: 1
+ *          -   in: query
+ *              name: paging
+ *              default: true
+ *              schema:
+ *                  type: string
+ *              description: Define whether need records in pagination
+ *              example: false
  *      responses:
  *          200:
  *              description: OK
@@ -69,7 +102,7 @@ exports.getCinema = asyncHandler(async (req, res, next) => {
  *      parameters:
  *          -   in: body
  *              name: cinema
- *              description: The cinema to create
+ *              description: The cinema to be created
  *              schema:
  *                  type: object
  *                  required:
@@ -88,7 +121,7 @@ exports.getCinema = asyncHandler(async (req, res, next) => {
  *                          example: 7AM - 9PM
  *      responses:
  *          201:
- *              description: OK
+ *              description: Created
  *          400:
  *              description: Validation Error
  *          500:
@@ -243,7 +276,7 @@ exports.uploadPhotoCinema = asyncHandler(async (req, res, next) => {
         { new: true }
     );
 
-    res.standard(200, true, 'Upload photo for cinema successfully', cinema);
+    res.standard(200, true, 'Photo of cinema is uploaded successfully', cinema);
 });
 
 /**
@@ -297,7 +330,7 @@ exports.uploadLayoutImageCinema = asyncHandler(async (req, res, next) => {
     res.standard(
         200,
         true,
-        'Upload layout image of cinema successfully',
+        'Layout image of cinema is uploaded successfully',
         cinema
     );
 });
