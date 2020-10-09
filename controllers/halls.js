@@ -105,7 +105,7 @@ exports.getHall = asyncHandler(async (req, res, next) => {
  *              schema:
  *                  type: string
  *              description: Object Id of cinema for adding a new hall into
- *              example: 5f7ae01bc3c24b4c6c328d03
+ *              example: 5d713995b721c3bb38c1f5d0
  *          -   in: body
  *              name: hall
  *              description: The hall to be created
@@ -134,6 +134,8 @@ exports.getHall = asyncHandler(async (req, res, next) => {
  *              description: Created
  *          400:
  *              description: Validation error
+ *          404:
+ *              description: Cinema is not found
  *          500:
  *              description: Internal server error
  */
