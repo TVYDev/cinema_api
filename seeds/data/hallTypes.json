@@ -1,0 +1,17 @@
+[
+    {
+        "_id": "5f80169afe932e3d4055d1ea",
+        "name": "2D/3D Hall",
+        "description": "Equipped with 2D/3D technology"
+    },
+    {
+        "_id": "5f80186e066d282d14640df0",
+        "name": "4DX Hall",
+        "description": "Equipped with motion and comfortable seats"
+    },
+    {
+        "_id": "5f8019addefb964344c97a3d",
+        "name": "VIP Hall",
+        "description": "Equippd with dining service and soft comfortably seats"
+    }
+]
