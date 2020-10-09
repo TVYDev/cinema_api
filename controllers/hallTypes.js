@@ -127,3 +127,40 @@ exports.createHallType = asyncHandler(async (req, res, next) => {
 
     res.standard(201, true, 'Hall type is created successfully', hallType);
 });
+
+/**
+ * @swagger
+ * /hall-types/{id}:
+ *  delete:
+ *      tags:
+ *          - 🏙 Hall Types
+ *      summary: Delete a hall type
+ *      description: (ADMIN) Delete a hall type
+ *      parameters:
+ *          -   in: path
+ *              name: id
+ *              required: true
+ *              schema: string
+ *              description: Object ID of hall type to be deleted
+ *              example: 5f80169afe932e3d4055d1ea
+ *      responses:
+ *          200:
+ *              description: OK
+ *          404:
+ *              description: Hall type is not found
+ *          500:
+ *              description: Internal server error
+ */
+exports.deleteHallType = asyncHandler(async (req, res, next) => {
+    const hallType = await HallType.findById(req.params.id);
+
+    if (!hallType) {
+        return next(
+            new ErrorResponse('Hall type with given ID is not found', 404)
+        );
+    }
+
+    await hallType.remove();
+
+    res.standard(200, true, 'Hall type is deleted succesfully', hallType);
+});
