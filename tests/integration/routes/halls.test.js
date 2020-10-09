@@ -101,7 +101,6 @@ describe('Halls', () => {
             ]);
 
             const res = await exec();
-            console.log(res);
             const { items } = res.body.data;
 
             expect(res.status).toBe(200);

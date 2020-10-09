@@ -18,14 +18,14 @@ APIs for cinema management including CRUD on cinemas, halls, movies, buying tick
 
 ### 🎪 Halls
 
--   [Admin] Add a new hall to a cinema (name, cinema ID, hall types ID, seats => JSON object, hall location image)
--   [Admin] Update a hall
--   [Admin] Get all halls
--   [Admin] Get all halls of a cinema
+-   ✅ [Admin] Add a new hall to a cinema (name, cinema ID, ⌛ hall types ID, seats => JSON object, hall location image)
+-   ✅ [Admin] Update a hall
+-   ✅ [Admin] Get all halls
+-   ✅ [Admin] Get all halls of a cinema
 -   [Admin] Get all compatible halls for a movie type
 -   [Admin] Get all compatible halls for a movie type of a cinema
--   [Admin] Get a single hall
--   [Admin] Delete a hall
+-   ✅ [Admin] Get a single hall
+-   ✅ [Admin] Delete a hall
 
 ### 🏙 Hall Types
 
