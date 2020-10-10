@@ -14,6 +14,10 @@ const {
 } = require('../models/HallType');
 const listJsonResponse = require('../middlewares/listJsonResponse');
 const router = express.Router();
+const hallsRouter = require('./halls');
+
+// Re-route to other resource routers
+router.use('/:hallTypeId/halls', hallsRouter);
 
 router
     .route('/')

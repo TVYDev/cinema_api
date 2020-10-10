@@ -35,6 +35,11 @@ const hallSchema = new mongoose.Schema({
         type: mongoose.Schema.ObjectId,
         ref: 'Cinema',
         required: true
+    },
+    hallType: {
+        type: mongoose.Schema.ObjectId,
+        ref: 'HallType',
+        required: true
     }
 });
 

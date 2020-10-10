@@ -16,6 +16,7 @@ const {
     validateOnUpdateHall
 } = require('../models/Hall');
 const { Cinema } = require('../models/Cinema');
+const { HallType } = require('../models/HallType');
 const pathParamsFilter = require('../middlewares/pathParamsFilter');
 const listJsonResponse = require('../middlewares/listJsonResponse');
 
@@ -23,7 +24,8 @@ router
     .route('/')
     .get(
         pathParamsFilter([
-            { field: 'cinema', param: 'cinemaId', model: Cinema }
+            { field: 'cinema', param: 'cinemaId', model: Cinema },
+            { field: 'hallType', param: 'hallTypeId', model: HallType}
         ]),
         listJsonResponse(Hall),
         getHalls

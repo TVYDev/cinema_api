@@ -105,6 +105,65 @@ const storeFileUpload = require('../helpers/storeFileUpload');
  *      responses:
  *          200:
  *              description: OK
+ *          404: 
+ *              description: Cinema is not found
+ *          500:
+ *              description: Internal server error
+ */
+/**
+ * @swagger
+ * /hall-types/{hallTypeId}/halls:
+ *  get:
+ *      tags:
+ *          - 🎪 Halls
+ *      summary: Get all halls of a hall type
+ *      description: (PUBLIC) Retrieve all halls of a hall type with filtering, sorting & pagination
+ *      parameters:
+ *          -   in: path
+ *              name: hallTypeId
+ *              required: true
+ *              schema:
+ *                  type: string
+ *              description: Object ID of hall type to be retrieved halls from
+ *              example: 5f80169afe932e3d4055d1ea
+ *          -   in: query
+ *              name: select
+ *              schema:
+ *                  type: string
+ *              description: Fields to be selected (Multiple fields separated by comma [,])
+ *              example: name,seatRows,seatColumns
+ *          -   in: query
+ *              name: sort
+ *              schema:
+ *                  type: string
+ *              description: Sort by field (Prefix the field with minus [-] for descending ordering)
+ *              example: name,-createdAt
+ *          -   in: query
+ *              name: limit
+ *              schema:
+ *                  type: string
+ *              default: 20
+ *              description: Limit numbers of record for a page
+ *              example: 10
+ *          -   in: query
+ *              name: page
+ *              default: 1
+ *              schema:
+ *                  type: string
+ *              description: Certain page index for records to be retrieved
+ *              example: 1
+ *          -   in: query
+ *              name: paging
+ *              default: true
+ *              schema:
+ *                  type: string
+ *              description: Define whether need records in pagination
+ *              example: false
+ *      responses:
+ *          200:
+ *              description: OK
+ *          404: 
+ *              description: Cinema is not found
  *          500:
  *              description: Internal server error
  */
