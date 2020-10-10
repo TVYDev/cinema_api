@@ -185,6 +185,89 @@ describe('Hall Types', () => {
         });
     });
 
+    describe('PUT /api/v1/hall-types/:id', () => {
+        let hallType;
+        let hallTypeId;
+
+        beforeEach(async () => {
+            hallType = await HallType.create({
+                name: '4DX Hall',
+                description: 'Equipped with motion and comfortable seats'
+            });
+
+            hallTypeId = hallType._id;
+        });
+        afterEach(async () => {
+            await hallType.remove();
+        });
+
+        const exec = () => request(server).put(`/api/v1/hall-types/${hallTypeId}`);
+
+        it('should return 404 if object ID is not valid', async () => {
+            hallTypeId = 1;
+            const res = await exec().send({});
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 404 if object ID of hall type does not exists', async () => {
+            hallTypeId = mongoose.Types.ObjectId();
+            const res = await exec().send({});
+
+            expect(res.status).toBe(404);
+        })
+
+        it('should return 400 if name is not a string', async () => {
+            const res = await exec().send({ name: true });
+
+            expect(res.status).toBe(400);
+        })
+
+        it('should return 400 if name is an empty string', async () => {
+            const res = await exec().send({ name: '' });
+
+            expect(res.status).toBe(400);
+        })
+
+        it('should return 400 if name is more than 100 characters', async () => {
+            const name = new Array(102).join('a');
+            const res = await exec().send({ name });
+
+            expect(res.status).toBe(400);
+        })
+
+        it('should return 400 if description is not a string', async () => {
+            const res = await exec().send({ description: true });
+
+            expect(res.status).toBe(400);
+        })
+
+        it('should return 400 if description is an empty string', async () => {
+            const res = await exec().send({ description: '' });
+
+            expect(res.status).toBe(400);
+        })
+
+        it('should return 200, and update the hall type if request is valid', async () => {
+            const res = await exec().send({ name: 'qwe', description: 'des-qwe' });
+
+            const hallTypeInDb = await HallType.findById(hallTypeId);
+
+            expect(res.status).toBe(200);
+            expect(hallTypeInDb.name).toBe('qwe');
+            expect(hallTypeInDb.description).toBe('des-qwe');
+        })
+
+        it('should return 200, and return the updated hall type if request is valid', async () => {
+            const res = await exec().send({ name: 'qwe', description: 'des-qwe' });
+
+            expect(res.status).toBe(200);
+            expect(res.body.data).toHaveProperty('_id', hallTypeId.toHexString());
+            expect(res.body.data).toHaveProperty('name', 'qwe');
+            expect(res.body.data).toHaveProperty('description', 'des-qwe');
+        })
+    });
+
     describe('DELETE /api/v1/hall-types/:id', () => {
         let hallType;
         let hallTypeId;
