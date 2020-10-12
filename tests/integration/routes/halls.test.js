@@ -233,6 +233,14 @@ describe('Halls', () => {
     describe('POST /api/v1/cinemas/:cinemaId/halls', () => {
         let cinema;
         let cinemaId;
+        let hallType;
+        let hallTypeId;
+
+        const data = {
+            name: 'Hall One',
+            seatRows: ['A', 'B', 'C', 'D'],
+            seatColumns: [1, 2, 3, 4]
+        };
 
         beforeEach(async () => {
             cinema = await Cinema.create({
@@ -242,18 +250,20 @@ describe('Halls', () => {
             });
 
             cinemaId = cinema._id;
+
+            hallType = await HallType.create({
+                name: '4DX Hall',
+                description: 'Equipped with motion and comfortable seats'
+            });
+
+            hallTypeId = hallType._id;
+            data.hallTypeId = hallType._id;
         });
 
         afterEach(async () => {
             await cinema.remove();
+            await hallType.remove();
         });
-
-        const data = {
-            name: 'Hall One',
-            seatRows: ['A', 'B', 'C', 'D'],
-            seatColumns: [1, 2, 3, 4],
-            hallType: mongoose.Types.ObjectId().toHexString()
-        };
 
         const exec = () =>
             request(server).post(`/api/v1/cinemas/${cinemaId}/halls`);
@@ -397,6 +407,7 @@ describe('Halls', () => {
                 'cinema',
                 cinemaId.toHexString()
             );
+            expect(res.body.data).toHaveProperty('hallType', hallTypeId.toHexString());
         });
     });
 

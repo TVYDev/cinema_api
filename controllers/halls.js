@@ -2,6 +2,7 @@ const asyncHandler = require('../middlewares/asyncHandler');
 const ErrorResponse = require('../utils/ErrorResponse');
 const { Hall } = require('../models/Hall');
 const { Cinema } = require('../models/Cinema');
+const { HallType } = require('../models/HallType');
 const validateFileUpload = require('../helpers/validateFileUpload');
 const storeFileUpload = require('../helpers/storeFileUpload');
 
@@ -227,6 +228,7 @@ exports.getHall = asyncHandler(async (req, res, next) => {
  *                  - name
  *                  - seatRows
  *                  - seatColumns
+ *                  - hallTypeId
  *              schema:
  *                  type: object
  *                  properties:
@@ -243,6 +245,9 @@ exports.getHall = asyncHandler(async (req, res, next) => {
  *                          items:
  *                              type: string | number
  *                          example: [1,2,3]
+ *                      hallTypeId:
+ *                          type: string
+ *                          example: 5f80169afe932e3d4055d1ea
  *      responses:
  *          201:
  *              description: Created
@@ -263,6 +268,13 @@ exports.addHall = asyncHandler(async (req, res, next) => {
             new ErrorResponse('Cinema with given ID is not found', 404)
         );
     }
+
+    const hallType = await HallType.findById(req.body.hallTypeId);
+
+    if (!hallType) {
+        return next(new ErrorResponse('Hall type with given ID is not found', 404));
+    }
+    req.body.hallType = req.body.hallTypeId;
 
     const hall = await Hall.create(req.body);
 
