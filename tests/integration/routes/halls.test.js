@@ -1,6 +1,7 @@
 const request = require('supertest');
 const { Hall } = require('../../../models/Hall');
 const { Cinema } = require('../../../models/Cinema');
+const { HallType } = require('../../../models/HallType');
 const mongoose = require('mongoose');
 const fs = require('fs');
 let server;
@@ -23,13 +24,15 @@ describe('Halls', () => {
                     name: 'Hall One',
                     seatRows: ['A', 'B', 'C', 'D'],
                     seatColumns: [1, 2, 3, 4],
-                    cinema: mongoose.Types.ObjectId()
+                    cinema: mongoose.Types.ObjectId(),
+                    hallType: mongoose.Types.ObjectId()
                 },
                 {
                     name: 'Hall Two',
                     seatRows: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'],
                     seatColumns: [1, 2, 3, 4, 5, 6, 7],
-                    cinema: mongoose.Types.ObjectId()
+                    cinema: mongoose.Types.ObjectId(),
+                    hallType: mongoose.Types.ObjectId()
                 }
             ]);
 
@@ -90,13 +93,15 @@ describe('Halls', () => {
                     name: 'Hall One',
                     seatRows: ['A', 'B', 'C', 'D'],
                     seatColumns: [1, 2, 3, 4],
-                    cinema: cinemaId
+                    cinema: cinemaId,
+                    hallType: mongoose.Types.ObjectId()
                 },
                 {
                     name: 'Hall Two',
                     seatRows: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'],
                     seatColumns: [1, 2, 3, 4, 5, 6, 7],
-                    cinema: cinemaId
+                    cinema: cinemaId,
+                    hallType: mongoose.Types.ObjectId()
                 }
             ]);
 
@@ -113,6 +118,67 @@ describe('Halls', () => {
             expect(items.some((h) => h.seatColumns.length === 7)).toBeTruthy();
 
             expect(items.length).toBe(2);
+        });
+    });
+
+    describe('GET /api/v1/hall-types/:hallTypeId/halls', () => {
+        let hallType;
+        let hallTypeId;
+
+        beforeEach(async () => {
+            hallType = await HallType.create({
+                name: '4DX Hall',
+                description: 'Equipped with motion and comfortable seats'
+            });
+
+            hallTypeId = hallType._id;
+        })
+        afterEach(async () => {
+            await hallType.remove();
+        })
+
+        const exec = () => request(server).get(`/api/v1/hall-types/${hallTypeId}/halls`);
+
+        it('should return 404 if object ID of hall type is not valid', async () => {
+            hallTypeId = 1;
+            const res = await exec();
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 404 if object ID of hall type does not exist', async () => {
+            hallTypeId = mongoose.Types.ObjectId();
+            const res = await exec();
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 200, and return all the halls of the hall type if object Id is valid and exists', async () => {
+            await Hall.create([
+                {
+                    name: 'Hall One',
+                    seatRows: ['A', 'B', 'C', 'D'],
+                    seatColumns: [1, 2, 3, 4],
+                    cinema: mongoose.Types.ObjectId(),
+                    hallType: hallTypeId
+                },
+                {
+                    name: 'Hall Two',
+                    seatRows: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'],
+                    seatColumns: [1, 2, 3, 4, 5, 6, 7],
+                    cinema: mongoose.Types.ObjectId(),
+                    hallType: hallTypeId
+                }
+            ]);
+
+            const res = await exec();
+            const { items } = res.body.data;
+
+            expect(res.status).toBe(200);
+            expect(items.some(h => h.name === 'Hall One')).toBeTruthy();
+            expect(items.some(h => h.name === 'Hall Two')).toBeTruthy();
+
+            expect(items).toHaveLength(2);
         });
     });
 
@@ -139,7 +205,8 @@ describe('Halls', () => {
                 name: 'Hall One',
                 seatRows: ['A', 'B', 'C', 'D'],
                 seatColumns: [1, 2, 3, 4],
-                cinema: mongoose.Types.ObjectId()
+                cinema: mongoose.Types.ObjectId(),
+                hallType: mongoose.Types.ObjectId()
             });
 
             hallId = hall._id;
@@ -166,6 +233,14 @@ describe('Halls', () => {
     describe('POST /api/v1/cinemas/:cinemaId/halls', () => {
         let cinema;
         let cinemaId;
+        let hallType;
+        let hallTypeId;
+
+        const data = {
+            name: 'Hall One',
+            seatRows: ['A', 'B', 'C', 'D'],
+            seatColumns: [1, 2, 3, 4]
+        };
 
         beforeEach(async () => {
             cinema = await Cinema.create({
@@ -175,17 +250,20 @@ describe('Halls', () => {
             });
 
             cinemaId = cinema._id;
+
+            hallType = await HallType.create({
+                name: '4DX Hall',
+                description: 'Equipped with motion and comfortable seats'
+            });
+
+            hallTypeId = hallType._id;
+            data.hallTypeId = hallType._id;
         });
 
         afterEach(async () => {
             await cinema.remove();
+            await hallType.remove();
         });
-
-        const data = {
-            name: 'Hall One',
-            seatRows: ['A', 'B', 'C', 'D'],
-            seatColumns: [1, 2, 3, 4]
-        };
 
         const exec = () =>
             request(server).post(`/api/v1/cinemas/${cinemaId}/halls`);
@@ -299,7 +377,8 @@ describe('Halls', () => {
 
             const hall = await Hall.find({
                 name: 'Hall One',
-                cinema: cinemaId
+                cinema: cinemaId,
+                hallType: mongoose.Types.ObjectId()
             });
 
             expect(res.status).toBe(201);
@@ -328,6 +407,7 @@ describe('Halls', () => {
                 'cinema',
                 cinemaId.toHexString()
             );
+            expect(res.body.data).toHaveProperty('hallType', hallTypeId.toHexString());
         });
     });
 
@@ -340,7 +420,8 @@ describe('Halls', () => {
                 name: 'Hall One',
                 seatRows: ['A', 'B', 'C', 'D'],
                 seatColumns: [1, 2, 3, 4],
-                cinema: mongoose.Types.ObjectId()
+                cinema: mongoose.Types.ObjectId(),
+                hallType: mongoose.Types.ObjectId()
             });
 
             hallId = hall._id;
@@ -448,7 +529,8 @@ describe('Halls', () => {
                 name: 'Hall One',
                 seatRows: ['A', 'B', 'C', 'D'],
                 seatColumns: [1, 2, 3, 4],
-                cinema: mongoose.Types.ObjectId()
+                cinema: mongoose.Types.ObjectId(),
+                hallType: mongoose.Types.ObjectId()
             });
 
             hallId = hall._id;
@@ -505,7 +587,8 @@ describe('Halls', () => {
                 name: 'Hall One',
                 seatRows: ['A', 'B', 'C', 'D'],
                 seatColumns: [1, 2, 3, 4],
-                cinema: mongoose.Types.ObjectId()
+                cinema: mongoose.Types.ObjectId(),
+                hallType: mongoose.Types.ObjectId()
             });
 
             hallId = hall._id;

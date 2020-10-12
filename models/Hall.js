@@ -35,6 +35,11 @@ const hallSchema = new mongoose.Schema({
         type: mongoose.Schema.ObjectId,
         ref: 'Cinema',
         required: true
+    },
+    hallType: {
+        type: mongoose.Schema.ObjectId,
+        ref: 'HallType',
+        required: true
     }
 });
 
@@ -51,7 +56,8 @@ const validationSchema = {
     seatColumns: Joi.array().items(
         Joi.alternatives().try(Joi.string(), Joi.number())
     ),
-    locationImage: Joi.string()
+    locationImage: Joi.string(),
+    hallTypeId: Joi.string()
 };
 
 function validateOnCreateHall(hall) {
@@ -59,6 +65,7 @@ function validateOnCreateHall(hall) {
     tmpValidationSchema.name = tmpValidationSchema.name.required();
     tmpValidationSchema.seatRows = tmpValidationSchema.seatRows.required();
     tmpValidationSchema.seatColumns = tmpValidationSchema.seatColumns.required();
+    tmpValidationSchema.hallTypeId = tmpValidationSchema.hallTypeId.required();
     const schema = Joi.object(tmpValidationSchema);
 
     return schema.validate(hall);
