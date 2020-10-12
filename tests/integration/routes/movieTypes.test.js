@@ -294,6 +294,61 @@ describe('Movie Types', () => {
             );
             expect(res.body.data).toHaveProperty('name', 'qwe');
             expect(res.body.data).toHaveProperty('description', 'qwe test');
+            expect(res.body.data).toHaveProperty('updatedAt');
+        });
+    });
+
+    describe('DELETE /api/v1/movie-types/:id', () => {
+        let movieType;
+        let movieTypeId;
+
+        beforeEach(async () => {
+            movieType = await MovieType.create({
+                name: '2D',
+                description: 'Simple 2D technology'
+            });
+
+            movieTypeId = movieType._id;
+        });
+        afterEach(async () => {
+            await movieType.remove();
+        });
+
+        const exec = () =>
+            request(server).delete(`/api/v1/movie-types/${movieTypeId}`);
+
+        it('should return 404 if object ID is not valid', async () => {
+            movieTypeId = 1;
+            const res = await exec().send({});
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 404 if object ID of movie type does not exist', async () => {
+            movieTypeId = mongoose.Types.ObjectId();
+            const res = await exec().send({});
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 200, and delete the movie type if request is valid', async () => {
+            const res = await exec();
+
+            const movieTypeInDb = await MovieType.findById(movieTypeId);
+
+            expect(res.status).toBe(200);
+            expect(movieTypeInDb).toBeNull();
+        });
+
+        it('should return 200, and return the deleted movie type if request is valid', async () => {
+            const res = await exec();
+
+            expect(res.status).toBe(200);
+            expect(res.body.data).toHaveProperty(
+                '_id',
+                movieTypeId.toHexString()
+            );
+            expect(res.body.data).toHaveProperty('name', '2D');
         });
     });
 });

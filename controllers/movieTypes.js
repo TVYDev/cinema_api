@@ -178,3 +178,39 @@ exports.updateMovieType = asyncHandler(async (req, res, next) => {
 
     res.standard(200, true, 'Movie type is updated successfully', movieType);
 });
+
+/**
+ * @swagger
+ * /movie-types/{id}:
+ *  delete:
+ *      tags:
+ *          - 🎦 Movie Types
+ *      summary: Delete a movie type by its ID
+ *      description: (ADMIN) Delete a movie type by its ID
+ *      parameters:
+ *          -   in: path
+ *              name: id
+ *              required: true
+ *              description: Object ID of movie type
+ *              example: 5f84030ea795143ed451ddbf
+ *      responses:
+ *          200:
+ *              description: OK
+ *          404:
+ *              description: Movie type is not found
+ *          500:
+ *              description: Internal server error
+ */
+exports.deleteMovieType = asyncHandler(async (req, res, next) => {
+    let movieType = await MovieType.findById(req.params.id);
+
+    if (!movieType) {
+        return next(
+            new ErrorResponse('Movie type with given ID is not found', 404)
+        );
+    }
+
+    await movieType.remove();
+
+    res.standard(200, true, 'Movie type is deleted successfully', movieType);
+});

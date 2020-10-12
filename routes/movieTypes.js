@@ -3,7 +3,8 @@ const {
     createMovieType,
     getMovieTypes,
     getMovieType,
-    updateMovieType
+    updateMovieType,
+    deleteMovieType
 } = require('../controllers/movieTypes');
 const {
     MovieType,
@@ -22,6 +23,7 @@ router
 router
     .route('/:id')
     .get(getMovieType)
-    .put(validateRequestBody(validateOnUpdateMovieType), updateMovieType);
+    .put(validateRequestBody(validateOnUpdateMovieType), updateMovieType)
+    .delete(deleteMovieType);
 
 module.exports = router;
