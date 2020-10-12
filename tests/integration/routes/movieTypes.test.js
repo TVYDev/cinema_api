@@ -49,6 +49,55 @@ describe('Movie Types', () => {
         });
     });
 
+    describe('GET /api/v1/movie-types/:id', () => {
+        let movieType;
+        let movieTypeId;
+
+        beforeEach(async () => {
+            movieType = await MovieType.create({
+                name: '2D',
+                description: 'Simple 2D technology'
+            });
+
+            movieTypeId = movieType._id;
+        });
+        afterEach(async () => {
+            await movieType.remove();
+        });
+
+        const exec = () =>
+            request(server).get(`/api/v1/movie-types/${movieTypeId}`);
+
+        it('should return 404 if object ID is not valid', async () => {
+            movieTypeId = 1;
+            const res = await exec();
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 404 if object ID of movie type does not exist', async () => {
+            movieTypeId = mongoose.Types.ObjectId();
+            const res = await exec();
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 200, and return the movie type if object ID is valid and exists', async () => {
+            const res = await exec();
+
+            expect(res.status).toBe(200);
+            expect(res.body.data).toHaveProperty(
+                '_id',
+                movieTypeId.toHexString()
+            );
+            expect(res.body.data).toHaveProperty('name', '2D');
+            expect(res.body.data).toHaveProperty(
+                'description',
+                'Simple 2D technology'
+            );
+        });
+    });
+
     describe('POST /api/v1/movie-types', () => {
         const data = {
             name: '2D',

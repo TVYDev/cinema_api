@@ -51,14 +51,48 @@ const { MovieType } = require('../models/MovieType');
  *              description: Internal server error
  */
 exports.getMovieTypes = asyncHandler(async (req, res, next) => {
-    res.standard(200, true, 'Success', res.listJsonData); 
+    res.standard(200, true, 'Success', res.listJsonData);
+});
+
+/**
+ * @swagger
+ * /movie-types/{id}:
+ *  get:
+ *      tags:
+ *          - 🎦 Movie Types
+ *      summary: Get a single movie type by ID
+ *      description: (PUBLIC) Get a single movie type by its ID
+ *      parameters:
+ *          -   in: path
+ *              name: id
+ *              require: true
+ *              description: Object ID of movie type
+ *              example: 5f84030ea795143ed451ddbf
+ *      responses:
+ *          200:
+ *              description: OK
+ *          404:
+ *              description: Movie type is not found
+ *          500:
+ *              description: Internal server error
+ */
+exports.getMovieType = asyncHandler(async (req, res, next) => {
+    const movieType = await MovieType.findById(req.params.id);
+
+    if (!movieType) {
+        return next(
+            new ErrorResponse('Movie type with given ID is not found', 404)
+        );
+    }
+
+    res.standard(200, true, 'Success', movieType);
 });
 
 /**
  * @swagger
  * /movie-types:
  *  post:
- *      tags: 
+ *      tags:
  *          - 🎦 Movie Types
  *      summary: Create a new movie type
  *      description: (ADMIN) Create a new movie type
@@ -66,24 +100,24 @@ exports.getMovieTypes = asyncHandler(async (req, res, next) => {
  *          -   in: body
  *              name: movieType
  *              description: movie type to be created
- *              schema: 
+ *              schema:
  *                  type: object
  *                  required:
  *                      - name
  *                      - description
  *                  properties:
- *                      name: 
+ *                      name:
  *                          type: string
  *                          example: 2D
  *                      description:
  *                          type: string
  *                          example: Simple 2D technology
- *      responses: 
+ *      responses:
  *          201:
  *              description: Created
  *          400:
  *              description: Validation Error
- *          500: 
+ *          500:
  *              description: Internal server error
  */
 exports.createMovieType = asyncHandler(async (req, res, next) => {
