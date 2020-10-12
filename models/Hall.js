@@ -56,7 +56,8 @@ const validationSchema = {
     seatColumns: Joi.array().items(
         Joi.alternatives().try(Joi.string(), Joi.number())
     ),
-    locationImage: Joi.string()
+    locationImage: Joi.string(),
+    hallType: Joi.string()
 };
 
 function validateOnCreateHall(hall) {
