@@ -1,17 +1,17 @@
-const mongoose = require('mongoose');
 const Joi = require('joi');
+const mongoose = require('mongoose');
 
-const hallTypeSchema = new mongoose.Schema({
+const movieTypeSchema = new mongoose.Schema({
     name: {
         type: String,
         trim: true,
         unique: true,
-        maxlength: [50, 'Name must not be more than 100 characters'],
-        required: [true, 'Please provide a name']
+        required: [true, 'Please provide a name'],
+        maxlength: [50, 'Name must be more than 50 characters']
     },
     description: {
         type: String,
-        required: [true, 'Please provide some description']
+        required: [true, 'Please provide a description']
     },
     createdAt: {
         type: Date,
@@ -23,7 +23,7 @@ const hallTypeSchema = new mongoose.Schema({
 });
 
 // Create `updatedAt` field
-hallTypeSchema.pre('findOneAndUpdate', function () {
+movieTypeSchema.pre('findOneAndUpdate', function () {
     this.set({ updatedAt: Date.now() });
 });
 
@@ -32,22 +32,22 @@ const validationSchema = {
     description: Joi.string()
 };
 
-function validateOnCreateHallType(hallType) {
+function validateOnCreateMovieType(movieType) {
     const tmpValidationSchema = { ...validationSchema };
     tmpValidationSchema.name = tmpValidationSchema.name.required();
     tmpValidationSchema.description = tmpValidationSchema.description.required();
-    const schema = Joi.object(tmpValidationSchema);
 
-    return schema.validate(hallType);
+    const schema = Joi.object(tmpValidationSchema);
+    return schema.validate(movieType);
 }
 
-function validateOnUpdateHallType(hallType) {
+function validateOnUpdateMovieType(movieType) {
     const tmpValidationSchema = { ...validationSchema };
+    
     const schema = Joi.object(tmpValidationSchema);
-
-    return schema.validate(hallType);
+    return schema.validate(movieType);
 }
 
-exports.HallType = mongoose.model('HallType', hallTypeSchema);
-exports.validateOnCreateHallType = validateOnCreateHallType;
-exports.validateOnUpdateHallType = validateOnUpdateHallType;
+exports.MovieType = mongoose.model('MovieType', movieTypeSchema);
+exports.validateOnCreateMovieType = validateOnCreateMovieType;
+exports.validateOnUpdateMovieType = validateOnUpdateMovieType;
