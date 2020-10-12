@@ -125,3 +125,56 @@ exports.createMovieType = asyncHandler(async (req, res, next) => {
 
     res.standard(201, true, 'Movie type is created successfully', movieType);
 });
+
+/**
+ * @swagger
+ * /movie-types/{id}:
+ *  put:
+ *      tags:
+ *          - 🎦 Movie Types
+ *      summary: Update a movie type
+ *      description: (ADMIN) Update a movie type by its ID
+ *      parameters:
+ *          -   in: path
+ *              name: id
+ *              required: true
+ *              description: Object ID of movie type
+ *              example: 5f84030ea795143ed451ddbf
+ *          -   in: body
+ *              name: movieType
+ *              description: Movie type data to be updated
+ *              schema:
+ *                  type: object
+ *                  properties:
+ *                      name:
+ *                          type: string
+ *                          example: 2D
+ *                      description:
+ *                          type: string
+ *                          example: Sample description
+ *      responses:
+ *          200:
+ *              description: OK
+ *          400:
+ *              description: Validation error
+ *          404:
+ *              description: Movie type is not found
+ *          500:
+ *              description: Internal server error
+ */
+exports.updateMovieType = asyncHandler(async (req, res, next) => {
+    let movieType = await MovieType.findById(req.params.id);
+
+    if (!movieType) {
+        return next(
+            new ErrorResponse('Movie type with given ID is not found', 404)
+        );
+    }
+
+    movieType = await MovieType.findByIdAndUpdate(req.params.id, req.body, {
+        new: true,
+        runValidators: true
+    });
+
+    res.standard(200, true, 'Movie type is updated successfully', movieType);
+});

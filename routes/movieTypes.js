@@ -2,7 +2,8 @@ const express = require('express');
 const {
     createMovieType,
     getMovieTypes,
-    getMovieType
+    getMovieType,
+    updateMovieType
 } = require('../controllers/movieTypes');
 const {
     MovieType,
@@ -18,6 +19,9 @@ router
     .get(listJsonResponse(MovieType), getMovieTypes)
     .post(validateRequestBody(validateOnCreateMovieType), createMovieType);
 
-router.route('/:id').get(getMovieType);
+router
+    .route('/:id')
+    .get(getMovieType)
+    .put(validateRequestBody(validateOnUpdateMovieType), updateMovieType);
 
 module.exports = router;

@@ -199,4 +199,101 @@ describe('Movie Types', () => {
             expect(res.body.data).toHaveProperty('createdAt');
         });
     });
+
+    describe('PUT /api/v1/movie-types/:id', () => {
+        let movieType;
+        let movieTypeId;
+
+        beforeEach(async () => {
+            movieType = await MovieType.create({
+                name: '2D',
+                description: 'Simple 2D technology'
+            });
+
+            movieTypeId = movieType._id;
+        });
+        afterEach(async () => {
+            await movieType.remove();
+        });
+
+        const exec = () =>
+            request(server).put(`/api/v1/movie-types/${movieTypeId}`);
+
+        it('should return 404 if object ID is not valid', async () => {
+            movieTypeId = 1;
+            const res = await exec().send({});
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 404 if object ID of movie type does not exist', async () => {
+            movieTypeId = mongoose.Types.ObjectId();
+            const res = await exec().send({});
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 400 if name is not a string', async () => {
+            const res = await exec().send({ name: true });
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 400 if name is an empty string', async () => {
+            const res = await exec().send({ name: '' });
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 400 if description is not a string', async () => {
+            const res = await exec().send({ description: true });
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 400 if description is an empty string', async () => {
+            const res = await exec().send({ description: '' });
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 400 if name to be updated is already existed', async () => {
+            const anotherMovieType = await MovieType.create({
+                name: '3D',
+                description: 'Exciting 3D technology with surrounding sounds'
+            });
+
+            const res = await exec().send({ name: '3D' });
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 200, and update the movie type if request is valid', async () => {
+            const res = await exec().send({
+                name: 'qwe',
+                description: 'qwe test'
+            });
+
+            const movieTypeInDb = await MovieType.findById(movieTypeId);
+
+            expect(res.status).toBe(200);
+            expect(movieTypeInDb.name).toBe('qwe');
+            expect(movieTypeInDb.description).toBe('qwe test');
+        });
+
+        it('should return 200, and return the updated movie type if request is valid', async () => {
+            const res = await exec().send({
+                name: 'qwe',
+                description: 'qwe test'
+            });
+
+            expect(res.status).toBe(200);
+            expect(res.body.data).toHaveProperty(
+                '_id',
+                movieTypeId.toHexString()
+            );
+            expect(res.body.data).toHaveProperty('name', 'qwe');
+            expect(res.body.data).toHaveProperty('description', 'qwe test');
+        });
+    });
 });
