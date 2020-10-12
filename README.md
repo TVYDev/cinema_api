@@ -18,7 +18,7 @@ APIs for cinema management including CRUD on cinemas, halls, movies, buying tick
 
 ### 🎪 Halls
 
--   ✅ [Admin] Add a new hall to a cinema (name, cinema ID, ⌛ hall types ID, seats => JSON object, hall location image)
+-   ✅ [Admin] Add a new hall to a cinema (name, cinema ID, hall types ID, seats => JSON object, hall location image)
 -   ✅ [Admin] Update a hall
 -   ✅ [Admin] Get all halls
 -   ✅ [Admin] Get all halls of a cinema
@@ -29,17 +29,17 @@ APIs for cinema management including CRUD on cinemas, halls, movies, buying tick
 
 ### 🏙 Hall Types
 
--   [Admin] Create a hall type (name: 2D, 3D, 4D, IMAX, VIP, PREMIUM, description, compatible movie types)
--   [Admin] Update a hall type
--   [Admin] Get all hall type
--   [Admin] Get all halls of a hall type
--   [Admin] Get a single hall type
--   [Admin] Delete a hall type
+-   ✅ [Admin] Create a hall type (name: 2D, 3D, 4D, IMAX, VIP, PREMIUM, description, ⌛ compatible movie types)
+-   ✅ [Admin] Update a hall type
+-   ✅ [Admin] Get all hall types
+-   ✅ [Admin] Get all halls of a hall type
+-   ✅ [Admin] Get a single hall type
+-   ✅ [Admin] Delete a hall type
 -   [Admin] Get all compatible hall types for a movie type
 
 ### 🎬 Movies
 
--   [Admin] Create a movie (title, unit price, duration, genre id, movie type: 2D-3D-4D, release date => (for coming soon section) , spoken language, subtitile language, country, description, trailer video url, banner image url)
+-   [Admin] Create a movie (title, unit price, duration, genre id, movie type id, release date => (for coming soon section) , spoken language, subtitile language, country, description, trailer video url, banner image url)
 -   [Admin] Update a movie
 -   [Admin] Get all movies
 -   [Admin] Get a single movie
