@@ -25,7 +25,7 @@ APIs for cinema management including CRUD on cinemas, halls, movies, buying tick
 -   ✅ [Admin] Get a single hall
 -   ✅ [Admin] Delete a hall
 
-### 🏙 Hall Types
+### 🏭 Hall Types
 
 -   ✅ [Admin] Create a hall type (name: 2D, 3D, 4D, IMAX, VIP, PREMIUM, description, compatible movie type ids)
 -   ✅ [Admin] Update a hall type

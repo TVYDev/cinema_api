@@ -6,6 +6,7 @@ const cinemas = require('../routes/cinemas');
 const halls = require('../routes/halls');
 const hallTypes = require('../routes/hallTypes');
 const movieTypes = require('../routes/movieTypes');
+const genres = require('../routes/genres');
 
 module.exports = function (app) {
     app.use(express.json());
@@ -15,5 +16,6 @@ module.exports = function (app) {
     app.use('/api/v1/halls', halls);
     app.use('/api/v1/hall-types', hallTypes);
     app.use('/api/v1/movie-types', movieTypes);
+    app.use('/api/v1/genres', genres);
     app.use(errorHandler);
 };

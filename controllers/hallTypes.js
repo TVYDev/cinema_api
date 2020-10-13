@@ -8,7 +8,7 @@ const { MovieType } = require('../models/MovieType');
  * /hall-types:
  *  get:
  *      tags:
- *          - 🏙 Hall Types
+ *          - 🏭 Hall Types
  *      summary: Get all hall types
  *      description: (PUBLIC) Retrieve all hall types from database with filtering, sorting and pagination.
  *      parameters:
@@ -57,7 +57,7 @@ const { MovieType } = require('../models/MovieType');
  * /movie-types/{movieTypeId}/compatible-hall-types:
  *  get:
  *      tags:
- *          - 🏙 Hall Types
+ *          - 🏭 Hall Types
  *      summary: Get all compatible hall types of a movie type
  *      description: (PUBLIC) Retrieve all compatible hall types of a movie type from database with filtering, sorting and pagination.
  *      parameters:
@@ -117,7 +117,7 @@ exports.getHallTypes = asyncHandler(async (req, res, next) => {
  * /hall-types/{id}:
  *  get:
  *      tags:
- *          - 🏙 Hall Types
+ *          - 🏭 Hall Types
  *      summary: Get a single hall type by ID
  *      description: (PUBLIC) Get a single hall type by its ID
  *      parameters:
@@ -152,7 +152,7 @@ exports.getHallType = asyncHandler(async (req, res, next) => {
  * /hall-types:
  *  post:
  *      tags:
- *          - 🏙 Hall Types
+ *          - 🏭 Hall Types
  *      summary: Create a new hall type
  *      description: (ADMIN) Create a new hall type
  *      parameters:
@@ -213,7 +213,7 @@ exports.createHallType = asyncHandler(async (req, res, next) => {
  * /hall-types/{id}:
  *  put:
  *      tags:
- *          - 🏙 Hall Types
+ *          - 🏭 Hall Types
  *      summary: Update a hall type
  *      description: (ADMIN) Update a hall type by its ID
  *      parameters:
@@ -267,7 +267,7 @@ exports.updateHallType = asyncHandler(async (req, res, next) => {
  * /hall-types/{id}:
  *  delete:
  *      tags:
- *          - 🏙 Hall Types
+ *          - 🏭 Hall Types
  *      summary: Delete a hall type
  *      description: (ADMIN) Delete a hall type
  *      parameters:
