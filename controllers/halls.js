@@ -3,6 +3,7 @@ const ErrorResponse = require('../utils/ErrorResponse');
 const { Hall } = require('../models/Hall');
 const { Cinema } = require('../models/Cinema');
 const { HallType } = require('../models/HallType');
+const { MovieType } = require('../models/MovieType');
 const validateFileUpload = require('../helpers/validateFileUpload');
 const storeFileUpload = require('../helpers/storeFileUpload');
 
@@ -106,7 +107,7 @@ const storeFileUpload = require('../helpers/storeFileUpload');
  *      responses:
  *          200:
  *              description: OK
- *          404: 
+ *          404:
  *              description: Cinema is not found
  *          500:
  *              description: Internal server error
@@ -163,7 +164,7 @@ const storeFileUpload = require('../helpers/storeFileUpload');
  *      responses:
  *          200:
  *              description: OK
- *          404: 
+ *          404:
  *              description: Cinema is not found
  *          500:
  *              description: Internal server error
@@ -224,13 +225,14 @@ exports.getHall = asyncHandler(async (req, res, next) => {
  *          -   in: body
  *              name: hall
  *              description: The hall to be created
- *              required:
- *                  - name
- *                  - seatRows
- *                  - seatColumns
- *                  - hallTypeId
  *              schema:
  *                  type: object
+ *                  required:
+ *                      - name
+ *                      - seatRows
+ *                      - seatColumns
+ *                      - hallTypeId
+ *                      - compatibleMovieTypeIds
  *                  properties:
  *                      name:
  *                          type: string
@@ -248,6 +250,12 @@ exports.getHall = asyncHandler(async (req, res, next) => {
  *                      hallTypeId:
  *                          type: string
  *                          example: 5f80169afe932e3d4055d1ea
+ *                      compatibleMovieTypeIds:
+ *                          type: array
+ *                          items:
+ *                              type: string
+ *                          description: Array of Object Id of movie types
+ *                          example: ["5f8409065fc86e09e4752519","5f84030ea795143ed451ddbf"]
  *      responses:
  *          201:
  *              description: Created
@@ -269,10 +277,28 @@ exports.addHall = asyncHandler(async (req, res, next) => {
         );
     }
 
+    const compatibleMovieTypeIds = req.body.compatibleMovieTypeIds;
+    let movieType;
+    for (id of compatibleMovieTypeIds) {
+        movieType = await MovieType.findById(id);
+
+        if (!movieType) {
+            return next(
+                new ErrorResponse(
+                    `Movie type with given ID (${id}) is not found`,
+                    404
+                )
+            );
+        }
+    }
+    req.body.compatibleMovieTypes = compatibleMovieTypeIds;
+
     const hallType = await HallType.findById(req.body.hallTypeId);
 
     if (!hallType) {
-        return next(new ErrorResponse('Hall type with given ID is not found', 404));
+        return next(
+            new ErrorResponse('Hall type with given ID is not found', 404)
+        );
     }
     req.body.hallType = req.body.hallTypeId;
 

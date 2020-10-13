@@ -25,7 +25,7 @@ router
     .get(
         pathParamsFilter([
             { field: 'cinema', param: 'cinemaId', model: Cinema },
-            { field: 'hallType', param: 'hallTypeId', model: HallType}
+            { field: 'hallType', param: 'hallTypeId', model: HallType }
         ]),
         listJsonResponse(Hall),
         getHalls
