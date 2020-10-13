@@ -33,12 +33,12 @@ const hallSchema = new mongoose.Schema({
         type: Date
     },
     cinema: {
-        type: mongoose.Schema.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'Cinema',
         required: true
     },
     hallType: {
-        type: mongoose.Schema.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'HallType',
         required: true
     },
