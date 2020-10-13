@@ -237,9 +237,6 @@ describe('Halls', () => {
         let cinemaId;
         let hallType;
         let hallTypeId;
-        let movieType1;
-        let movieType2;
-        let movieTypeIds;
 
         const data = {
             name: 'Hall One',
@@ -263,26 +260,11 @@ describe('Halls', () => {
 
             hallTypeId = hallType._id;
             data.hallTypeId = hallType._id;
-
-            movieType1 = await MovieType.create({
-                name: '2D',
-                description: 'Simple 2D technology'
-            });
-
-            movieType2 = await MovieType.create({
-                name: '3D',
-                description: 'Exciting 3D technology with surrounding sounds'
-            });
-
-            movieTypeIds = [movieType1._id, movieType2._id];
-            data.compatibleMovieTypeIds = movieTypeIds;
         });
 
         afterEach(async () => {
             await cinema.remove();
             await hallType.remove();
-            await movieType1.remove();
-            await movieType2.remove();
         });
 
         const exec = () =>
@@ -419,54 +401,6 @@ describe('Halls', () => {
             expect(res.status).toBe(404);
         });
 
-        it('should return 400 if compatibleMovieTypeIds is not provided', async () => {
-            const curData = { ...data };
-            delete curData.compatibleMovieTypeIds;
-
-            const res = await exec().send(curData);
-
-            expect(res.status).toBe(400);
-        });
-
-        it('should return 400 if compatibleMovieTypeIds is an empty array', async () => {
-            const curData = { ...data };
-            curData.compatibleMovieTypeIds = [];
-
-            const res = await exec().send(curData);
-
-            expect(res.status).toBe(400);
-        });
-
-        it('should return 400 if compatibleMovieTypeIds is not an array of only string', async () => {
-            const curData = { ...data };
-            curData.compatibleMovieTypeIds = [1, 2];
-
-            const res = await exec().send(curData);
-
-            expect(res.status).toBe(400);
-        });
-
-        it('should return 400 if any id of compatibleMovieTypeIds is not a valid object Id', async () => {
-            const curData = { ...data };
-            curData.compatibleMovieTypeIds = [1, mongoose.Types.ObjectId()];
-
-            const res = await exec().send(curData);
-
-            expect(res.status).toBe(400);
-        });
-
-        it('should return 404 if any id of compatibleMovieTypeIds does not exist', async () => {
-            const curData = { ...data };
-            curData.compatibleMovieTypeIds = [
-                mongoose.Types.ObjectId(),
-                mongoose.Types.ObjectId()
-            ];
-
-            const res = await exec().send(curData);
-
-            expect(res.status).toBe(404);
-        });
-
         it('should return 201, and save the hall to the cinema if the request body is valid', async () => {
             const res = await exec().send(data);
 
@@ -506,8 +440,6 @@ describe('Halls', () => {
                 'hallType',
                 hallTypeId.toHexString()
             );
-            expect(res.body.data).toHaveProperty('compatibleMovieTypes');
-            expect(res.body.data.compatibleMovieTypes).toHaveLength(2);
         });
     });
 

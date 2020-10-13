@@ -3,7 +3,6 @@ const ErrorResponse = require('../utils/ErrorResponse');
 const { Hall } = require('../models/Hall');
 const { Cinema } = require('../models/Cinema');
 const { HallType } = require('../models/HallType');
-const { MovieType } = require('../models/MovieType');
 const validateFileUpload = require('../helpers/validateFileUpload');
 const storeFileUpload = require('../helpers/storeFileUpload');
 
@@ -232,7 +231,6 @@ exports.getHall = asyncHandler(async (req, res, next) => {
  *                      - seatRows
  *                      - seatColumns
  *                      - hallTypeId
- *                      - compatibleMovieTypeIds
  *                  properties:
  *                      name:
  *                          type: string
@@ -250,12 +248,6 @@ exports.getHall = asyncHandler(async (req, res, next) => {
  *                      hallTypeId:
  *                          type: string
  *                          example: 5f80169afe932e3d4055d1ea
- *                      compatibleMovieTypeIds:
- *                          type: array
- *                          items:
- *                              type: string
- *                          description: Array of Object Id of movie types
- *                          example: ["5f8409065fc86e09e4752519","5f84030ea795143ed451ddbf"]
  *      responses:
  *          201:
  *              description: Created
@@ -276,22 +268,6 @@ exports.addHall = asyncHandler(async (req, res, next) => {
             new ErrorResponse('Cinema with given ID is not found', 404)
         );
     }
-
-    const compatibleMovieTypeIds = req.body.compatibleMovieTypeIds;
-    let movieType;
-    for (id of compatibleMovieTypeIds) {
-        movieType = await MovieType.findById(id);
-
-        if (!movieType) {
-            return next(
-                new ErrorResponse(
-                    `Movie type with given ID (${id}) is not found`,
-                    404
-                )
-            );
-        }
-    }
-    req.body.compatibleMovieTypes = compatibleMovieTypeIds;
 
     const hallType = await HallType.findById(req.body.hallTypeId);
 

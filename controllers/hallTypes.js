@@ -1,6 +1,7 @@
 const asyncHandler = require('../middlewares/asyncHandler');
 const ErrorResponse = require('../utils/ErrorResponse');
 const { HallType } = require('../models/HallType');
+const { MovieType } = require('../models/MovieType');
 
 /**
  * @swagger
@@ -107,6 +108,7 @@ exports.getHallType = asyncHandler(async (req, res, next) => {
  *                  required:
  *                      - name
  *                      - description
+ *                      - compatibleMovieTypeIds
  *                  properties:
  *                      name:
  *                          type: string
@@ -114,6 +116,12 @@ exports.getHallType = asyncHandler(async (req, res, next) => {
  *                      description:
  *                          type: string
  *                          example: Hall with 2D/3D technology
+ *                      compatibleMovieTypeIds:
+ *                          type: array
+ *                          items:
+ *                              type: string
+ *                          description: Array of Object Id of movie types
+ *                          example: ["5f8409065fc86e09e4752519","5f84030ea795143ed451ddbf"]
  *      responses:
  *          201:
  *              description: Created
@@ -123,6 +131,22 @@ exports.getHallType = asyncHandler(async (req, res, next) => {
  *              description: Internal server error
  */
 exports.createHallType = asyncHandler(async (req, res, next) => {
+    const compatibleMovieTypeIds = req.body.compatibleMovieTypeIds;
+    let movieType;
+    for (id of compatibleMovieTypeIds) {
+        movieType = await MovieType.findById(id);
+
+        if (!movieType) {
+            return next(
+                new ErrorResponse(
+                    `Movie type with given ID (${id}) is not found`,
+                    404
+                )
+            );
+        }
+    }
+    req.body.compatibleMovieTypes = compatibleMovieTypeIds;
+
     const hallType = await HallType.create(req.body);
 
     res.standard(201, true, 'Hall type is created successfully', hallType);

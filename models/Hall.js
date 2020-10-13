@@ -41,13 +41,7 @@ const hallSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'HallType',
         required: true
-    },
-    compatibleMovieTypes: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'MovieType'
-        }
-    ]
+    }
 });
 
 // Create `updatedAt` field
@@ -64,8 +58,7 @@ const validationSchema = {
         Joi.alternatives().try(Joi.string(), Joi.number())
     ),
     locationImage: Joi.string(),
-    hallTypeId: Joi.objectid(),
-    compatibleMovieTypeIds: Joi.array().items(Joi.objectid()).min(1)
+    hallTypeId: Joi.objectid()
 };
 
 function validateOnCreateHall(hall) {
@@ -74,7 +67,6 @@ function validateOnCreateHall(hall) {
     tmpValidationSchema.seatRows = tmpValidationSchema.seatRows.required();
     tmpValidationSchema.seatColumns = tmpValidationSchema.seatColumns.required();
     tmpValidationSchema.hallTypeId = tmpValidationSchema.hallTypeId.required();
-    tmpValidationSchema.compatibleMovieTypeIds = tmpValidationSchema.compatibleMovieTypeIds.required();
     const schema = Joi.object(tmpValidationSchema);
 
     return schema.validate(hall);
