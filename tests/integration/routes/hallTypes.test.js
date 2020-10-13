@@ -50,6 +50,88 @@ describe('Hall Types', () => {
         });
     });
 
+    describe('GET /api/movie-types/:movieTypeId/compatible-hall-types', () => {
+        let movieType2D;
+        let movieType3D;
+        let movieTypeId;
+
+        beforeEach(async () => {
+            movieType2D = await MovieType.create({
+                name: '2D',
+                description: 'Simple 2D technology'
+            });
+
+            movieType3D = await MovieType.create({
+                name: '3D',
+                description: 'Exciting 3D technology with surrounding sounds'
+            });
+
+            const hallTypes = await HallType.create([
+                {
+                    name: '2D/3D Hall',
+                    description: 'Equipped with 2D/3D technology',
+                    compatibleMovieTypes: [
+                        movieType2D._id.toHexString(),
+                        movieType3D._id.toHexString()
+                    ]
+                },
+                {
+                    name: '4DX Hall',
+                    description: 'Equipped with motion and comfortable seats',
+                    compatibleMovieTypes: [movieType3D._id.toHexString()]
+                }
+            ]);
+
+            movieTypeId = movieType2D._id;
+        });
+
+        afterEach(async () => {
+            await HallType.deleteMany();
+            await MovieType.deleteMany();
+        });
+
+        const exec = () =>
+            request(server).get(
+                `/api/v1/movie-types/${movieTypeId}/compatible-hall-types`
+            );
+
+        it('should return 404 if object ID of movie type is not valid', async () => {
+            movieTypeId = 1;
+            const res = await exec();
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 404 if object Id of movie type does not exist', async () => {
+            movieTypeId = mongoose.Types.ObjectId();
+            const res = await exec();
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 200, and return all the 2 compatible hall types of 3D movie if request is valid', async () => {
+            movieTypeId = movieType3D._id;
+            const res = await exec();
+            const { items } = res.body.data;
+
+            expect(res.status).toBe(200);
+            expect(items.some((h) => h.name === '2D/3D Hall')).toBeTruthy();
+            expect(items.some((h) => h.name === '4DX Hall')).toBeTruthy();
+            expect(items).toHaveLength(2);
+        });
+
+        it('should return 200, and return only 1 compatible hall type of 2D movie if request is valid', async () => {
+            movieTypeId = movieType2D._id;
+            const res = await exec();
+            const { items } = res.body.data;
+
+            expect(res.status).toBe(200);
+            expect(items.some((h) => h.name === '2D/3D Hall')).toBeTruthy();
+            expect(items.some((h) => h.name === '4DX Hall')).not.toBeTruthy();
+            expect(items).toHaveLength(1);
+        });
+    });
+
     describe('GET /api/v1/hall-types/:id', () => {
         let hallType;
         let hallTypeId;

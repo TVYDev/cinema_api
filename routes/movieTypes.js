@@ -14,6 +14,10 @@ const {
 const validateRequestBody = require('../middlewares/validateRequestBody');
 const listJsonResponse = require('../middlewares/listJsonResponse');
 const router = express.Router();
+const hallTypesRouter = require('./hallTypes');
+
+// Re-route to other route resources
+router.use('/:movieTypeId/compatible-hall-types', hallTypesRouter);
 
 router
     .route('/')

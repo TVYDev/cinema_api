@@ -12,7 +12,7 @@ const pathParamFilter = (params) => async (req, res, next) => {
                 if (!item) {
                     return next(
                         new ErrorResponse(
-                            `${p.field} with given ID is not found`,
+                            `${p.model.prototype.collection.name} with given ID is not found`,
                             404
                         )
                     );

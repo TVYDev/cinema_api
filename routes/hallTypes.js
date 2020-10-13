@@ -12,8 +12,10 @@ const {
     validateOnCreateHallType,
     validateOnUpdateHallType
 } = require('../models/HallType');
+const { MovieType } = require('../models/MovieType');
 const listJsonResponse = require('../middlewares/listJsonResponse');
-const router = express.Router();
+const pathParamFilters = require('../middlewares/pathParamsFilter');
+const router = express.Router({ mergeParams: true });
 const hallsRouter = require('./halls');
 
 // Re-route to other resource routers
@@ -21,7 +23,17 @@ router.use('/:hallTypeId/halls', hallsRouter);
 
 router
     .route('/')
-    .get(listJsonResponse(HallType), getHallTypes)
+    .get(
+        pathParamFilters([
+            {
+                field: 'compatibleMovieTypes',
+                param: 'movieTypeId',
+                model: MovieType
+            }
+        ]),
+        listJsonResponse(HallType),
+        getHallTypes
+    )
     .post(validateRequestBody(validateOnCreateHallType), createHallType);
 
 router
