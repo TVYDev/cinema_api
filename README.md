@@ -22,20 +22,18 @@ APIs for cinema management including CRUD on cinemas, halls, movies, buying tick
 -   ✅ [Admin] Update a hall
 -   ✅ [Admin] Get all halls
 -   ✅ [Admin] Get all halls of a cinema
--   [Admin] Get all compatible halls for a movie type
--   [Admin] Get all compatible halls for a movie type of a cinema
 -   ✅ [Admin] Get a single hall
 -   ✅ [Admin] Delete a hall
 
 ### 🏙 Hall Types
 
--   ✅ [Admin] Create a hall type (name: 2D, 3D, 4D, IMAX, VIP, PREMIUM, description, ⌛ compatible movie types)
+-   ✅ [Admin] Create a hall type (name: 2D, 3D, 4D, IMAX, VIP, PREMIUM, description, compatible movie type ids)
 -   ✅ [Admin] Update a hall type
 -   ✅ [Admin] Get all hall types
 -   ✅ [Admin] Get all halls of a hall type
 -   ✅ [Admin] Get a single hall type
 -   ✅ [Admin] Delete a hall type
--   [Admin] Get all compatible hall types for a movie type
+-   ✅ [Admin] Get all compatible hall types for a movie type
 
 ### 🎬 Movies
 
@@ -47,12 +45,12 @@ APIs for cinema management including CRUD on cinemas, halls, movies, buying tick
 
 ### 🎦 Movie Types
 
--   [Admin] Create a movie type (name: 2D, 3D, 4D, description)
--   [Admin] Update a movie type
--   [Admin] Get all movie type
+-   ✅ [Admin] Create a movie type (name: 2D, 3D, 4D, description)
+-   ✅ [Admin] Update a movie type
+-   ✅ [Admin] Get all movie types
 -   [Admin] Get all movies of a movie type
--   [Admin] Get a single movie type
--   [Admin] Delete a movie type
+-   ✅ [Admin] Get a single movie type
+-   ✅ [Admin] Delete a movie type
 
 ### 🎃 Genres
 
