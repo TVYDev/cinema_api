@@ -106,7 +106,7 @@ const storeFileUpload = require('../helpers/storeFileUpload');
  *      responses:
  *          200:
  *              description: OK
- *          404: 
+ *          404:
  *              description: Cinema is not found
  *          500:
  *              description: Internal server error
@@ -163,7 +163,7 @@ const storeFileUpload = require('../helpers/storeFileUpload');
  *      responses:
  *          200:
  *              description: OK
- *          404: 
+ *          404:
  *              description: Cinema is not found
  *          500:
  *              description: Internal server error
@@ -224,13 +224,13 @@ exports.getHall = asyncHandler(async (req, res, next) => {
  *          -   in: body
  *              name: hall
  *              description: The hall to be created
- *              required:
- *                  - name
- *                  - seatRows
- *                  - seatColumns
- *                  - hallTypeId
  *              schema:
  *                  type: object
+ *                  required:
+ *                      - name
+ *                      - seatRows
+ *                      - seatColumns
+ *                      - hallTypeId
  *                  properties:
  *                      name:
  *                          type: string
@@ -272,7 +272,9 @@ exports.addHall = asyncHandler(async (req, res, next) => {
     const hallType = await HallType.findById(req.body.hallTypeId);
 
     if (!hallType) {
-        return next(new ErrorResponse('Hall type with given ID is not found', 404));
+        return next(
+            new ErrorResponse('Hall type with given ID is not found', 404)
+        );
     }
     req.body.hallType = req.body.hallTypeId;
 

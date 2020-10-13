@@ -1,5 +1,6 @@
 const Joi = require('joi');
 const mongoose = require('mongoose');
+Joi.objectid = require('joi-objectid')(Joi);
 
 const hallSchema = new mongoose.Schema({
     name: {
@@ -32,12 +33,12 @@ const hallSchema = new mongoose.Schema({
         type: Date
     },
     cinema: {
-        type: mongoose.Schema.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'Cinema',
         required: true
     },
     hallType: {
-        type: mongoose.Schema.ObjectId,
+        type: mongoose.Schema.Types.ObjectId,
         ref: 'HallType',
         required: true
     }
@@ -57,7 +58,7 @@ const validationSchema = {
         Joi.alternatives().try(Joi.string(), Joi.number())
     ),
     locationImage: Joi.string(),
-    hallTypeId: Joi.string()
+    hallTypeId: Joi.objectid()
 };
 
 function validateOnCreateHall(hall) {

@@ -1,0 +1,17 @@
+[
+    {
+        "_id": "5f84030ea795143ed451ddbf",
+        "name": "2D",
+        "description": "Simple 2D technology"
+    }, 
+    {
+        "_id": "5f8409065fc86e09e4752519",
+        "name": "3D",
+        "description": "Exciting 3D technology with surrounding sounds"
+    },
+    {
+        "_id": "5f84091350eab4485c327d1d",
+        "name": "4D",
+        "description": "Awesome movie experience with all angle-viewed screen, motion chairs and surrouding sounds"
+    } 
+]

@@ -2,16 +2,25 @@
     {
         "_id": "5f80169afe932e3d4055d1ea",
         "name": "2D/3D Hall",
-        "description": "Equipped with 2D/3D technology"
+        "description": "Equipped with 2D/3D technology",
+        "compatibleMovieTypes": [
+            "5f84030ea795143ed451ddbf",
+            "5f8409065fc86e09e4752519"
+        ]
     },
     {
         "_id": "5f80186e066d282d14640df0",
         "name": "4DX Hall",
-        "description": "Equipped with motion and comfortable seats"
+        "description": "Equipped with motion and comfortable seats",
+        "compatibleMovieTypes": [
+            "5f84091350eab4485c327d1d",
+            "5f8409065fc86e09e4752519"
+        ]
     },
     {
         "_id": "5f8019addefb964344c97a3d",
         "name": "VIP Hall",
-        "description": "Equippd with dining service and soft comfortably seats"
+        "description": "Equippd with dining service and soft comfortably seats",
+        "compatibleMovieTypes": ["5f84030ea795143ed451ddbf"]
     }
 ]

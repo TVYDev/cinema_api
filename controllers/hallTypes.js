@@ -1,6 +1,7 @@
 const asyncHandler = require('../middlewares/asyncHandler');
 const ErrorResponse = require('../utils/ErrorResponse');
 const { HallType } = require('../models/HallType');
+const { MovieType } = require('../models/MovieType');
 
 /**
  * @swagger
@@ -47,6 +48,62 @@ const { HallType } = require('../models/HallType');
  *      responses:
  *          200:
  *              description: OK
+ *          500:
+ *              description: Internal server error
+ *
+ */
+/**
+ * @swagger
+ * /movie-types/{movieTypeId}/compatible-hall-types:
+ *  get:
+ *      tags:
+ *          - 🏙 Hall Types
+ *      summary: Get all compatible hall types of a movie type
+ *      description: (PUBLIC) Retrieve all compatible hall types of a movie type from database with filtering, sorting and pagination.
+ *      parameters:
+ *          -   in: path
+ *              name: movieTypeId
+ *              required: true
+ *              description: Object ID of movie type
+ *              example: 5f84091350eab4485c327d1d
+ *          -   in: query
+ *              name: select
+ *              schema:
+ *                  type: string
+ *              description: Fields to be selected (Multiple fields separated by comma [,])
+ *              example: name,description
+ *          -   in: query
+ *              name: sort
+ *              schema:
+ *                  type: string
+ *              description: Sort by field (Prefix the field with minus [-] for descending ordering)
+ *              example: name,-createdAt
+ *          -   in: query
+ *              name: limit
+ *              schema:
+ *                  type: string
+ *              default: 20
+ *              description: Limit numbers of record for a page
+ *              example: 10
+ *          -   in: query
+ *              name: page
+ *              default: 1
+ *              schema:
+ *                  type: string
+ *              description: Certain page index for records to be retrieved
+ *              example: 1
+ *          -   in: query
+ *              name: paging
+ *              default: true
+ *              schema:
+ *                  type: string
+ *              description: Define whether need records in pagination
+ *              example: false
+ *      responses:
+ *          200:
+ *              description: OK
+ *          404:
+ *              description: Movie type is not found
  *          500:
  *              description: Internal server error
  *
@@ -107,6 +164,7 @@ exports.getHallType = asyncHandler(async (req, res, next) => {
  *                  required:
  *                      - name
  *                      - description
+ *                      - compatibleMovieTypeIds
  *                  properties:
  *                      name:
  *                          type: string
@@ -114,6 +172,12 @@ exports.getHallType = asyncHandler(async (req, res, next) => {
  *                      description:
  *                          type: string
  *                          example: Hall with 2D/3D technology
+ *                      compatibleMovieTypeIds:
+ *                          type: array
+ *                          items:
+ *                              type: string
+ *                          description: Array of Object Id of movie types
+ *                          example: ["5f8409065fc86e09e4752519","5f84030ea795143ed451ddbf"]
  *      responses:
  *          201:
  *              description: Created
@@ -123,6 +187,22 @@ exports.getHallType = asyncHandler(async (req, res, next) => {
  *              description: Internal server error
  */
 exports.createHallType = asyncHandler(async (req, res, next) => {
+    const compatibleMovieTypeIds = req.body.compatibleMovieTypeIds;
+    let movieType;
+    for (id of compatibleMovieTypeIds) {
+        movieType = await MovieType.findById(id);
+
+        if (!movieType) {
+            return next(
+                new ErrorResponse(
+                    `Movie type with given ID (${id}) is not found`,
+                    404
+                )
+            );
+        }
+    }
+    req.body.compatibleMovieTypes = compatibleMovieTypeIds;
+
     const hallType = await HallType.create(req.body);
 
     res.standard(201, true, 'Hall type is created successfully', hallType);

@@ -11,6 +11,7 @@
         "test-cinemas": "jest --verbose --runInBand ./tests/integration/routes/cinemas.test.js",
         "test-halls": "jest --verbose --runInBand ./tests/integration/routes/halls.test.js",
         "test-hall-types": "jest --verbose --runInBand ./tests/integration/routes/hallTypes.test.js",
+        "test-movie-types": "jest --verbose --runInBand ./tests/integration/routes/movieTypes.test.js",
         "coverage": "jest --collectCoverage"
     },
     "repository": {
@@ -37,6 +38,7 @@
         "express": "^4.17.1",
         "express-fileupload": "^1.2.0",
         "joi": "^17.2.1",
+        "joi-objectid": "^3.0.1",
         "mongoose": "^5.10.7",
         "morgan": "^1.10.0",
         "node-geocoder": "^3.27.0",

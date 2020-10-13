@@ -2,6 +2,7 @@ const request = require('supertest');
 const { Hall } = require('../../../models/Hall');
 const { Cinema } = require('../../../models/Cinema');
 const { HallType } = require('../../../models/HallType');
+const { MovieType } = require('../../../models/MovieType');
 const mongoose = require('mongoose');
 const fs = require('fs');
 let server;
@@ -132,12 +133,13 @@ describe('Halls', () => {
             });
 
             hallTypeId = hallType._id;
-        })
+        });
         afterEach(async () => {
             await hallType.remove();
-        })
+        });
 
-        const exec = () => request(server).get(`/api/v1/hall-types/${hallTypeId}/halls`);
+        const exec = () =>
+            request(server).get(`/api/v1/hall-types/${hallTypeId}/halls`);
 
         it('should return 404 if object ID of hall type is not valid', async () => {
             hallTypeId = 1;
@@ -175,8 +177,8 @@ describe('Halls', () => {
             const { items } = res.body.data;
 
             expect(res.status).toBe(200);
-            expect(items.some(h => h.name === 'Hall One')).toBeTruthy();
-            expect(items.some(h => h.name === 'Hall Two')).toBeTruthy();
+            expect(items.some((h) => h.name === 'Hall One')).toBeTruthy();
+            expect(items.some((h) => h.name === 'Hall Two')).toBeTruthy();
 
             expect(items).toHaveLength(2);
         });
@@ -372,6 +374,33 @@ describe('Halls', () => {
             expect(res.status).toBe(404);
         });
 
+        it('should return 400 if hallTypeId is not provided', async () => {
+            const curData = { ...data };
+            delete curData.hallTypeId;
+
+            const res = await exec().send(curData);
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 400 if hallTypeId is not a valid object Id', async () => {
+            const curData = { ...data };
+            curData.hallTypeId = 1;
+
+            const res = await exec().send(curData);
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 404 if hallTypeId does not exist', async () => {
+            const curData = { ...data };
+            curData.hallTypeId = mongoose.Types.ObjectId();
+
+            const res = await exec().send(curData);
+
+            expect(res.status).toBe(404);
+        });
+
         it('should return 201, and save the hall to the cinema if the request body is valid', async () => {
             const res = await exec().send(data);
 
@@ -407,7 +436,10 @@ describe('Halls', () => {
                 'cinema',
                 cinemaId.toHexString()
             );
-            expect(res.body.data).toHaveProperty('hallType', hallTypeId.toHexString());
+            expect(res.body.data).toHaveProperty(
+                'hallType',
+                hallTypeId.toHexString()
+            );
         });
     });
 

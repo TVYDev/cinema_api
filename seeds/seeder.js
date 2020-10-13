@@ -9,6 +9,7 @@ dotenv.config({ path: './config/.env' });
 const { Cinema } = require('../models/Cinema');
 const { Hall } = require('../models/Hall');
 const { HallType } = require('../models/HallType');
+const { MovieType } = require('../models/MovieType');
 
 // Connect database
 mongoose.connect(process.env.MONGODB_URI, {
@@ -28,11 +29,13 @@ const halls = JSON.parse(
 const hallTypes = JSON.parse(
     fs.readFileSync(`${__dirname}/data/hallTypes.json`, 'utf-8')
 );
+const movieTypes = JSON.parse(fs.readFileSync(`${__dirname}/data/movieTypes.json`, 'utf-8'));
 
 const importData = async () => {
     try {
         await Cinema.create(cinemas);
         await HallType.create(hallTypes);
+        await MovieType.create(movieTypes);
         await Hall.create(halls);
 
         console.log('Data imported'.blue.inverse);
@@ -46,6 +49,7 @@ const destroyData = async () => {
     try {
         await Hall.deleteMany();
         await HallType.deleteMany();
+        await MovieType.deleteMany();
         await Cinema.deleteMany();
 
         console.log('Data destroyed'.red.inverse);
