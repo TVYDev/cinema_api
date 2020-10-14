@@ -58,6 +58,38 @@ exports.getMovies = asyncHandler(async (req, res, next) => {
 
 /**
  * @swagger
+ * /movies/{id}:
+ *  get:
+ *      tags:
+ *          - 🎬 Movies
+ *      summary: Get a single movie by ID
+ *      description: (PUBLIC) Retreive a single movie by its ID
+ *      parameters:
+ *          -   in: path
+ *              name: id
+ *              required: true
+ *              description: Object ID of movie
+ *              example: 5f867dafee5d303788cfbb90
+ *      responses:
+ *          200:
+ *              description: OK
+ *          404:
+ *              description: Movie is not found
+ *          500:
+ *              description: Internal server error
+ */
+exports.getMovie = asyncHandler(async (req, res, next) => {
+    const movie = await Movie.findById(req.params.id);
+
+    if (!movie) {
+        return next(new ErrorResponse('Movie with given ID is not found', 404));
+    }
+
+    res.standard(200, true, 'Success', movie);
+});
+
+/**
+ * @swagger
  * /movies:
  *  post:
  *      tags:
