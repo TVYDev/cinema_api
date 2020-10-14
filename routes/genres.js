@@ -11,7 +11,8 @@ const {
     createGenre,
     getGenres,
     getGenre,
-    updateGenre
+    updateGenre,
+    deleteGenre
 } = require('../controllers/genres');
 
 router
@@ -22,6 +23,7 @@ router
 router
     .route('/:id')
     .get(getGenre)
-    .put(validateRequestBody(validateOnUpdateGenre), updateGenre);
+    .put(validateRequestBody(validateOnUpdateGenre), updateGenre)
+    .delete(deleteGenre);
 
 module.exports = router;

@@ -174,3 +174,37 @@ exports.updateGenre = asyncHandler(async (req, res, next) => {
 
     res.standard(200, true, 'Genre is updated successfully', genre);
 });
+
+/**
+ * @swagger
+ * /genres/{id}:
+ *  delete:
+ *      tags:
+ *          - 🎃 Genres
+ *      summary: Delete a genre by its ID
+ *      description: (ADMIN) Delete a genre by its ID
+ *      parameters:
+ *          -   in: path
+ *              name: id
+ *              required: true
+ *              description: Object ID of genre
+ *              example: 5f85b4bb8be19d2788193471
+ *      responses:
+ *          200:
+ *              description: OK
+ *          404:
+ *              description: Genre is not found
+ *          500:
+ *              description: Internal server error
+ */
+exports.deleteGenre = asyncHandler(async (req, res, next) => {
+    let genre = await Genre.findById(req.params.id);
+
+    if (!genre) {
+        return next(new ErrorResponse('Genre with given ID is not found', 404));
+    }
+
+    await genre.remove();
+
+    res.standard(200, true, 'Genre is deleted successfully', genre);
+});

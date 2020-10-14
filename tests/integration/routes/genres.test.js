@@ -264,4 +264,58 @@ describe('Genres', () => {
             expect(res.body.data).toHaveProperty('updatedAt');
         });
     });
+
+    describe('DELETE /api/v1/genres/:id', () => {
+        let genre;
+        let genreId;
+
+        beforeEach(async () => {
+            genre = await Genre.create({
+                name: 'Action',
+                description: 'Fighting scenes'
+            });
+
+            genreId = genre._id;
+        });
+        afterEach(async () => {
+            await genre.remove();
+        });
+
+        const exec = () => request(server).delete(`/api/v1/genres/${genreId}`);
+
+        it('should return 404 if object ID is not valid', async () => {
+            genreId = 1;
+            const res = await exec();
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 404 if object ID of genre does not exist', async () => {
+            genreId = mongoose.Types.ObjectId();
+            const res = await exec();
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 200, and delete the genre if request is valid', async () => {
+            const res = await exec();
+
+            const genreInDb = await Genre.findById(genreId);
+
+            expect(res.status).toBe(200);
+            expect(genreInDb).toBeNull();
+        });
+
+        it('should return 200, and return the deleted genre if request is valid', async () => {
+            const res = await exec();
+
+            expect(res.status).toBe(200);
+            expect(res.body.data).toHaveProperty('_id', genreId.toHexString());
+            expect(res.body.data).toHaveProperty('name', 'Action');
+            expect(res.body.data).toHaveProperty(
+                'description',
+                'Fighting scenes'
+            );
+        });
+    });
 });
