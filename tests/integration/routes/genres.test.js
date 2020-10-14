@@ -14,6 +14,35 @@ describe('Genres', () => {
         await Genre.deleteMany();
     });
 
+    describe('GET /api/v1/genres', () => {
+        it('should return 200, and return all the genres', async () => {
+            await Genre.create([
+                {
+                    name: 'Action',
+                    description: 'Fighting scenes'
+                },
+                {
+                    name: 'Horror',
+                    description: 'Ghosts, scary things'
+                }
+            ]);
+
+            const res = await request(server).get('/api/v1/genres');
+            const { items } = res.body.data;
+
+            expect(res.status).toBe(200);
+            expect(items.some((g) => g.name === 'Action')).toBeTruthy();
+            expect(items.some((g) => g.name === 'Horror')).toBeTruthy();
+            expect(
+                items.some((g) => g.description === 'Fighting scenes')
+            ).toBeTruthy();
+            expect(
+                items.some((g) => g.description === 'Ghosts, scary things')
+            ).toBeTruthy();
+            expect(items).toHaveLength(2);
+        });
+    });
+
     describe('POST /api/v1/genres', () => {
         const data = {
             name: 'Action',
