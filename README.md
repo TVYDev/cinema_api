@@ -37,7 +37,7 @@ APIs for cinema management including CRUD on cinemas, halls, movies, buying tick
 
 ### 🎬 Movies
 
--   [Admin] Create a movie (title, unit price, duration, genre id, movie type id, release date => (for coming soon section) , spoken language, subtitile language, country, description, trailer video url, banner image url)
+-   [Admin] Create a movie (title, ticketPrice, durationInMinutes, genre ids, movie type id, release date => (for coming soon section) , ⏳ spoken language id, ⏳ subtitile language id, ⏳ country id, description, trailer url, banner url)
 -   [Admin] Update a movie
 -   [Admin] Get all movies
 -   [Admin] Get a single movie
