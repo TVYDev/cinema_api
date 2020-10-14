@@ -52,6 +52,61 @@ const { Genre } = require('../models/Genre');
  *          500:
  *              description: Internal server error
  */
+/**
+ * @swagger
+ * /genres/{genreId}/movies:
+ *  get:
+ *      tags:
+ *          - 🎬 Movies
+ *      summary: Get all movies of a genre
+ *      description: (PUBLIC) Get all movies of a genre with filtering, sorting & pagination
+ *      parameters:
+ *          -   in: path
+ *              name: genreId
+ *              required: true
+ *              description: Object ID of genre
+ *              example: 5f85b59cca353939f0b98e78
+ *          -   in: query
+ *              name: select
+ *              schema:
+ *                  type: string
+ *              description: Fields to be selected (Multiple fields separated by comma [,])
+ *              example: name,title
+ *          -   in: query
+ *              name: sort
+ *              schema:
+ *                  type: string
+ *              description: Sort by field (Prefix the field with minus [-] for descending ordering)
+ *              example: name,-createdAt
+ *          -   in: query
+ *              name: limit
+ *              schema:
+ *                  type: string
+ *              default: 20
+ *              description: Limit numbers of record for a page
+ *              example: 10
+ *          -   in: query
+ *              name: page
+ *              default: 1
+ *              schema:
+ *                  type: string
+ *              description: Certain page index for records to be retrieved
+ *              example: 1
+ *          -   in: query
+ *              name: paging
+ *              default: true
+ *              schema:
+ *                  type: string
+ *              description: Define whether need records in pagination
+ *              example: false
+ *      responses:
+ *          200:
+ *              description: OK
+ *          404:
+ *              description: Genre is not found
+ *          500:
+ *              description: Internal server error
+ */
 exports.getMovies = asyncHandler(async (req, res, next) => {
     res.standard(200, true, 'Success', res.listJsonData);
 });

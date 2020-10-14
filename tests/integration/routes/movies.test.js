@@ -61,6 +61,85 @@ describe('Movies', () => {
         });
     });
 
+    describe('GET /api/v1/genres/:genreId/movies', () => {
+        let genre;
+        let genreId;
+
+        beforeEach(async () => {
+            genre = await Genre.create({
+                name: 'Action',
+                description: 'Fighting scenes'
+            });
+
+            genreId = genre._id;
+        });
+        afterEach(async () => {
+            await genre.remove();
+        });
+
+        const exec = () =>
+            request(server).get(`/api/v1/genres/${genreId}/movies`);
+
+        it('should return 404 if object ID of genre is not valid', async () => {
+            genreId = 1;
+            const res = await exec();
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 404 if object ID of genre does not exist', async () => {
+            genreId = mongoose.Types.ObjectId();
+            const res = await exec();
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 200, and all the movies of the genre if the request is valid', async () => {
+            await Movie.create([
+                {
+                    _id: '5f867dafee5d303788cfbb90',
+                    title: 'Spider man',
+                    description: 'Superhero with climbing abilities',
+                    releasedDate: '2020-01-23',
+                    ticketPrice: 2.5,
+                    durationInMinutes: 120,
+                    genres: [genreId],
+                    movieType: '5f84030ea795143ed451ddbf',
+                    trailerUrl: 'https://youtu.be/dR3cjXncoSk',
+                    posterUrl:
+                        'https://i.pinimg.com/originals/e6/a2/5a/e6a25a2855e741f7461fe1698db3153a.jpg'
+                },
+                {
+                    _id: '5f867f6526b4c50090a9cf83',
+                    title: 'Toy Story',
+                    description: 'Animated toys of a boy',
+                    releasedDate: '2019-10-01',
+                    ticketPrice: 2,
+                    durationInMinutes: 80,
+                    genres: [genreId, mongoose.Types.ObjectId()],
+                    movieType: '5f8409065fc86e09e4752519',
+                    trailerUrl: 'https://youtu.be/wmiIUN-7qhE',
+                    posterUrl:
+                        'https://images-na.ssl-images-amazon.com/images/I/714hR8KCqaL._AC_SL1308_.jpg'
+                }
+            ]);
+
+            const res = await exec();
+            const { items } = res.body.data;
+
+            expect(res.status).toBe(200);
+            expect(
+                items.some((m) => m._id === '5f867dafee5d303788cfbb90')
+            ).toBeTruthy();
+            expect(
+                items.some((m) => m._id === '5f867f6526b4c50090a9cf83')
+            ).toBeTruthy();
+            expect(items.some((m) => m.title === 'Spider man')).toBeTruthy();
+            expect(items.some((m) => m.title === 'Toy Story')).toBeTruthy();
+            expect(items).toHaveLength(2);
+        });
+    });
+
     describe('GET /api/v1/movies/:id', () => {
         let movie;
         let movieId;
