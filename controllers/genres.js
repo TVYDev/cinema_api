@@ -123,3 +123,54 @@ exports.createGenre = asyncHandler(async (req, res, next) => {
 
     res.standard(201, true, 'Genre is created successfully', genre);
 });
+
+/**
+ * @swagger
+ * /genres/{id}:
+ *  put:
+ *      tags:
+ *          - 🎃 Genres
+ *      summary: Update a genre
+ *      description: (ADMIN) Update information of a genre
+ *      parameters:
+ *          -   in: path
+ *              name: id
+ *              required: true
+ *              description: Object ID of genre to be updated
+ *              example: 5f85b4bb8be19d2788193471
+ *          -   in: body
+ *              name: genre
+ *              description: Genre data to be updated
+ *              schema:
+ *                  type: object
+ *                  properties:
+ *                      name:
+ *                          type: string
+ *                          example: Romance
+ *                      description:
+ *                          type: string
+ *                          example: Love story
+ *      responses:
+ *          200:
+ *              description: OK
+ *          400:
+ *              description: Validation error
+ *          404:
+ *              description: Genre is not found
+ *          500:
+ *              description: Internal server error
+ */
+exports.updateGenre = asyncHandler(async (req, res, next) => {
+    let genre = await Genre.findById(req.params.id);
+
+    if (!genre) {
+        return next(new ErrorResponse('Genre with given ID is not found', 404));
+    }
+
+    genre = await Genre.findByIdAndUpdate(req.params.id, req.body, {
+        new: true,
+        runValidators: true
+    });
+
+    res.standard(200, true, 'Genre is updated successfully', genre);
+});

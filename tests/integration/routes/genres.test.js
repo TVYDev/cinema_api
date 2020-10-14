@@ -174,4 +174,94 @@ describe('Genres', () => {
             );
         });
     });
+
+    describe('PUT /api/v1/genres/:id', () => {
+        let genre;
+        let genreId;
+
+        beforeEach(async () => {
+            genre = await Genre.create({
+                name: 'Action',
+                description: 'Fighting scenes'
+            });
+
+            genreId = genre._id;
+        });
+        afterEach(async () => {
+            await genre.remove();
+        });
+
+        const exec = () => request(server).put(`/api/v1/genres/${genreId}`);
+
+        it('should return 404 if object ID is not valid', async () => {
+            genreId = 1;
+            const res = await exec().send({});
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 404 if object ID of genre does not exist', async () => {
+            genreId = mongoose.Types.ObjectId();
+            const res = await exec().send({});
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 400 if name is not a string', async () => {
+            const res = await exec().send({ name: true });
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 400 if name is an empty string', async () => {
+            const res = await exec().send({ name: '' });
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 400 if name is more than 50 characters', async () => {
+            const name = new Array(52).join('a');
+            const res = await exec().send({ name });
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 400 if description is not a string', async () => {
+            const res = await exec().send({ description: true });
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 400 if description is an empty string', async () => {
+            const res = await exec().send({ description: '' });
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 200, and update the genre if request is valid', async () => {
+            const res = await exec().send({
+                name: 'qwe',
+                description: 'qwe test'
+            });
+
+            const genreInDb = await Genre.findById(genreId);
+
+            expect(res.status).toBe(200);
+            expect(genreInDb.name).toBe('qwe');
+            expect(genreInDb.description).toBe('qwe test');
+        });
+
+        it('should return 200, and return the updated genre if request is valid', async () => {
+            const res = await exec().send({
+                name: 'qwe',
+                description: 'qwe test'
+            });
+
+            expect(res.status).toBe(200);
+            expect(res.body.data).toHaveProperty('_id', genreId.toHexString());
+            expect(res.body.data).toHaveProperty('name', 'qwe');
+            expect(res.body.data).toHaveProperty('description', 'qwe test');
+            expect(res.body.data).toHaveProperty('updatedAt');
+        });
+    });
 });
