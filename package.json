@@ -13,6 +13,7 @@
         "test-hall-types": "jest --verbose --runInBand ./tests/integration/routes/hallTypes.test.js",
         "test-movie-types": "jest --verbose --runInBand ./tests/integration/routes/movieTypes.test.js",
         "test-genres": "jest --verbose --runInBand ./tests/integration/routes/genres.test.js",
+        "test-movies": "jest --verbose --runInBand ./tests/integration/routes/movies.test.js",
         "coverage": "jest --collectCoverage"
     },
     "repository": {
