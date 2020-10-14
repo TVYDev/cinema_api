@@ -448,4 +448,160 @@ describe('Movies', () => {
             expect(dt.genres).toHaveLength(2);
         });
     });
+
+    describe('PUT /api/v1/movies/:id', () => {
+        let movie;
+        let movieId;
+
+        beforeEach(async () => {
+            movie = await Movie.create({
+                title: 'Spider man',
+                description: 'Superhero with climbing abilities',
+                releasedDate: '2020-01-23',
+                ticketPrice: 2.5,
+                durationInMinutes: 120,
+                trailerUrl: 'https://youtu.be/dR3cjXncoSk',
+                posterUrl:
+                    'https://i.pinimg.com/originals/e6/a2/5a/e6a25a2855e741f7461fe1698db3153a.jpg',
+                genres: [
+                    '5f85b4bb8be19d2788193471',
+                    '5f85b58f15173c139c7476b7'
+                ],
+                movieType: '5f84030ea795143ed451ddbf'
+            });
+
+            movieId = movie._id;
+        });
+        afterEach(async () => {
+            await movie.remove();
+        });
+
+        const exec = () => request(server).put(`/api/v1/movies/${movieId}`);
+
+        it('should return 400 if title is not a string', async () => {
+            const res = await exec().send({ title: true });
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 400 if title is an empty string', async () => {
+            const res = await exec().send({ title: '' });
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 400 if title is more than 100 characters', async () => {
+            const title = new Array(102).join('a');
+            const res = await exec().send({ title });
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 400 if description is not a string', async () => {
+            const res = await exec().send({ description: true });
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 400 if description is an empty string', async () => {
+            const res = await exec().send({ description: '' });
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 400 if ticketPrice is not a number', async () => {
+            const res = await exec().send({ ticketPrice: true });
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 400 if ticketPrice is less than zero', async () => {
+            const res = await exec().send({ ticketPrice: -1 });
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 400 if durationInMinutes is not a number', async () => {
+            const res = await exec().send({ durationInMinutes: true });
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 400 if durationInMinutes is not an integer', async () => {
+            const res = await exec().send({ durationInMinutes: 2.2 });
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 400 if durationInMinutes is less than zero', async () => {
+            const res = await exec().send({ durationInMinutes: -1 });
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 400 if releasedDate is not a date string', async () => {
+            const res = await exec().send({ releasedDate: true });
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 400 if releasedDate is not a valid date string', async () => {
+            const res = await exec().send({ releasedDate: '10-10-10' });
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 400 if trailerUrl is not a valid URL', async () => {
+            const res = await exec().send({ trailerUrl: 'qwe' });
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 400 if posterUrl is not a valid URL', async () => {
+            const res = await exec().send({ posterUrl: 'qwe' });
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 404 if object ID is not valid', async () => {
+            movieId = 1;
+            const res = await exec().send({});
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 404 if object ID of movie does not exist', async () => {
+            movieId = mongoose.Types.ObjectId();
+            const res = await exec().send({});
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 200, and update the movie if request is valid', async () => {
+            const res = await exec().send({
+                title: 'qwe',
+                description: 'test qwe'
+            });
+
+            const movieInDb = await Movie.findById(movieId);
+
+            expect(res.status).toBe(200);
+            expect(movieInDb.title).toBe('qwe');
+            expect(movieInDb.description).toBe('test qwe');
+            expect(movieInDb.updatedAt).not.toBeNull();
+        });
+
+        it('should return 200, and return the updated movie if request is valid', async () => {
+            const res = await exec().send({
+                title: 'qwe',
+                description: 'test qwe'
+            });
+
+            expect(res.status).toBe(200);
+            expect(res.body.data).toHaveProperty('_id', movieId.toHexString());
+            expect(res.body.data).toHaveProperty('title', 'qwe');
+            expect(res.body.data).toHaveProperty('description', 'test qwe');
+            expect(res.body.data).toHaveProperty('updatedAt');
+        });
+    });
 });

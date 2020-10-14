@@ -1,5 +1,10 @@
 const express = require('express');
-const { createMovie, getMovies, getMovie } = require('../controllers/movies');
+const {
+    createMovie,
+    getMovies,
+    getMovie,
+    updateMovie
+} = require('../controllers/movies');
 const validateRequestBody = require('../middlewares/validateRequestBody');
 const listJsonResponse = require('../middlewares/listJsonResponse');
 const {
@@ -14,6 +19,9 @@ router
     .get(listJsonResponse(Movie), getMovies)
     .post(validateRequestBody(validateOnCreateMovie), createMovie);
 
-router.route('/:id').get(getMovie);
+router
+    .route('/:id')
+    .get(getMovie)
+    .put(validateRequestBody(validateOnUpdateMovie), updateMovie);
 
 module.exports = router;

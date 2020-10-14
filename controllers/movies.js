@@ -184,3 +184,79 @@ exports.createMovie = asyncHandler(async (req, res, next) => {
 
     res.standard(201, true, 'Movie is created successfully', movie);
 });
+
+/**
+ * @swagger
+ * /movies/{id}:
+ *  put:
+ *      tags:
+ *          - 🎬 Movies
+ *      summary: Update a movie
+ *      description: (ADMIN) Update information of a movie by its ID
+ *      parameters:
+ *          -   in: path
+ *              name: id
+ *              required: true
+ *              description: Object ID of movie
+ *              example: 5f867dafee5d303788cfbb90
+ *          -   in: body
+ *              name: movie
+ *              description: Movie to be created
+ *              schema:
+ *                  type: object
+ *                  properties:
+ *                      title:
+ *                          type: string
+ *                          maxLength: 100
+ *                          example: Spiderman
+ *                      description:
+ *                          type: string
+ *                          example: Superhero born with climbing ability
+ *                      ticketPrice:
+ *                          type: number
+ *                          example: 2.5
+ *                      durationInMinutes:
+ *                          type: integer
+ *                          example: 120
+ *                      releasedDate:
+ *                          type: string
+ *                          format: date
+ *                          example: "2020-02-10"
+ *                      genreIds:
+ *                          type: array
+ *                          items:
+ *                              type: string
+ *                          example: ["5f85b4bb8be19d2788193471", "5f85b58f15173c139c7476b7"]
+ *                      movieTypeId:
+ *                          type: string
+ *                          example: 5f84030ea795143ed451ddbf
+ *                      trailerUrl:
+ *                          type: string
+ *                          example: https://youtu.be/dR3cjXncoSk
+ *                      posterUrl:
+ *                          type: string
+ *                          example: https://i.pinimg.com/originals/e6/a2/5a/e6a25a2855e741f7461fe1698db3153a.jpg
+ *      responses:
+ *          200:
+ *              description: OK
+ *          400:
+ *              description: Validation error
+ *          404:
+ *              description: Movie is not found
+ *          500:
+ *              description: Internal server error
+ */
+exports.updateMovie = asyncHandler(async (req, res, next) => {
+    let movie = await Movie.findById(req.params.id);
+
+    if (!movie) {
+        return next(new ErrorResponse('Movie with given ID is not found', 404));
+    }
+
+    movie = await Movie.findByIdAndUpdate(req.params.id, req.body, {
+        new: true,
+        runValidators: true
+    });
+
+    res.standard(200, true, 'Movie is updated successfully', movie);
+});
