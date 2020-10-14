@@ -56,6 +56,38 @@ exports.getGenres = asyncHandler(async (req, res, next) => {
 
 /**
  * @swagger
+ * /genres/{id}:
+ *  get:
+ *      tags:
+ *          - 🎃 Genres
+ *      summary: Get a single genre
+ *      description: (PUBLIC) Get a single genre by its ID
+ *      parameters:
+ *          -   in: path
+ *              name: id
+ *              required: true
+ *              description: Object ID of genre
+ *              example: 5f85b4bb8be19d2788193471
+ *      responses:
+ *          200:
+ *              description: OK
+ *          404:
+ *              description: Genre is not found
+ *          500:
+ *              description: Internal server error
+ */
+exports.getGenre = asyncHandler(async (req, res, next) => {
+    const genre = await Genre.findById(req.params.id);
+
+    if (!genre) {
+        return next(new ErrorResponse('Genre with given ID is not found', 404));
+    }
+
+    res.standard(200, true, 'Success', genre);
+});
+
+/**
+ * @swagger
  * /genres:
  *  post:
  *      tags:

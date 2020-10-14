@@ -43,6 +43,51 @@ describe('Genres', () => {
         });
     });
 
+    describe('GET /api/v1/genres/:id', () => {
+        let genre;
+        let genreId;
+
+        beforeEach(async () => {
+            genre = await Genre.create({
+                name: 'Action',
+                description: 'Fighting scenes'
+            });
+
+            genreId = genre._id;
+        });
+        afterEach(async () => {
+            await genre.remove();
+        });
+
+        const exec = () => request(server).get(`/api/v1/genres/${genreId}`);
+
+        it('should return 404 if object ID is not valid', async () => {
+            genreId = 1;
+            const res = await exec();
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 404 if object ID of genre does not exist', async () => {
+            genreId = mongoose.Types.ObjectId();
+            const res = await exec();
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 200, and return the genre if request is valid', async () => {
+            const res = await exec();
+
+            expect(res.status).toBe(200);
+            expect(res.body.data).toHaveProperty('_id', genreId.toHexString());
+            expect(res.body.data).toHaveProperty('name', 'Action');
+            expect(res.body.data).toHaveProperty(
+                'description',
+                'Fighting scenes'
+            );
+        });
+    });
+
     describe('POST /api/v1/genres', () => {
         const data = {
             name: 'Action',
