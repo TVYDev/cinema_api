@@ -14,6 +14,10 @@ const {
     updateGenre,
     deleteGenre
 } = require('../controllers/genres');
+const moviesRouter = require('./movies');
+
+// Re-route to other route resources
+router.use('/:genreId/movies', moviesRouter);   
 
 router
     .route('/')

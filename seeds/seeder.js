@@ -11,6 +11,7 @@ const { Hall } = require('../models/Hall');
 const { HallType } = require('../models/HallType');
 const { MovieType } = require('../models/MovieType');
 const { Genre } = require('../models/Genre');
+const { Movie } = require('../models/Movie');
 
 // Connect database
 mongoose.connect(process.env.MONGODB_URI, {
@@ -36,6 +37,9 @@ const movieTypes = JSON.parse(
 const genres = JSON.parse(
     fs.readFileSync(`${__dirname}/data/genres.json`, 'utf-8')
 );
+const movies = JSON.parse(
+    fs.readFileSync(`${__dirname}/data/movies.json`, 'utf-8')
+);
 
 const importData = async () => {
     try {
@@ -44,6 +48,7 @@ const importData = async () => {
         await MovieType.create(movieTypes);
         await Hall.create(halls);
         await Genre.create(genres);
+        await Movie.create(movies);
 
         console.log('Data imported'.blue.inverse);
         process.exit();
@@ -54,6 +59,7 @@ const importData = async () => {
 
 const destroyData = async () => {
     try {
+        await Movie.deleteMany();
         await Hall.deleteMany();
         await HallType.deleteMany();
         await MovieType.deleteMany();
