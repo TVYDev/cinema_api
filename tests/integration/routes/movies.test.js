@@ -16,6 +16,51 @@ describe('Movies', () => {
         await Movie.deleteMany();
     });
 
+    describe('GET /api/v1/movies', () => {
+        it('should return 200, and return all the movies', async () => {
+            await Movie.create([
+                {
+                    title: 'Spider man',
+                    description: 'Superhero with climbing abilities',
+                    releasedDate: '2020-01-23',
+                    ticketPrice: 2.5,
+                    durationInMinutes: 120,
+                    genres: [
+                        '5f85b4bb8be19d2788193471',
+                        '5f85b58f15173c139c7476b7'
+                    ],
+                    movieType: '5f84030ea795143ed451ddbf',
+                    trailerUrl: 'https://youtu.be/dR3cjXncoSk',
+                    posterUrl:
+                        'https://i.pinimg.com/originals/e6/a2/5a/e6a25a2855e741f7461fe1698db3153a.jpg'
+                },
+                {
+                    title: 'Toy Story',
+                    description: 'Animated toys of a boy',
+                    releasedDate: '2019-10-01',
+                    ticketPrice: 2,
+                    durationInMinutes: 80,
+                    genres: [
+                        '5f85b59cca353939f0b98e78',
+                        '5f85b58f15173c139c7476b7'
+                    ],
+                    movieType: '5f8409065fc86e09e4752519',
+                    trailerUrl: 'https://youtu.be/wmiIUN-7qhE',
+                    posterUrl:
+                        'https://images-na.ssl-images-amazon.com/images/I/714hR8KCqaL._AC_SL1308_.jpg'
+                }
+            ]);
+
+            const res = await request(server).get('/api/v1/movies');
+            const { items } = res.body.data;
+
+            expect(res.status).toBe(200);
+            expect(items.some((m) => m.title === 'Spider man')).toBeTruthy();
+            expect(items.some((m) => m.title === 'Toy Story')).toBeTruthy();
+            expect(items).toHaveLength(2);
+        });
+    });
+
     describe('POST /api/v1/movies', () => {
         let genreAction;
         let genreHorror;
