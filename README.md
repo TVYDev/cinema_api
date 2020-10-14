@@ -25,7 +25,7 @@ APIs for cinema management including CRUD on cinemas, halls, movies, buying tick
 -   ✅ [Admin] Get a single hall
 -   ✅ [Admin] Delete a hall
 
-### 🏙 Hall Types
+### 🏭 Hall Types
 
 -   ✅ [Admin] Create a hall type (name: 2D, 3D, 4D, IMAX, VIP, PREMIUM, description, compatible movie type ids)
 -   ✅ [Admin] Update a hall type
@@ -54,12 +54,12 @@ APIs for cinema management including CRUD on cinemas, halls, movies, buying tick
 
 ### 🎃 Genres
 
--   [Admin] Create a genre (name, description)
--   [Admin] Update a genre
--   [Admin] Get all genres
+-   ✅ [Admin] Create a genre (name, description)
+-   ✅ [Admin] Update a genre
+-   ✅ [Admin] Get all genres
 -   [Admin] Get all movies of a genre
--   [Admin] Get a single genre
--   [Admin] Delete a genre
+-   ✅ [Admin] Get a single genre
+-   ✅ [Admin] Delete a genre
 
 ### ⏲ Showtimes
 

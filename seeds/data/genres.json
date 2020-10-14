@@ -1,0 +1,17 @@
+[
+    {
+        "_id": "5f85b4bb8be19d2788193471",
+        "name": "Action",
+        "description": "Fighting scenes"
+    },
+    {
+        "_id": "5f85b58f15173c139c7476b7",
+        "name": "Horror",
+        "description": "Ghosts, scary things"
+    },
+    {
+        "_id": "5f85b59cca353939f0b98e78",
+        "name": "Adventure",
+        "description": "Traveling with mysteries and surprised"
+    }
+]
