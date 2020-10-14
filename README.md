@@ -54,12 +54,12 @@ APIs for cinema management including CRUD on cinemas, halls, movies, buying tick
 
 ### 🎃 Genres
 
--   [Admin] Create a genre (name, description)
--   [Admin] Update a genre
--   [Admin] Get all genres
+-   ✅ [Admin] Create a genre (name, description)
+-   ✅ [Admin] Update a genre
+-   ✅ [Admin] Get all genres
 -   [Admin] Get all movies of a genre
--   [Admin] Get a single genre
--   [Admin] Delete a genre
+-   ✅ [Admin] Get a single genre
+-   ✅ [Admin] Delete a genre
 
 ### ⏲ Showtimes
 
