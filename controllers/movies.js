@@ -260,3 +260,37 @@ exports.updateMovie = asyncHandler(async (req, res, next) => {
 
     res.standard(200, true, 'Movie is updated successfully', movie);
 });
+
+/**
+ * @swagger
+ * /movies/{id}:
+ *  delete:
+ *      tags:
+ *          - 🎬 Movies
+ *      summary: Delete a movie by ID
+ *      description: (ADMIN) Delete a movie by its ID
+ *      parameters:
+ *          -   in: path
+ *              name: id
+ *              required: true
+ *              description: Object ID of movie
+ *              example: 5f867dafee5d303788cfbb90
+ *      responses:
+ *          200:
+ *              description: OK
+ *          404:
+ *              description: Movie is not found
+ *          500:
+ *              description: Internal server error
+ */
+exports.deleteMovie = asyncHandler(async (req, res, next) => {
+    let movie = await Movie.findById(req.params.id);
+
+    if (!movie) {
+        return next(new ErrorResponse('Movie with given ID is not found', 404));
+    }
+
+    await movie.remove();
+
+    res.standard(200, true, 'Movie is deleted successfully', movie);
+});

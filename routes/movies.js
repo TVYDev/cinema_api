@@ -3,7 +3,8 @@ const {
     createMovie,
     getMovies,
     getMovie,
-    updateMovie
+    updateMovie,
+    deleteMovie
 } = require('../controllers/movies');
 const validateRequestBody = require('../middlewares/validateRequestBody');
 const listJsonResponse = require('../middlewares/listJsonResponse');
@@ -22,6 +23,7 @@ router
 router
     .route('/:id')
     .get(getMovie)
-    .put(validateRequestBody(validateOnUpdateMovie), updateMovie);
+    .put(validateRequestBody(validateOnUpdateMovie), updateMovie)
+    .delete(deleteMovie);
 
 module.exports = router;

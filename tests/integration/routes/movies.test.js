@@ -604,4 +604,65 @@ describe('Movies', () => {
             expect(res.body.data).toHaveProperty('updatedAt');
         });
     });
+
+    describe('DELETE /api/v1/movies/:id', () => {
+        let movie;
+        let movieId;
+
+        beforeEach(async () => {
+            movie = await Movie.create({
+                title: 'Spider man',
+                description: 'Superhero with climbing abilities',
+                releasedDate: '2020-01-23',
+                ticketPrice: 2.5,
+                durationInMinutes: 120,
+                trailerUrl: 'https://youtu.be/dR3cjXncoSk',
+                posterUrl:
+                    'https://i.pinimg.com/originals/e6/a2/5a/e6a25a2855e741f7461fe1698db3153a.jpg',
+                genres: [
+                    '5f85b4bb8be19d2788193471',
+                    '5f85b58f15173c139c7476b7'
+                ],
+                movieType: '5f84030ea795143ed451ddbf'
+            });
+
+            movieId = movie._id;
+        });
+        afterEach(async () => {
+            await movie.remove();
+        });
+
+        const exec = () => request(server).delete(`/api/v1/movies/${movieId}`);
+
+        it('should return 404 if object ID is not valid', async () => {
+            movieId = 1;
+            const res = await exec();
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 404 if object ID of movie does not exist', async () => {
+            movieId = mongoose.Types.ObjectId();
+            const res = await exec();
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 200, and delete the movie if request is valid', async () => {
+            const res = await exec();
+
+            const movieInDb = await Movie.findById(movieId);
+
+            expect(res.status).toBe(200);
+            expect(movieInDb).toBeNull();
+        });
+
+        it('should return 200, and return the deleted movie if request is valid', async () => {
+            const res = await exec();
+
+            expect(res.status).toBe(200);
+            expect(res.body.data).toHaveProperty('_id', movieId.toHexString());
+            expect(res.body.data).toHaveProperty('title', 'Spider man');
+        });
+    });
 });
