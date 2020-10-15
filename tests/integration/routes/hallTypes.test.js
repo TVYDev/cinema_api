@@ -345,6 +345,8 @@ describe('Hall Types', () => {
     describe('PUT /api/v1/hall-types/:id', () => {
         let hallType;
         let hallTypeId;
+        let movieType;
+        let movieTypeId;
 
         beforeEach(async () => {
             hallType = await HallType.create({
@@ -353,15 +355,23 @@ describe('Hall Types', () => {
             });
 
             hallTypeId = hallType._id;
+
+            movieType = await MovieType.create({
+                name: '2D',
+                description: 'Simple 2D technology'
+            });
+
+            movieTypeId = movieType._id;
         });
         afterEach(async () => {
             await hallType.remove();
+            await movieType.remove();
         });
 
         const exec = () =>
             request(server).put(`/api/v1/hall-types/${hallTypeId}`);
 
-        it('should return 404 if object ID is not valid', async () => {
+        it('should return 404 if object ID of hall type is not valid', async () => {
             hallTypeId = 1;
             const res = await exec().send({});
 
@@ -406,10 +416,42 @@ describe('Hall Types', () => {
             expect(res.status).toBe(400);
         });
 
+        it('should return 400 if compatibleMovieTypeIds is an empty array', async () => {
+            const res = await exec().send({ compatibleMovieTypeIds: [] });
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 400 if compatibleMovieTypeIds is not an array of only string', async () => {
+            const res = await exec().send({ compatibleMovieTypeIds: [1, 2] });
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 400 if any id of compatibleMovieTypeIds is not a valid object Id', async () => {
+            const res = await exec().send({
+                compatibleMovieTypeIds: [1, mongoose.Types.ObjectId()]
+            });
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 404 if any id of compatibleMovieTypeIds does not exist', async () => {
+            const res = await exec().send({
+                compatibleMovieTypeIds: [
+                    mongoose.Types.ObjectId(),
+                    mongoose.Types.ObjectId()
+                ]
+            });
+
+            expect(res.status).toBe(404);
+        });
+
         it('should return 200, and update the hall type if request is valid', async () => {
             const res = await exec().send({
                 name: 'qwe',
-                description: 'des-qwe'
+                description: 'des-qwe',
+                compatibleMovieTypeIds: [movieTypeId]
             });
 
             const hallTypeInDb = await HallType.findById(hallTypeId);
@@ -417,13 +459,17 @@ describe('Hall Types', () => {
             expect(res.status).toBe(200);
             expect(hallTypeInDb.name).toBe('qwe');
             expect(hallTypeInDb.description).toBe('des-qwe');
+            expect(hallTypeInDb.compatibleMovieTypes).toContain(
+                movieTypeId.toHexString()
+            );
             expect(hallTypeInDb.updatedAt).not.toBeNull();
         });
 
         it('should return 200, and return the updated hall type if request is valid', async () => {
             const res = await exec().send({
                 name: 'qwe',
-                description: 'des-qwe'
+                description: 'des-qwe',
+                compatibleMovieTypeIds: [movieTypeId]
             });
 
             expect(res.status).toBe(200);
@@ -433,6 +479,7 @@ describe('Hall Types', () => {
             );
             expect(res.body.data).toHaveProperty('name', 'qwe');
             expect(res.body.data).toHaveProperty('description', 'des-qwe');
+            expect(res.body.data).toHaveProperty('compatibleMovieTypes');
             expect(res.body.data).toHaveProperty('updatedAt');
         });
     });
