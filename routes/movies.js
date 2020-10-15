@@ -15,6 +15,7 @@ const {
     validateOnUpdateMovie
 } = require('../models/Movie');
 const { Genre } = require('../models/Genre');
+const { MovieType } = require('../models/MovieType');
 const router = express.Router({ mergeParams: true });
 
 router
@@ -25,6 +26,11 @@ router
                 field: 'genres',
                 param: 'genreId',
                 model: Genre
+            },
+            {
+                field: 'movieType',
+                param: 'movieTypeId',
+                model: MovieType
             }
         ]),
         listJsonResponse(Movie),

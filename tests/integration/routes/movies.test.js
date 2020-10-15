@@ -140,6 +140,98 @@ describe('Movies', () => {
         });
     });
 
+    describe('GET /api/v1/movie-types/:movieTypeId/movies', () => {
+        let movieType;
+        let movieTypeId;
+
+        beforeEach(async () => {
+            movieType = await MovieType.create({
+                name: '2D',
+                description: 'Simple 2D technology'
+            });
+
+            movieTypeId = movieType._id;
+        });
+        afterEach(async () => {
+            await movieType.remove();
+        });
+
+        const exec = () =>
+            request(server).get(`/api/v1/movie-tpyes/${movieTypeId}/movies`);
+
+        it('should return 404 if object ID of movie type is not valid', async () => {
+            movieTypeId = 1;
+            const res = await exec();
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 404 if object ID of movie type does not exist', async () => {
+            movieTypeId = mongoose.Types.ObjectId();
+            const res = await exec();
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 200, and all the movies of the movie type if the request is valid', async () => {
+            await Movie.create([
+                {
+                    _id: '5f867dafee5d303788cfbb90',
+                    title: 'Spider man',
+                    description: 'Superhero with climbing abilities',
+                    releasedDate: '2020-01-23',
+                    ticketPrice: 2.5,
+                    durationInMinutes: 120,
+                    genres: [mongoose.Types.ObjectId()],
+                    movieType: movieTypeId,
+                    trailerUrl: 'https://youtu.be/dR3cjXncoSk',
+                    posterUrl:
+                        'https://i.pinimg.com/originals/e6/a2/5a/e6a25a2855e741f7461fe1698db3153a.jpg'
+                },
+                {
+                    _id: '5f867f6526b4c50090a9cf83',
+                    title: 'Toy Story',
+                    description: 'Animated toys of a boy',
+                    releasedDate: '2019-10-01',
+                    ticketPrice: 2,
+                    durationInMinutes: 80,
+                    genres: [mongoose.Types.ObjectId()],
+                    movieType: movieTypeId,
+                    trailerUrl: 'https://youtu.be/wmiIUN-7qhE',
+                    posterUrl:
+                        'https://images-na.ssl-images-amazon.com/images/I/714hR8KCqaL._AC_SL1308_.jpg'
+                },
+                {
+                    _id: '5f8680aafc113a4648914a84',
+                    title: 'Ralph Breaks the Internet',
+                    description: 'Fantasy video games characters',
+                    releasedDate: '2020-08-10',
+                    ticketPrice: 3,
+                    durationInMinutes: 130,
+                    genres: [mongoose.Types.ObjectId()],
+                    movieType: mongoose.Types.ObjectId(),
+                    trailerUrl: 'https://youtu.be/_BcYBFC6zfY',
+                    posterUrl:
+                        'https://images-na.ssl-images-amazon.com/images/I/71sAwnr37AL._AC_SL1069_.jpg'
+                }
+            ]);
+
+            const res = await exec();
+            const { items } = res.body.data;
+
+            expect(res.status).toBe(200);
+            expect(
+                items.some((m) => m._id === '5f867dafee5d303788cfbb90')
+            ).toBeTruthy();
+            expect(
+                items.some((m) => m._id === '5f867f6526b4c50090a9cf83')
+            ).toBeTruthy();
+            expect(items.some((m) => m.title === 'Spider man')).toBeTruthy();
+            expect(items.some((m) => m.title === 'Toy Story')).toBeTruthy();
+            expect(items).toHaveLength(2);
+        });
+    });
+
     describe('GET /api/v1/movies/:id', () => {
         let movie;
         let movieId;
