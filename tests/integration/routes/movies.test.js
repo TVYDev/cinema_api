@@ -623,6 +623,8 @@ describe('Movies', () => {
     describe('PUT /api/v1/movies/:id', () => {
         let movie;
         let movieId;
+        let genre;
+        let genreId;
 
         beforeEach(async () => {
             movie = await Movie.create({
@@ -642,6 +644,13 @@ describe('Movies', () => {
             });
 
             movieId = movie._id;
+
+            genre = await Genre.create({
+                name: 'Action',
+                description: 'Fighting scenes'
+            });
+
+            genreId = genre._id;
         });
         afterEach(async () => {
             await movie.remove();
@@ -734,7 +743,35 @@ describe('Movies', () => {
             expect(res.status).toBe(400);
         });
 
-        it('should return 404 if object ID is not valid', async () => {
+        it('should return 400 if genreIds is not an array', async () => {
+            const res = await exec().send({ genreIds: true });
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 400 if genreIds is an empty array', async () => {
+            const res = await exec().send({ genreIds: [] });
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 400 if genreIds is not an array of valid object ID', async () => {
+            const res = await exec().send({
+                genreIds: [mongoose.Types.ObjectId(), 1]
+            });
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 404 if any genreId of genreIds array does not exist', async () => {
+            const res = await exec().send({
+                genreIds: [mongoose.Types.ObjectId()]
+            });
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 404 if object ID of movie is not valid', async () => {
             movieId = 1;
             const res = await exec().send({});
 
@@ -751,7 +788,8 @@ describe('Movies', () => {
         it('should return 200, and update the movie if request is valid', async () => {
             const res = await exec().send({
                 title: 'qwe',
-                description: 'test qwe'
+                description: 'test qwe',
+                genreIds: [genreId]
             });
 
             const movieInDb = await Movie.findById(movieId);
@@ -759,6 +797,11 @@ describe('Movies', () => {
             expect(res.status).toBe(200);
             expect(movieInDb.title).toBe('qwe');
             expect(movieInDb.description).toBe('test qwe');
+
+            expect(movieInDb.genres).toContain(genreId.toHexString());
+            expect(movieInDb.genres).not.toContain('5f85b4bb8be19d2788193471');
+            expect(movieInDb.genres).not.toContain('5f85b58f15173c139c7476b7');
+
             expect(movieInDb.updatedAt).not.toBeNull();
         });
 
@@ -772,6 +815,7 @@ describe('Movies', () => {
             expect(res.body.data).toHaveProperty('_id', movieId.toHexString());
             expect(res.body.data).toHaveProperty('title', 'qwe');
             expect(res.body.data).toHaveProperty('description', 'test qwe');
+            expect(res.body.data).toHaveProperty('genres');
             expect(res.body.data).toHaveProperty('updatedAt');
         });
     });
