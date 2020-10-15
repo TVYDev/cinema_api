@@ -837,7 +837,9 @@ describe('Movies', () => {
         it('should return 200, and return the updated movie if request is valid', async () => {
             const res = await exec().send({
                 title: 'qwe',
-                description: 'test qwe'
+                description: 'test qwe',
+                genreIds: [genreId],
+                movieTypeId
             });
 
             const { data } = res.body;
