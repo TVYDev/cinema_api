@@ -448,6 +448,8 @@ describe('Halls', () => {
         let hallId;
         let hallType;
         let hallTypeId;
+        let cinema;
+        let cinemaId;
 
         beforeEach(async () => {
             hall = await Hall.create({
@@ -467,11 +469,20 @@ describe('Halls', () => {
             });
 
             hallTypeId = hallType._id;
+
+            cinema = await Cinema.create({
+                name: 'Delee Cinma Phnom Penh',
+                address: 'Toul Kork, Phnom Penh, Cambodia',
+                openingHours: '7AM - 10PM'
+            });
+
+            cinemaId = cinema._id;
         });
 
         afterEach(async () => {
             await hall.remove();
             await hallType.remove();
+            await cinema.remove();
         });
 
         const exec = () => request(server).put(`/api/v1/halls/${hallId}`);
@@ -527,6 +538,20 @@ describe('Halls', () => {
             expect(res.status).toBe(404);
         });
 
+        it('should return 404 if cinema object id is not valid', async () => {
+            const res = await exec().send({ cinemaId: 1 });
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 404 if cinema id does not exists', async () => {
+            const res = await exec().send({
+                cinemaId: mongoose.Types.ObjectId()
+            });
+
+            expect(res.status).toBe(404);
+        });
+
         it('should return 404 if object ID of hall is not valid', async () => {
             hallId = 1;
             const res = await exec().send({});
@@ -546,7 +571,8 @@ describe('Halls', () => {
                 name: 'Hall qwe',
                 seatRows: ['A', 'B'],
                 seatColumns: ['I', 'II', 'III'],
-                hallTypeId
+                hallTypeId,
+                cinemaId
             });
 
             const hallInDb = await Hall.findById(hallId);
@@ -558,6 +584,8 @@ describe('Halls', () => {
             expect(hallInDb.seatColumns).toHaveLength(3);
             expect(hallInDb.seatColumns).not.toEqual(res.body.data.seatColumns);
             expect(hallInDb.hallType).toBe(hallTypeId.toHexString());
+            expect(hallInDb.cinema).toBe(cinemaId.toHexString());
+            expect(hallInDb.updatedAt).not.toBeNull();
         });
 
         it('should return 200, and return the updated hall if the request is valid', async () => {
@@ -565,7 +593,8 @@ describe('Halls', () => {
                 name: 'Hall qwe',
                 seatRows: ['A', 'B'],
                 seatColumns: ['I', 'II', 'III'],
-                hallTypeId
+                hallTypeId,
+                cinemaId
             });
 
             const { data } = res.body;
@@ -576,6 +605,8 @@ describe('Halls', () => {
             expect(data).toHaveProperty('seatRows', ['A', 'B']);
             expect(data).toHaveProperty('seatColumns', ['I', 'II', 'III']);
             expect(data).toHaveProperty('hallType');
+            expect(data).toHaveProperty('cinema');
+            expect(data).toHaveProperty('updatedAt');
         });
     });
 

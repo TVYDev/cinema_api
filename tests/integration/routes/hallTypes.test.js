@@ -417,6 +417,7 @@ describe('Hall Types', () => {
             expect(res.status).toBe(200);
             expect(hallTypeInDb.name).toBe('qwe');
             expect(hallTypeInDb.description).toBe('des-qwe');
+            expect(hallTypeInDb.updatedAt).not.toBeNull();
         });
 
         it('should return 200, and return the updated hall type if request is valid', async () => {
@@ -432,6 +433,7 @@ describe('Hall Types', () => {
             );
             expect(res.body.data).toHaveProperty('name', 'qwe');
             expect(res.body.data).toHaveProperty('description', 'des-qwe');
+            expect(res.body.data).toHaveProperty('updatedAt');
         });
     });
 
