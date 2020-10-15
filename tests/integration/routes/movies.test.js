@@ -625,6 +625,8 @@ describe('Movies', () => {
         let movieId;
         let genre;
         let genreId;
+        let movieType;
+        let movieTypeId;
 
         beforeEach(async () => {
             movie = await Movie.create({
@@ -651,9 +653,18 @@ describe('Movies', () => {
             });
 
             genreId = genre._id;
+
+            movieType = await MovieType.create({
+                name: '2D',
+                description: 'Simple 2D technology'
+            });
+
+            movieTypeId = movieType._id;
         });
         afterEach(async () => {
             await movie.remove();
+            await genre.remove();
+            await movieType.remove();
         });
 
         const exec = () => request(server).put(`/api/v1/movies/${movieId}`);
@@ -771,6 +782,20 @@ describe('Movies', () => {
             expect(res.status).toBe(404);
         });
 
+        it('should return 400 if movieTypeId is not a valid object Id', async () => {
+            const res = await exec().send({ movieTypeId: 1 });
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 404 if movieTypeId does not exist', async () => {
+            const res = await exec().send({
+                movieTypeId: mongoose.Types.ObjectId()
+            });
+
+            expect(res.status).toBe(404);
+        });
+
         it('should return 404 if object ID of movie is not valid', async () => {
             movieId = 1;
             const res = await exec().send({});
@@ -789,7 +814,8 @@ describe('Movies', () => {
             const res = await exec().send({
                 title: 'qwe',
                 description: 'test qwe',
-                genreIds: [genreId]
+                genreIds: [genreId],
+                movieTypeId
             });
 
             const movieInDb = await Movie.findById(movieId);
@@ -802,6 +828,9 @@ describe('Movies', () => {
             expect(movieInDb.genres).not.toContain('5f85b4bb8be19d2788193471');
             expect(movieInDb.genres).not.toContain('5f85b58f15173c139c7476b7');
 
+            expect(movieInDb.movieType).toBe(movieTypeId.toHexString());
+            expect(movieInDb.movieType).not.toBe('5f84030ea795143ed451ddbf');
+
             expect(movieInDb.updatedAt).not.toBeNull();
         });
 
@@ -811,12 +840,15 @@ describe('Movies', () => {
                 description: 'test qwe'
             });
 
+            const { data } = res.body;
+
             expect(res.status).toBe(200);
-            expect(res.body.data).toHaveProperty('_id', movieId.toHexString());
-            expect(res.body.data).toHaveProperty('title', 'qwe');
-            expect(res.body.data).toHaveProperty('description', 'test qwe');
-            expect(res.body.data).toHaveProperty('genres');
-            expect(res.body.data).toHaveProperty('updatedAt');
+            expect(data).toHaveProperty('_id', movieId.toHexString());
+            expect(data).toHaveProperty('title', 'qwe');
+            expect(data).toHaveProperty('description', 'test qwe');
+            expect(data).toHaveProperty('genres');
+            expect(data).toHaveProperty('movieType');
+            expect(data).toHaveProperty('updatedAt');
         });
     });
 
