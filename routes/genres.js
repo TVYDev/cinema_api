@@ -7,6 +7,7 @@ const {
 } = require('../models/Genre');
 const validateRequestBody = require('../middlewares/validateRequestBody');
 const listJsonResponse = require('../middlewares/listJsonResponse');
+const validateReferences = require('../middlewares/validateReferences');
 const {
     createGenre,
     getGenres,
@@ -17,7 +18,7 @@ const {
 const moviesRouter = require('./movies');
 
 // Re-route to other route resources
-router.use('/:genreId/movies', moviesRouter);   
+router.use('/:genreId/movies', moviesRouter);
 
 router
     .route('/')
@@ -26,8 +27,36 @@ router
 
 router
     .route('/:id')
-    .get(getGenre)
-    .put(validateRequestBody(validateOnUpdateGenre), updateGenre)
-    .delete(deleteGenre);
+    .get(
+        validateReferences([
+            {
+                model: Genre,
+                field: '_id',
+                param: 'id'
+            }
+        ]),
+        getGenre
+    )
+    .put(
+        validateRequestBody(validateOnUpdateGenre),
+        validateReferences([
+            {
+                model: Genre,
+                field: '_id',
+                param: 'id'
+            }
+        ]),
+        updateGenre
+    )
+    .delete(
+        validateReferences([
+            {
+                model: Genre,
+                field: '_id',
+                param: 'id'
+            }
+        ]),
+        deleteGenre
+    );
 
 module.exports = router;

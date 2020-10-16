@@ -79,10 +79,6 @@ exports.getGenres = asyncHandler(async (req, res, next) => {
 exports.getGenre = asyncHandler(async (req, res, next) => {
     const genre = await Genre.findById(req.params.id);
 
-    if (!genre) {
-        return next(new ErrorResponse('Genre with given ID is not found', 404));
-    }
-
     res.standard(200, true, 'Success', genre);
 });
 
@@ -161,13 +157,7 @@ exports.createGenre = asyncHandler(async (req, res, next) => {
  *              description: Internal server error
  */
 exports.updateGenre = asyncHandler(async (req, res, next) => {
-    let genre = await Genre.findById(req.params.id);
-
-    if (!genre) {
-        return next(new ErrorResponse('Genre with given ID is not found', 404));
-    }
-
-    genre = await Genre.findByIdAndUpdate(req.params.id, req.body, {
+    const genre = await Genre.findByIdAndUpdate(req.params.id, req.body, {
         new: true,
         runValidators: true
     });
@@ -198,13 +188,7 @@ exports.updateGenre = asyncHandler(async (req, res, next) => {
  *              description: Internal server error
  */
 exports.deleteGenre = asyncHandler(async (req, res, next) => {
-    let genre = await Genre.findById(req.params.id);
-
-    if (!genre) {
-        return next(new ErrorResponse('Genre with given ID is not found', 404));
-    }
-
-    await genre.remove();
+    const genre = await Genre.findByIdAndRemove(req.params.id);
 
     res.standard(200, true, 'Genre is deleted successfully', genre);
 });
