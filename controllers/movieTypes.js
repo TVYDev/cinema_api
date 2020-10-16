@@ -1,4 +1,3 @@
-const ErrorResponse = require('../utils/ErrorResponse');
 const asyncHandler = require('../middlewares/asyncHandler');
 const { MovieType } = require('../models/MovieType');
 
@@ -79,12 +78,6 @@ exports.getMovieTypes = asyncHandler(async (req, res, next) => {
 exports.getMovieType = asyncHandler(async (req, res, next) => {
     const movieType = await MovieType.findById(req.params.id);
 
-    if (!movieType) {
-        return next(
-            new ErrorResponse('Movie type with given ID is not found', 404)
-        );
-    }
-
     res.standard(200, true, 'Success', movieType);
 });
 
@@ -163,18 +156,14 @@ exports.createMovieType = asyncHandler(async (req, res, next) => {
  *              description: Internal server error
  */
 exports.updateMovieType = asyncHandler(async (req, res, next) => {
-    let movieType = await MovieType.findById(req.params.id);
-
-    if (!movieType) {
-        return next(
-            new ErrorResponse('Movie type with given ID is not found', 404)
-        );
-    }
-
-    movieType = await MovieType.findByIdAndUpdate(req.params.id, req.body, {
-        new: true,
-        runValidators: true
-    });
+    const movieType = await MovieType.findByIdAndUpdate(
+        req.params.id,
+        req.body,
+        {
+            new: true,
+            runValidators: true
+        }
+    );
 
     res.standard(200, true, 'Movie type is updated successfully', movieType);
 });
@@ -202,15 +191,7 @@ exports.updateMovieType = asyncHandler(async (req, res, next) => {
  *              description: Internal server error
  */
 exports.deleteMovieType = asyncHandler(async (req, res, next) => {
-    let movieType = await MovieType.findById(req.params.id);
-
-    if (!movieType) {
-        return next(
-            new ErrorResponse('Movie type with given ID is not found', 404)
-        );
-    }
-
-    await movieType.remove();
+    const movieType = await MovieType.findByIdAndRemove(req.params.id);
 
     res.standard(200, true, 'Movie type is deleted successfully', movieType);
 });

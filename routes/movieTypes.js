@@ -13,6 +13,7 @@ const {
 } = require('../models/MovieType');
 const validateRequestBody = require('../middlewares/validateRequestBody');
 const listJsonResponse = require('../middlewares/listJsonResponse');
+const validateReferences = require('../middlewares/validateReferences');
 const router = express.Router();
 const hallTypesRouter = require('./hallTypes');
 const moviesRouter = require('./movies');
@@ -28,8 +29,36 @@ router
 
 router
     .route('/:id')
-    .get(getMovieType)
-    .put(validateRequestBody(validateOnUpdateMovieType), updateMovieType)
-    .delete(deleteMovieType);
+    .get(
+        validateReferences([
+            {
+                model: MovieType,
+                field: '_id',
+                param: 'id'
+            }
+        ]),
+        getMovieType
+    )
+    .put(
+        validateRequestBody(validateOnUpdateMovieType),
+        validateReferences([
+            {
+                model: MovieType,
+                field: '_id',
+                param: 'id'
+            }
+        ]),
+        updateMovieType
+    )
+    .delete(
+        validateReferences([
+            {
+                model: MovieType,
+                field: '_id',
+                param: 'id'
+            }
+        ]),
+        deleteMovieType
+    );
 
 module.exports = router;
