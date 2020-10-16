@@ -459,7 +459,8 @@ describe('Hall Types', () => {
             expect(res.status).toBe(200);
             expect(hallTypeInDb.name).toBe('qwe');
             expect(hallTypeInDb.description).toBe('des-qwe');
-            expect(hallTypeInDb.compatibleMovieTypes).toContain(
+            expect(hallTypeInDb.compatibleMovieTypes).toHaveLength(1);
+            expect(hallTypeInDb.compatibleMovieTypes[0].toHexString()).toBe(
                 movieTypeId.toHexString()
             );
             expect(hallTypeInDb.updatedAt).not.toBeNull();
