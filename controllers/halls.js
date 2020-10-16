@@ -334,6 +334,30 @@ exports.updateHall = asyncHandler(async (req, res, next) => {
         return next(new ErrorResponse('Hall with given ID is not found', 404));
     }
 
+    const cinemaId = req.body.cinemaId;
+    if (cinemaId) {
+        const cinema = await Cinema.findById(cinemaId);
+        if (!cinema) {
+            return next(
+                new ErrorResponse('Cinema with given ID is not found', 404)
+            );
+        }
+
+        req.body.cinema = cinemaId;
+    }
+
+    const hallTypeId = req.body.hallTypeId;
+    if (hallTypeId) {
+        const hallType = await HallType.findById(hallTypeId);
+        if (!hallType) {
+            return next(
+                new ErrorResponse('Hall type with given ID is not found', 404)
+            );
+        }
+
+        req.body.hallType = req.body.hallTypeId;
+    }
+
     hall = await Hall.findByIdAndUpdate(req.params.id, req.body, {
         new: true,
         runValidators: true

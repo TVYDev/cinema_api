@@ -538,10 +538,10 @@ describe('Halls', () => {
             expect(res.status).toBe(404);
         });
 
-        it('should return 404 if cinema object id is not valid', async () => {
+        it('should return 400 if cinema object id is not valid', async () => {
             const res = await exec().send({ cinemaId: 1 });
 
-            expect(res.status).toBe(404);
+            expect(res.status).toBe(400);
         });
 
         it('should return 404 if cinema id does not exists', async () => {
@@ -583,8 +583,10 @@ describe('Halls', () => {
             expect(hallInDb.seatRows).not.toEqual(res.body.data.seatRows);
             expect(hallInDb.seatColumns).toHaveLength(3);
             expect(hallInDb.seatColumns).not.toEqual(res.body.data.seatColumns);
-            expect(hallInDb.hallType).toBe(hallTypeId.toHexString());
-            expect(hallInDb.cinema).toBe(cinemaId.toHexString());
+            expect(hallInDb.hallType.toHexString()).toBe(
+                hallTypeId.toHexString()
+            );
+            expect(hallInDb.cinema.toHexString()).toBe(cinemaId.toHexString());
             expect(hallInDb.updatedAt).not.toBeNull();
         });
 
