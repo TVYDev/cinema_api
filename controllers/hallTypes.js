@@ -1,7 +1,5 @@
 const asyncHandler = require('../middlewares/asyncHandler');
-const ErrorResponse = require('../utils/ErrorResponse');
 const { HallType } = require('../models/HallType');
-const { MovieType } = require('../models/MovieType');
 
 /**
  * @swagger

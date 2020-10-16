@@ -12,34 +12,38 @@ const validateReferences = (references) => async (req, res, next) => {
         let refResource;
         for (ref of references) {
             property = req.body[ref.property] || req.params[ref.param];
-            if (!Array.isArray(property)) {
-                refResource = await ref.model.findOne({
-                    [ref.field]: property
-                });
-                if (!refResource) {
-                    return next(
-                        new ErrorResponse(
-                            `${ref.model.prototype.collection.name} with given field (${ref.field} = ${property}) is not found`,
-                            404
-                        )
-                    );
-                }
-            } else {
-                for (p of property) {
-                    refResource = await ref.model.findOne({ [ref.field]: p });
+            if (property) {
+                if (!Array.isArray(property)) {
+                    refResource = await ref.model.findOne({
+                        [ref.field]: property
+                    });
                     if (!refResource) {
                         return next(
                             new ErrorResponse(
-                                `${ref.model.prototype.collection.name} with given field (${ref.field} = ${p}) is not found`,
+                                `${ref.model.prototype.collection.name} with given field (${ref.field} = ${property}) is not found`,
                                 404
                             )
                         );
                     }
+                } else {
+                    for (p of property) {
+                        refResource = await ref.model.findOne({
+                            [ref.field]: p
+                        });
+                        if (!refResource) {
+                            return next(
+                                new ErrorResponse(
+                                    `${ref.model.prototype.collection.name} with given field (${ref.field} = ${p}) is not found`,
+                                    404
+                                )
+                            );
+                        }
+                    }
                 }
-            }
 
-            if (ref.assignedProperty) {
-                req.body[ref.assignedProperty] = property;
+                if (ref.assignedProperty) {
+                    req.body[ref.assignedProperty] = property;
+                }
             }
         }
         next();
