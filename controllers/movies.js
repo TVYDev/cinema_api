@@ -1,8 +1,5 @@
-const ErrorResponse = require('../utils/ErrorResponse');
 const asyncHandler = require('../middlewares/asyncHandler');
 const { Movie } = require('../models/Movie');
-const { MovieType } = require('../models/MovieType');
-const { Genre } = require('../models/Genre');
 
 /**
  * @swagger
@@ -190,10 +187,6 @@ exports.getMovies = asyncHandler(async (req, res, next) => {
 exports.getMovie = asyncHandler(async (req, res, next) => {
     const movie = await Movie.findById(req.params.id);
 
-    if (!movie) {
-        return next(new ErrorResponse('Movie with given ID is not found', 404));
-    }
-
     res.standard(200, true, 'Success', movie);
 });
 
@@ -260,35 +253,6 @@ exports.getMovie = asyncHandler(async (req, res, next) => {
  *              description: Internal server error
  */
 exports.createMovie = asyncHandler(async (req, res, next) => {
-    const genreIds = req.body.genreIds;
-    let genre;
-    for (id of genreIds) {
-        genre = await Genre.findById(id);
-
-        if (!genre) {
-            return next(
-                new ErrorResponse(
-                    `Genre with given ID (${id}) is not found`,
-                    404
-                )
-            );
-        }
-    }
-
-    const movieTypeId = req.body.movieTypeId;
-    const movieType = await MovieType.findById(movieTypeId);
-    if (!movieType) {
-        return next(
-            new ErrorResponse(
-                `Movie type with given ID (${movieTypeId}) is not found`,
-                404
-            )
-        );
-    }
-
-    req.body.genres = genreIds;
-    req.body.movieType = movieTypeId;
-
     const movie = await Movie.create(req.body);
 
     res.standard(201, true, 'Movie is created successfully', movie);
@@ -356,45 +320,7 @@ exports.createMovie = asyncHandler(async (req, res, next) => {
  *              description: Internal server error
  */
 exports.updateMovie = asyncHandler(async (req, res, next) => {
-    let movie = await Movie.findById(req.params.id);
-
-    if (!movie) {
-        return next(new ErrorResponse('Movie with given ID is not found', 404));
-    }
-
-    const genreIds = req.body.genreIds;
-    if (genreIds) {
-        let genre;
-        for (id of genreIds) {
-            genre = await Genre.findById(id);
-
-            if (!genre) {
-                return next(
-                    new ErrorResponse(
-                        `Genre with given ID (${id}) is not found`,
-                        404
-                    )
-                );
-            }
-        }
-        req.body.genres = genreIds;
-    }
-
-    const movieTypeId = req.body.movieTypeId;
-    if (movieTypeId) {
-        const movieType = await MovieType.findById(movieTypeId);
-        if (!movieType) {
-            return next(
-                new ErrorResponse(
-                    `Movie type with given ID (${movieTypeId}) is not found`,
-                    404
-                )
-            );
-        }
-        req.body.movieType = movieTypeId;
-    }
-
-    movie = await Movie.findByIdAndUpdate(req.params.id, req.body, {
+    const movie = await Movie.findByIdAndUpdate(req.params.id, req.body, {
         new: true,
         runValidators: true
     });
@@ -425,13 +351,7 @@ exports.updateMovie = asyncHandler(async (req, res, next) => {
  *              description: Internal server error
  */
 exports.deleteMovie = asyncHandler(async (req, res, next) => {
-    let movie = await Movie.findById(req.params.id);
-
-    if (!movie) {
-        return next(new ErrorResponse('Movie with given ID is not found', 404));
-    }
-
-    await movie.remove();
+    const movie = await Movie.findByIdAndRemove(req.params.id);
 
     res.standard(200, true, 'Movie is deleted successfully', movie);
 });
