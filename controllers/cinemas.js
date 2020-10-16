@@ -1,6 +1,5 @@
 const { Cinema } = require('../models/Cinema');
 const asyncHandler = require('../middlewares/asyncHandler');
-const ErrorResponse = require('../utils/ErrorResponse');
 const validateFileUpload = require('../helpers/validateFileUpload');
 const storeFileUpload = require('../helpers/storeFileUpload');
 
@@ -81,12 +80,6 @@ exports.getCinemas = asyncHandler(async (req, res, next) => {
  */
 exports.getCinema = asyncHandler(async (req, res, next) => {
     const cinema = await Cinema.findById(req.params.id);
-
-    if (!cinema) {
-        return next(
-            new ErrorResponse('Cinema with given ID is not found', 404)
-        );
-    }
 
     res.standard(200, true, 'Success', cinema);
 });
@@ -173,15 +166,7 @@ exports.createCinema = asyncHandler(async (req, res, next) => {
  *              description: Internal server error
  */
 exports.updateCinema = asyncHandler(async (req, res, next) => {
-    let cinema = await Cinema.findById(req.params.id);
-
-    if (!cinema) {
-        return next(
-            new ErrorResponse('Cinema with given ID is not found', 404)
-        );
-    }
-
-    cinema = await Cinema.findByIdAndUpdate(req.params.id, req.body, {
+    const cinema = await Cinema.findByIdAndUpdate(req.params.id, req.body, {
         new: true,
         runValidators: true
     });
@@ -213,15 +198,7 @@ exports.updateCinema = asyncHandler(async (req, res, next) => {
  *              description: Internal server error
  */
 exports.deleteCinema = asyncHandler(async (req, res, next) => {
-    let cinema = await Cinema.findById(req.params.id);
-
-    if (!cinema) {
-        return next(
-            new ErrorResponse('Cinema with given ID is not found', 404)
-        );
-    }
-
-    await cinema.remove();
+    const cinema = await Cinema.findByIdAndRemove(req.params.id);
 
     res.standard(200, true, 'Cinema is deleted successfully', cinema);
 });
@@ -257,18 +234,11 @@ exports.deleteCinema = asyncHandler(async (req, res, next) => {
  */
 exports.uploadPhotoCinema = asyncHandler(async (req, res, next) => {
     const cinemaId = req.params.id;
-    let cinema = await Cinema.findById(cinemaId);
-
-    if (!cinema) {
-        return next(
-            new ErrorResponse('Cinema with given ID is not found', 404)
-        );
-    }
 
     const file = validateFileUpload(req, next, 'image');
     const fileName = storeFileUpload('cinema_photo', cinemaId, file);
 
-    cinema = await Cinema.findByIdAndUpdate(
+    const cinema = await Cinema.findByIdAndUpdate(
         cinemaId,
         {
             photo: fileName
@@ -310,18 +280,11 @@ exports.uploadPhotoCinema = asyncHandler(async (req, res, next) => {
  */
 exports.uploadLayoutImageCinema = asyncHandler(async (req, res, next) => {
     const cinemaId = req.params.id;
-    let cinema = await Cinema.findById(cinemaId);
-
-    if (!cinema) {
-        return next(
-            new ErrorResponse('Cinema with given ID is not found', 404)
-        );
-    }
 
     const file = validateFileUpload(req, next, 'image');
     const fileName = storeFileUpload('cinema_layout_image', cinemaId, file);
 
-    cinema = await Cinema.findByIdAndUpdate(
+    const cinema = await Cinema.findByIdAndUpdate(
         cinemaId,
         { layoutImage: fileName },
         { new: true }

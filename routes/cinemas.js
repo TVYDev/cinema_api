@@ -16,6 +16,7 @@ const {
     validateOnUpdateCinema
 } = require('../models/Cinema');
 const validateRequestBody = require('../middlewares/validateRequestBody');
+const validateReferences = require('../middlewares/validateReferences');
 const hallsRouter = require('./halls');
 
 // Re-route to other resource routers
@@ -28,12 +29,58 @@ router
 
 router
     .route('/:id')
-    .get(getCinema)
-    .put(validateRequestBody(validateOnUpdateCinema), updateCinema)
-    .delete(deleteCinema);
+    .get(
+        validateReferences([
+            {
+                model: Cinema,
+                field: '_id',
+                param: 'id'
+            }
+        ]),
+        getCinema
+    )
+    .put(
+        validateRequestBody(validateOnUpdateCinema),
+        validateReferences([
+            {
+                model: Cinema,
+                field: '_id',
+                param: 'id'
+            }
+        ]),
+        updateCinema
+    )
+    .delete(
+        validateReferences([
+            {
+                model: Cinema,
+                field: '_id',
+                param: 'id'
+            }
+        ]),
+        deleteCinema
+    );
 
-router.route('/:id/photo').put(uploadPhotoCinema);
+router.route('/:id/photo').put(
+    validateReferences([
+        {
+            model: Cinema,
+            field: '_id',
+            param: 'id'
+        }
+    ]),
+    uploadPhotoCinema
+);
 
-router.route('/:id/layout-image').put(uploadLayoutImageCinema);
+router.route('/:id/layout-image').put(
+    validateReferences([
+        {
+            model: Cinema,
+            field: '_id',
+            param: 'id'
+        }
+    ]),
+    uploadLayoutImageCinema
+);
 
 module.exports = router;
