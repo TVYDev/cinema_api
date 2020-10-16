@@ -157,7 +157,7 @@ describe('Movies', () => {
         });
 
         const exec = () =>
-            request(server).get(`/api/v1/movie-tpyes/${movieTypeId}/movies`);
+            request(server).get(`/api/v1/movie-types/${movieTypeId}/movies`);
 
         it('should return 404 if object ID of movie type is not valid', async () => {
             movieTypeId = 1;
@@ -824,12 +824,14 @@ describe('Movies', () => {
             expect(movieInDb.title).toBe('qwe');
             expect(movieInDb.description).toBe('test qwe');
 
-            expect(movieInDb.genres).toContain(genreId.toHexString());
-            expect(movieInDb.genres).not.toContain('5f85b4bb8be19d2788193471');
-            expect(movieInDb.genres).not.toContain('5f85b58f15173c139c7476b7');
+            expect(movieInDb.genres).toHaveLength(1);
+            expect(movieInDb.genres[0].toHexString()).toBe(
+                genreId.toHexString()
+            );
 
-            expect(movieInDb.movieType).toBe(movieTypeId.toHexString());
-            expect(movieInDb.movieType).not.toBe('5f84030ea795143ed451ddbf');
+            expect(movieInDb.movieType.toHexString()).toBe(
+                movieTypeId.toHexString()
+            );
 
             expect(movieInDb.updatedAt).not.toBeNull();
         });

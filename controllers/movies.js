@@ -362,6 +362,38 @@ exports.updateMovie = asyncHandler(async (req, res, next) => {
         return next(new ErrorResponse('Movie with given ID is not found', 404));
     }
 
+    const genreIds = req.body.genreIds;
+    if (genreIds) {
+        let genre;
+        for (id of genreIds) {
+            genre = await Genre.findById(id);
+
+            if (!genre) {
+                return next(
+                    new ErrorResponse(
+                        `Genre with given ID (${id}) is not found`,
+                        404
+                    )
+                );
+            }
+        }
+        req.body.genres = genreIds;
+    }
+
+    const movieTypeId = req.body.movieTypeId;
+    if (movieTypeId) {
+        const movieType = await MovieType.findById(movieTypeId);
+        if (!movieType) {
+            return next(
+                new ErrorResponse(
+                    `Movie type with given ID (${movieTypeId}) is not found`,
+                    404
+                )
+            );
+        }
+        req.body.movieType = movieTypeId;
+    }
+
     movie = await Movie.findByIdAndUpdate(req.params.id, req.body, {
         new: true,
         runValidators: true
