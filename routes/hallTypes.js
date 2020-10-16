@@ -15,6 +15,7 @@ const {
 const { MovieType } = require('../models/MovieType');
 const listJsonResponse = require('../middlewares/listJsonResponse');
 const pathParamFilters = require('../middlewares/pathParamsFilter');
+const validateReferences = require('../middlewares/validateReferences');
 const router = express.Router({ mergeParams: true });
 const hallsRouter = require('./halls');
 
@@ -34,12 +35,57 @@ router
         listJsonResponse(HallType),
         getHallTypes
     )
-    .post(validateRequestBody(validateOnCreateHallType), createHallType);
+    .post(
+        validateRequestBody(validateOnCreateHallType),
+        validateReferences([
+            {
+                model: MovieType,
+                field: '_id',
+                property: 'compatibleMovieTypeIds',
+                assignedProperty: 'compatibleMovieTypes'
+            }
+        ]),
+        createHallType
+    );
 
 router
     .route('/:id')
-    .get(getHallType)
-    .delete(deleteHallType)
-    .put(validateRequestBody(validateOnUpdateHallType), updateHallType);
+    .get(
+        validateReferences([
+            {
+                model: HallType,
+                field: '_id',
+                param: 'id'
+            }
+        ]),
+        getHallType
+    )
+    .delete(
+        validateReferences([
+            {
+                model: HallType,
+                field: '_id',
+                param: 'id'
+            }
+        ]),
+        deleteHallType
+    )
+    .put(
+        validateRequestBody(validateOnUpdateHallType),
+        validateReferences([
+            {
+                model: HallType,
+                field: '_id',
+                param: 'id'
+            },
+            {
+                model: MovieType,
+                field: '_id',
+                property: 'compatibleMovieTypeIds',
+                assignedProperty: 'compatibleMovieTypes'
+            }
+        ]),
+        updateHallType
+    );
 
 module.exports = router;

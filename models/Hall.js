@@ -58,7 +58,8 @@ const validationSchema = {
         Joi.alternatives().try(Joi.string(), Joi.number())
     ),
     locationImage: Joi.string(),
-    hallTypeId: Joi.objectid()
+    hallTypeId: Joi.objectid(),
+    cinemaId: Joi.objectid()
 };
 
 function validateOnCreateHall(hall) {
@@ -67,6 +68,7 @@ function validateOnCreateHall(hall) {
     tmpValidationSchema.seatRows = tmpValidationSchema.seatRows.required();
     tmpValidationSchema.seatColumns = tmpValidationSchema.seatColumns.required();
     tmpValidationSchema.hallTypeId = tmpValidationSchema.hallTypeId.required();
+    delete tmpValidationSchema.cinemaId;
     const schema = Joi.object(tmpValidationSchema);
 
     return schema.validate(hall);

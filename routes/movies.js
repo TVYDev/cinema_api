@@ -9,12 +9,14 @@ const {
 const validateRequestBody = require('../middlewares/validateRequestBody');
 const listJsonResponse = require('../middlewares/listJsonResponse');
 const pathParamsFilter = require('../middlewares/pathParamsFilter');
+const validateReferences = require('../middlewares/validateReferences');
 const {
     Movie,
     validateOnCreateMovie,
     validateOnUpdateMovie
 } = require('../models/Movie');
 const { Genre } = require('../models/Genre');
+const { MovieType } = require('../models/MovieType');
 const router = express.Router({ mergeParams: true });
 
 router
@@ -25,17 +27,79 @@ router
                 field: 'genres',
                 param: 'genreId',
                 model: Genre
+            },
+            {
+                field: 'movieType',
+                param: 'movieTypeId',
+                model: MovieType
             }
         ]),
         listJsonResponse(Movie),
         getMovies
     )
-    .post(validateRequestBody(validateOnCreateMovie), createMovie);
+    .post(
+        validateRequestBody(validateOnCreateMovie),
+        validateReferences([
+            {
+                model: Genre,
+                field: '_id',
+                property: 'genreIds',
+                assignedProperty: 'genres'
+            },
+            {
+                model: MovieType,
+                field: '_id',
+                property: 'movieTypeId',
+                assignedProperty: 'movieType'
+            }
+        ]),
+        createMovie
+    );
 
 router
     .route('/:id')
-    .get(getMovie)
-    .put(validateRequestBody(validateOnUpdateMovie), updateMovie)
-    .delete(deleteMovie);
+    .get(
+        validateReferences([
+            {
+                model: Movie,
+                field: '_id',
+                param: 'id'
+            }
+        ]),
+        getMovie
+    )
+    .put(
+        validateRequestBody(validateOnUpdateMovie),
+        validateReferences([
+            {
+                model: Movie,
+                field: '_id',
+                param: 'id'
+            },
+            {
+                model: Genre,
+                field: '_id',
+                property: 'genreIds',
+                assignedProperty: 'genres'
+            },
+            {
+                model: MovieType,
+                field: '_id',
+                property: 'movieTypeId',
+                assignedProperty: 'movieType'
+            }
+        ]),
+        updateMovie
+    )
+    .delete(
+        validateReferences([
+            {
+                model: Movie,
+                field: '_id',
+                param: 'id'
+            }
+        ]),
+        deleteMovie
+    );
 
 module.exports = router;

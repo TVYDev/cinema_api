@@ -279,6 +279,7 @@ describe('Movie Types', () => {
             expect(res.status).toBe(200);
             expect(movieTypeInDb.name).toBe('qwe');
             expect(movieTypeInDb.description).toBe('qwe test');
+            expect(movieTypeInDb.updatedAt).not.toBeNull();
         });
 
         it('should return 200, and return the updated movie type if request is valid', async () => {

@@ -1,7 +1,5 @@
 const asyncHandler = require('../middlewares/asyncHandler');
-const ErrorResponse = require('../utils/ErrorResponse');
 const { HallType } = require('../models/HallType');
-const { MovieType } = require('../models/MovieType');
 
 /**
  * @swagger
@@ -138,12 +136,6 @@ exports.getHallTypes = asyncHandler(async (req, res, next) => {
 exports.getHallType = asyncHandler(async (req, res, next) => {
     const hallType = await HallType.findById(req.params.id);
 
-    if (!hallType) {
-        return next(
-            new ErrorResponse('Hall type with given ID is not found', 404)
-        );
-    }
-
     res.standard(200, true, 'Success', hallType);
 });
 
@@ -187,22 +179,6 @@ exports.getHallType = asyncHandler(async (req, res, next) => {
  *              description: Internal server error
  */
 exports.createHallType = asyncHandler(async (req, res, next) => {
-    const compatibleMovieTypeIds = req.body.compatibleMovieTypeIds;
-    let movieType;
-    for (id of compatibleMovieTypeIds) {
-        movieType = await MovieType.findById(id);
-
-        if (!movieType) {
-            return next(
-                new ErrorResponse(
-                    `Movie type with given ID (${id}) is not found`,
-                    404
-                )
-            );
-        }
-    }
-    req.body.compatibleMovieTypes = compatibleMovieTypeIds;
-
     const hallType = await HallType.create(req.body);
 
     res.standard(201, true, 'Hall type is created successfully', hallType);
@@ -246,15 +222,7 @@ exports.createHallType = asyncHandler(async (req, res, next) => {
  *              description: Internal server error
  */
 exports.updateHallType = asyncHandler(async (req, res, next) => {
-    let hallType = await HallType.findById(req.params.id);
-
-    if (!hallType) {
-        return next(
-            new ErrorResponse('Hall type with given ID is not found', 404)
-        );
-    }
-
-    hallType = await HallType.findByIdAndUpdate(req.params.id, req.body, {
+    const hallType = await HallType.findByIdAndUpdate(req.params.id, req.body, {
         new: true,
         runValidators: true
     });
@@ -286,15 +254,7 @@ exports.updateHallType = asyncHandler(async (req, res, next) => {
  *              description: Internal server error
  */
 exports.deleteHallType = asyncHandler(async (req, res, next) => {
-    const hallType = await HallType.findById(req.params.id);
-
-    if (!hallType) {
-        return next(
-            new ErrorResponse('Hall type with given ID is not found', 404)
-        );
-    }
-
-    await hallType.remove();
+    const hallType = await HallType.findByIdAndRemove(req.params.id);
 
     res.standard(200, true, 'Hall type is deleted succesfully', hallType);
 });

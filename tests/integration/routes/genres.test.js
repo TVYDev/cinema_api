@@ -249,6 +249,7 @@ describe('Genres', () => {
             expect(res.status).toBe(200);
             expect(genreInDb.name).toBe('qwe');
             expect(genreInDb.description).toBe('qwe test');
+            expect(genreInDb.updatedAt).not.toBeNull();
         });
 
         it('should return 200, and return the updated genre if request is valid', async () => {

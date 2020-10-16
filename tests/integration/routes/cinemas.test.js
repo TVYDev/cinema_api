@@ -260,6 +260,7 @@ describe('Cinemas', () => {
             expect(cinemaInDb.address).toBe('Takhmao, Cambodia');
             expect(cinemaInDb.openingHours).toBe('8AM - 9PM');
             expect(cinemaInDb.location).not.toEqual(res.body.data.location);
+            expect(cinemaInDb.updatedAt).not.toBeNull();
         });
 
         it('should return 200, and return the updated cinema if request is valid', async () => {
@@ -276,6 +277,7 @@ describe('Cinemas', () => {
                 'Takhmao, Cambodia'
             );
             expect(res.body.data).toHaveProperty('openingHours', '8AM - 9PM');
+            expect(res.body.data).toHaveProperty('updatedAt');
         });
     });
 

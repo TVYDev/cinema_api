@@ -446,6 +446,10 @@ describe('Halls', () => {
     describe('PUT /api/v1/halls/:id', () => {
         let hall;
         let hallId;
+        let hallType;
+        let hallTypeId;
+        let cinema;
+        let cinemaId;
 
         beforeEach(async () => {
             hall = await Hall.create({
@@ -457,10 +461,28 @@ describe('Halls', () => {
             });
 
             hallId = hall._id;
+
+            hallType = await HallType.create({
+                name: '2D/3D Hall',
+                description: 'Equipped with 2D/3D technology',
+                compatibleMovieTypes: [mongoose.Types.ObjectId()]
+            });
+
+            hallTypeId = hallType._id;
+
+            cinema = await Cinema.create({
+                name: 'Delee Cinma Phnom Penh',
+                address: 'Toul Kork, Phnom Penh, Cambodia',
+                openingHours: '7AM - 10PM'
+            });
+
+            cinemaId = cinema._id;
         });
 
         afterEach(async () => {
             await hall.remove();
+            await hallType.remove();
+            await cinema.remove();
         });
 
         const exec = () => request(server).put(`/api/v1/halls/${hallId}`);
@@ -502,7 +524,35 @@ describe('Halls', () => {
             expect(res.status).toBe(400);
         });
 
-        it('should return 404 if object ID is not valid', async () => {
+        it('should return 400 if hallTypeId is not a valid object Id', async () => {
+            const res = await exec().send({ hallTypeId: 1 });
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 404 if hallTypeId does not exist', async () => {
+            const res = await exec().send({
+                hallTypeId: mongoose.Types.ObjectId()
+            });
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 400 if cinema object id is not valid', async () => {
+            const res = await exec().send({ cinemaId: 1 });
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 404 if cinema id does not exists', async () => {
+            const res = await exec().send({
+                cinemaId: mongoose.Types.ObjectId()
+            });
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 404 if object ID of hall is not valid', async () => {
             hallId = 1;
             const res = await exec().send({});
 
@@ -520,7 +570,9 @@ describe('Halls', () => {
             const res = await exec().send({
                 name: 'Hall qwe',
                 seatRows: ['A', 'B'],
-                seatColumns: ['I', 'II', 'III']
+                seatColumns: ['I', 'II', 'III'],
+                hallTypeId,
+                cinemaId
             });
 
             const hallInDb = await Hall.findById(hallId);
@@ -531,24 +583,32 @@ describe('Halls', () => {
             expect(hallInDb.seatRows).not.toEqual(res.body.data.seatRows);
             expect(hallInDb.seatColumns).toHaveLength(3);
             expect(hallInDb.seatColumns).not.toEqual(res.body.data.seatColumns);
+            expect(hallInDb.hallType.toHexString()).toBe(
+                hallTypeId.toHexString()
+            );
+            expect(hallInDb.cinema.toHexString()).toBe(cinemaId.toHexString());
+            expect(hallInDb.updatedAt).not.toBeNull();
         });
 
         it('should return 200, and return the updated hall if the request is valid', async () => {
             const res = await exec().send({
                 name: 'Hall qwe',
                 seatRows: ['A', 'B'],
-                seatColumns: ['I', 'II', 'III']
+                seatColumns: ['I', 'II', 'III'],
+                hallTypeId,
+                cinemaId
             });
 
+            const { data } = res.body;
+
             expect(res.status).toBe(200);
-            expect(res.body.data).toHaveProperty('_id', hallId.toHexString());
-            expect(res.body.data).toHaveProperty('name', 'Hall qwe');
-            expect(res.body.data).toHaveProperty('seatRows', ['A', 'B']);
-            expect(res.body.data).toHaveProperty('seatColumns', [
-                'I',
-                'II',
-                'III'
-            ]);
+            expect(data).toHaveProperty('_id', hallId.toHexString());
+            expect(data).toHaveProperty('name', 'Hall qwe');
+            expect(data).toHaveProperty('seatRows', ['A', 'B']);
+            expect(data).toHaveProperty('seatColumns', ['I', 'II', 'III']);
+            expect(data).toHaveProperty('hallType');
+            expect(data).toHaveProperty('cinema');
+            expect(data).toHaveProperty('updatedAt');
         });
     });
 

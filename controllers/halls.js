@@ -1,8 +1,5 @@
 const asyncHandler = require('../middlewares/asyncHandler');
-const ErrorResponse = require('../utils/ErrorResponse');
 const { Hall } = require('../models/Hall');
-const { Cinema } = require('../models/Cinema');
-const { HallType } = require('../models/HallType');
 const validateFileUpload = require('../helpers/validateFileUpload');
 const storeFileUpload = require('../helpers/storeFileUpload');
 
@@ -198,10 +195,6 @@ exports.getHalls = asyncHandler(async (req, res, next) => {
 exports.getHall = asyncHandler(async (req, res, next) => {
     const hall = await Hall.findById(req.params.id);
 
-    if (!hall) {
-        return next(new ErrorResponse('Hall with given ID is not found', 404));
-    }
-
     res.standard(200, true, 'Success', hall);
 });
 
@@ -259,25 +252,6 @@ exports.getHall = asyncHandler(async (req, res, next) => {
  *              description: Internal server error
  */
 exports.addHall = asyncHandler(async (req, res, next) => {
-    const cinemaId = req.params.cinemaId;
-    const cinema = await Cinema.findById(cinemaId);
-    req.body.cinema = cinemaId;
-
-    if (!cinema) {
-        return next(
-            new ErrorResponse('Cinema with given ID is not found', 404)
-        );
-    }
-
-    const hallType = await HallType.findById(req.body.hallTypeId);
-
-    if (!hallType) {
-        return next(
-            new ErrorResponse('Hall type with given ID is not found', 404)
-        );
-    }
-    req.body.hallType = req.body.hallTypeId;
-
     const hall = await Hall.create(req.body);
 
     res.standard(201, true, 'Hall is added to cinema successfully', hall);
@@ -328,13 +302,7 @@ exports.addHall = asyncHandler(async (req, res, next) => {
  *              description: Internal server error
  */
 exports.updateHall = asyncHandler(async (req, res, next) => {
-    let hall = await Hall.findById(req.params.id);
-
-    if (!hall) {
-        return next(new ErrorResponse('Hall with given ID is not found', 404));
-    }
-
-    hall = await Hall.findByIdAndUpdate(req.params.id, req.body, {
+    const hall = await Hall.findByIdAndUpdate(req.params.id, req.body, {
         new: true,
         runValidators: true
     });
@@ -367,13 +335,7 @@ exports.updateHall = asyncHandler(async (req, res, next) => {
  *              description: Internal server error
  */
 exports.deleteHall = asyncHandler(async (req, res, next) => {
-    let hall = await Hall.findById(req.params.id);
-
-    if (!hall) {
-        return next(new ErrorResponse('Hall with given ID is not found', 404));
-    }
-
-    await hall.remove();
+    const hall = await Hall.findByIdAndRemove(req.params.id);
 
     res.standard(200, true, 'Hall is deleted succesfully', hall);
 });
@@ -410,16 +372,11 @@ exports.deleteHall = asyncHandler(async (req, res, next) => {
  */
 exports.uploadLocationImageHall = asyncHandler(async (req, res, next) => {
     const hallId = req.params.id;
-    let hall = await Hall.findById(hallId);
-
-    if (!hall) {
-        return next(new ErrorResponse('Hall with given ID is not found', 404));
-    }
 
     const file = validateFileUpload(req, next, 'image');
     const fileName = storeFileUpload('hall_location_image', hallId, file);
 
-    hall = await Hall.findByIdAndUpdate(
+    const hall = await Hall.findByIdAndUpdate(
         hallId,
         {
             locationImage: fileName
