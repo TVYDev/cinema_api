@@ -63,11 +63,11 @@ APIs for cinema management including CRUD on cinemas, halls, movies, buying tick
 
 ### 🔤 Languages
 
--   [ADMIN] Create a language (name)
--   [ADMIN] Update a language
--   [ADMIN] Get all languages
--   [ADMIN] Get a single language
--   [ADMIN] Delete a language
+-   ✅ [ADMIN] Create a language (name)
+-   ✅ [ADMIN] Update a language
+-   ✅ [ADMIN] Get all languages
+-   ✅ [ADMIN] Get a single language
+-   ✅ [ADMIN] Delete a language
 
 ### 🚩 Countries
 
