@@ -48,7 +48,7 @@ APIs for cinema management including CRUD on cinemas, halls, movies, buying tick
 -   ✅ [Admin] Create a movie type (name: 2D, 3D, 4D, description)
 -   ✅ [Admin] Update a movie type
 -   ✅ [Admin] Get all movie types
--   [Admin] Get all movies of a movie type
+-   ✅ [Admin] Get all movies of a movie type
 -   ✅ [Admin] Get a single movie type
 -   ✅ [Admin] Delete a movie type
 

@@ -32,7 +32,7 @@ router
                 model: MovieType
             }
         ]),
-        listJsonResponse(HallType),
+        listJsonResponse(HallType, ['compatibleMovieTypes']),
         getHallTypes
     )
     .post(

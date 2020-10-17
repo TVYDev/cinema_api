@@ -34,7 +34,7 @@ router
                 model: MovieType
             }
         ]),
-        listJsonResponse(Movie),
+        listJsonResponse(Movie, ['genres', 'movieType']),
         getMovies
     )
     .post(

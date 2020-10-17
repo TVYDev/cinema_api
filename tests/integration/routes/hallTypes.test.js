@@ -46,6 +46,9 @@ describe('Hall Types', () => {
                         'Equipped with motion and comfortable seats'
                 )
             ).toBeTruthy();
+            expect(
+                items.some((h) => h.compatibleMovieTypes !== undefined)
+            ).toBeTruthy();
             expect(items).toHaveLength(2);
         });
     });
@@ -117,6 +120,9 @@ describe('Hall Types', () => {
             expect(res.status).toBe(200);
             expect(items.some((h) => h.name === '2D/3D Hall')).toBeTruthy();
             expect(items.some((h) => h.name === '4DX Hall')).toBeTruthy();
+            expect(
+                items.some((h) => h.compatibleMovieTypes !== undefined)
+            ).toBeTruthy();
             expect(items).toHaveLength(2);
         });
 
@@ -128,6 +134,9 @@ describe('Hall Types', () => {
             expect(res.status).toBe(200);
             expect(items.some((h) => h.name === '2D/3D Hall')).toBeTruthy();
             expect(items.some((h) => h.name === '4DX Hall')).not.toBeTruthy();
+            expect(
+                items.some((h) => h.compatibleMovieTypes !== undefined)
+            ).toBeTruthy();
             expect(items).toHaveLength(1);
         });
     });
@@ -178,6 +187,7 @@ describe('Hall Types', () => {
                 'description',
                 'Equipped with motion and comfortable seats'
             );
+            expect(res.body.data).toHaveProperty('compatibleMovieTypes');
         });
     });
 

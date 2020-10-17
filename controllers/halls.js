@@ -193,7 +193,9 @@ exports.getHalls = asyncHandler(async (req, res, next) => {
  *              description: Internal server error
  */
 exports.getHall = asyncHandler(async (req, res, next) => {
-    const hall = await Hall.findById(req.params.id);
+    const hall = await Hall.findById(req.params.id)
+        .populate('cinema')
+        .populate('hallType');
 
     res.standard(200, true, 'Success', hall);
 });

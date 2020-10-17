@@ -41,6 +41,12 @@ const listJsonResponse = (model, populate = null) => async (req, res, next) => {
             query = query.sort('-createdAt');
         }
 
+        if (populate) {
+            for (p of populate) {
+                query = query.populate(p);
+            }
+        }
+
         if (hasPaging) {
             // Pagination
             const page = parseInt(req.query.page, 10) || 1;

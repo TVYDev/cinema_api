@@ -185,7 +185,9 @@ exports.getMovies = asyncHandler(async (req, res, next) => {
  *              description: Internal server error
  */
 exports.getMovie = asyncHandler(async (req, res, next) => {
-    const movie = await Movie.findById(req.params.id);
+    const movie = await Movie.findById(req.params.id)
+        .populate('genres')
+        .populate('movieType');
 
     res.standard(200, true, 'Success', movie);
 });

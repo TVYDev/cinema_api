@@ -134,7 +134,9 @@ exports.getHallTypes = asyncHandler(async (req, res, next) => {
  *              description: Internal server error
  */
 exports.getHallType = asyncHandler(async (req, res, next) => {
-    const hallType = await HallType.findById(req.params.id);
+    const hallType = await HallType.findById(req.params.id).populate(
+        'compatibleMovieTypes'
+    );
 
     res.standard(200, true, 'Success', hallType);
 });
