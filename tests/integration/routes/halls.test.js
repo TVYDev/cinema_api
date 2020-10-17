@@ -2,7 +2,6 @@ const request = require('supertest');
 const { Hall } = require('../../../models/Hall');
 const { Cinema } = require('../../../models/Cinema');
 const { HallType } = require('../../../models/HallType');
-const { MovieType } = require('../../../models/MovieType');
 const mongoose = require('mongoose');
 const fs = require('fs');
 let server;
@@ -48,6 +47,8 @@ describe('Halls', () => {
             expect(items.some((h) => h.seatColumns.length === 4)).toBeTruthy();
             expect(items.some((h) => h.seatRows.length === 8)).toBeTruthy();
             expect(items.some((h) => h.seatColumns.length === 7)).toBeTruthy();
+            expect(items.some((h) => h.cinema !== undefined)).toBeTruthy();
+            expect(items.some((h) => h.hallType !== undefined)).toBeTruthy();
 
             expect(items.length).toBe(2);
         });
@@ -117,6 +118,8 @@ describe('Halls', () => {
             expect(items.some((h) => h.seatColumns.length === 4)).toBeTruthy();
             expect(items.some((h) => h.seatRows.length === 8)).toBeTruthy();
             expect(items.some((h) => h.seatColumns.length === 7)).toBeTruthy();
+            expect(items.some((h) => h.cinema !== undefined)).toBeTruthy();
+            expect(items.some((h) => h.hallType !== undefined)).toBeTruthy();
 
             expect(items.length).toBe(2);
         });
@@ -179,6 +182,8 @@ describe('Halls', () => {
             expect(res.status).toBe(200);
             expect(items.some((h) => h.name === 'Hall One')).toBeTruthy();
             expect(items.some((h) => h.name === 'Hall Two')).toBeTruthy();
+            expect(items.some((h) => h.cinema !== undefined)).toBeTruthy();
+            expect(items.some((h) => h.hallType !== undefined)).toBeTruthy();
 
             expect(items).toHaveLength(2);
         });

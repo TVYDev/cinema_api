@@ -57,6 +57,8 @@ describe('Movies', () => {
             expect(res.status).toBe(200);
             expect(items.some((m) => m.title === 'Spider man')).toBeTruthy();
             expect(items.some((m) => m.title === 'Toy Story')).toBeTruthy();
+            expect(items.some((m) => m.genres !== undefined)).toBeTruthy();
+            expect(items.some((m) => m.movieType !== undefined)).toBeTruthy();
             expect(items).toHaveLength(2);
         });
     });
@@ -136,6 +138,8 @@ describe('Movies', () => {
             ).toBeTruthy();
             expect(items.some((m) => m.title === 'Spider man')).toBeTruthy();
             expect(items.some((m) => m.title === 'Toy Story')).toBeTruthy();
+            expect(items.some((m) => m.genres !== undefined)).toBeTruthy();
+            expect(items.some((m) => m.movieType !== undefined)).toBeTruthy();
             expect(items).toHaveLength(2);
         });
     });
@@ -228,6 +232,8 @@ describe('Movies', () => {
             ).toBeTruthy();
             expect(items.some((m) => m.title === 'Spider man')).toBeTruthy();
             expect(items.some((m) => m.title === 'Toy Story')).toBeTruthy();
+            expect(items.some((m) => m.genres !== undefined)).toBeTruthy();
+            expect(items.some((m) => m.movieType !== undefined)).toBeTruthy();
             expect(items).toHaveLength(2);
         });
     });
@@ -285,6 +291,8 @@ describe('Movies', () => {
                 'description',
                 'Superhero with climbing abilities'
             );
+            expect(res.body.data).toHaveProperty('genres');
+            expect(res.body.data).toHaveProperty('movieType');
             expect(res.body.data).toHaveProperty('createdAt');
         });
     });
