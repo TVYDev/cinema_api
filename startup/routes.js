@@ -8,6 +8,7 @@ const hallTypes = require('../routes/hallTypes');
 const movieTypes = require('../routes/movieTypes');
 const genres = require('../routes/genres');
 const movies = require('../routes/movies');
+const languages = require('../routes/languages');
 
 module.exports = function (app) {
     app.use(express.json());
@@ -19,5 +20,6 @@ module.exports = function (app) {
     app.use('/api/v1/movie-types', movieTypes);
     app.use('/api/v1/genres', genres);
     app.use('/api/v1/movies', movies);
+    app.use('/api/v1/languages', languages);
     app.use(errorHandler);
 };
