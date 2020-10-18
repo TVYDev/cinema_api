@@ -282,6 +282,283 @@ describe('Movies', () => {
         });
     });
 
+    describe('GET /api/v1/languages/spoken/:spokenLanguageId/movies', () => {
+        let language;
+        let languageId;
+
+        beforeEach(async () => {
+            language = await Language.create({ name: 'Khmer' });
+
+            languageId = language._id;
+        });
+        afterEach(async () => {
+            await language.remove();
+        });
+
+        const exec = () =>
+            request(server).get(
+                `/api/v1/languages/spoken/${languageId}/movies`
+            );
+
+        it('should return 404 if object ID of spoken language ID is not valid', async () => {
+            languageId = 1;
+            const res = await exec();
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 404 if object ID of spoken language ID does not exist', async () => {
+            languageId = mongoose.Types.ObjectId();
+            const res = await exec();
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 200, and return the movies of the spoken language if request is valid', async () => {
+            await Movie.create([
+                {
+                    _id: '5f867dafee5d303788cfbb90',
+                    title: 'Spider man',
+                    description: 'Superhero with climbing abilities',
+                    releasedDate: '2020-01-23',
+                    ticketPrice: 2.5,
+                    durationInMinutes: 120,
+                    genres: [mongoose.Types.ObjectId()],
+                    movieType: mongoose.Types.ObjectId(),
+                    trailerUrl: 'https://youtu.be/dR3cjXncoSk',
+                    posterUrl:
+                        'https://i.pinimg.com/originals/e6/a2/5a/e6a25a2855e741f7461fe1698db3153a.jpg',
+                    spokenLanguage: languageId,
+                    subtitleLanguage: mongoose.Types.ObjectId(),
+                    country: mongoose.Types.ObjectId()
+                },
+                {
+                    _id: '5f867f6526b4c50090a9cf83',
+                    title: 'Toy Story',
+                    description: 'Animated toys of a boy',
+                    releasedDate: '2019-10-01',
+                    ticketPrice: 2,
+                    durationInMinutes: 80,
+                    genres: [mongoose.Types.ObjectId()],
+                    movieType: mongoose.Types.ObjectId(),
+                    trailerUrl: 'https://youtu.be/wmiIUN-7qhE',
+                    posterUrl:
+                        'https://images-na.ssl-images-amazon.com/images/I/714hR8KCqaL._AC_SL1308_.jpg',
+                    spokenLanguage: languageId,
+                    subtitleLanguage: mongoose.Types.ObjectId(),
+                    country: mongoose.Types.ObjectId()
+                }
+            ]);
+
+            const res = await exec();
+            const { items } = res.body.data;
+
+            expect(res.status).toBe(200);
+            expect(
+                items.some((m) => m._id === '5f867dafee5d303788cfbb90')
+            ).toBeTruthy();
+            expect(
+                items.some((m) => m._id === '5f867f6526b4c50090a9cf83')
+            ).toBeTruthy();
+            expect(items.some((m) => m.title === 'Spider man')).toBeTruthy();
+            expect(items.some((m) => m.title === 'Toy Story')).toBeTruthy();
+            expect(items.some((m) => m.genres !== undefined)).toBeTruthy();
+            expect(items.some((m) => m.movieType !== undefined)).toBeTruthy();
+            expect(
+                items.some((m) => m.spokenLanguage !== undefined)
+            ).toBeTruthy();
+            expect(
+                items.some((m) => m.subtitleLanguage !== undefined)
+            ).toBeTruthy();
+            expect(items.some((m) => m.country !== undefined)).toBeTruthy();
+            expect(items).toHaveLength(2);
+        });
+    });
+
+    describe('GET /api/v1/languages/subtitle/:subtitleLanguageId/movies', () => {
+        let language;
+        let languageId;
+
+        beforeEach(async () => {
+            language = await Language.create({ name: 'Khmer' });
+
+            languageId = language._id;
+        });
+        afterEach(async () => {
+            await language.remove();
+        });
+
+        const exec = () =>
+            request(server).get(
+                `/api/v1/languages/subtitle/${languageId}/movies`
+            );
+
+        it('should return 404 if object ID of subtitle language ID is not valid', async () => {
+            languageId = 1;
+            const res = await exec();
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 404 if object ID of subtitle language ID does not exist', async () => {
+            languageId = mongoose.Types.ObjectId();
+            const res = await exec();
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 200, and return the movies of the subtitle language if request is valid', async () => {
+            await Movie.create([
+                {
+                    _id: '5f867dafee5d303788cfbb90',
+                    title: 'Spider man',
+                    description: 'Superhero with climbing abilities',
+                    releasedDate: '2020-01-23',
+                    ticketPrice: 2.5,
+                    durationInMinutes: 120,
+                    genres: [mongoose.Types.ObjectId()],
+                    movieType: mongoose.Types.ObjectId(),
+                    trailerUrl: 'https://youtu.be/dR3cjXncoSk',
+                    posterUrl:
+                        'https://i.pinimg.com/originals/e6/a2/5a/e6a25a2855e741f7461fe1698db3153a.jpg',
+                    spokenLanguage: mongoose.Types.ObjectId(),
+                    subtitleLanguage: languageId,
+                    country: mongoose.Types.ObjectId()
+                },
+                {
+                    _id: '5f867f6526b4c50090a9cf83',
+                    title: 'Toy Story',
+                    description: 'Animated toys of a boy',
+                    releasedDate: '2019-10-01',
+                    ticketPrice: 2,
+                    durationInMinutes: 80,
+                    genres: [mongoose.Types.ObjectId()],
+                    movieType: mongoose.Types.ObjectId(),
+                    trailerUrl: 'https://youtu.be/wmiIUN-7qhE',
+                    posterUrl:
+                        'https://images-na.ssl-images-amazon.com/images/I/714hR8KCqaL._AC_SL1308_.jpg',
+                    spokenLanguage: mongoose.Types.ObjectId(),
+                    subtitleLanguage: languageId,
+                    country: mongoose.Types.ObjectId()
+                }
+            ]);
+
+            const res = await exec();
+            const { items } = res.body.data;
+
+            expect(res.status).toBe(200);
+            expect(
+                items.some((m) => m._id === '5f867dafee5d303788cfbb90')
+            ).toBeTruthy();
+            expect(
+                items.some((m) => m._id === '5f867f6526b4c50090a9cf83')
+            ).toBeTruthy();
+            expect(items.some((m) => m.title === 'Spider man')).toBeTruthy();
+            expect(items.some((m) => m.title === 'Toy Story')).toBeTruthy();
+            expect(items.some((m) => m.genres !== undefined)).toBeTruthy();
+            expect(items.some((m) => m.movieType !== undefined)).toBeTruthy();
+            expect(
+                items.some((m) => m.spokenLanguage !== undefined)
+            ).toBeTruthy();
+            expect(
+                items.some((m) => m.subtitleLanguage !== undefined)
+            ).toBeTruthy();
+            expect(items.some((m) => m.country !== undefined)).toBeTruthy();
+            expect(items).toHaveLength(2);
+        });
+    });
+
+    describe('GET /api/v1/countries/:countryId/movies', () => {
+        let country;
+        let countryId;
+
+        beforeEach(async () => {
+            country = await Country.create({ name: 'Cambodai', code: 'KH' });
+
+            countryId = country._id;
+        });
+        afterEach(async () => {
+            await country.remove();
+        });
+
+        const exec = () =>
+            request(server).get(`/api/v1/countries/${countryId}/movies`);
+
+        it('should return 404 if object ID of country ID is not valid', async () => {
+            countryId = 1;
+            const res = await exec();
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 404 if object ID of country ID does not exist', async () => {
+            countryId = mongoose.Types.ObjectId();
+            const res = await exec();
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 200, and return the movies of the country if request is valid', async () => {
+            await Movie.create([
+                {
+                    _id: '5f867dafee5d303788cfbb90',
+                    title: 'Spider man',
+                    description: 'Superhero with climbing abilities',
+                    releasedDate: '2020-01-23',
+                    ticketPrice: 2.5,
+                    durationInMinutes: 120,
+                    genres: [mongoose.Types.ObjectId()],
+                    movieType: mongoose.Types.ObjectId(),
+                    trailerUrl: 'https://youtu.be/dR3cjXncoSk',
+                    posterUrl:
+                        'https://i.pinimg.com/originals/e6/a2/5a/e6a25a2855e741f7461fe1698db3153a.jpg',
+                    spokenLanguage: mongoose.Types.ObjectId(),
+                    subtitleLanguage: mongoose.Types.ObjectId(),
+                    country: countryId
+                },
+                {
+                    _id: '5f867f6526b4c50090a9cf83',
+                    title: 'Toy Story',
+                    description: 'Animated toys of a boy',
+                    releasedDate: '2019-10-01',
+                    ticketPrice: 2,
+                    durationInMinutes: 80,
+                    genres: [mongoose.Types.ObjectId()],
+                    movieType: mongoose.Types.ObjectId(),
+                    trailerUrl: 'https://youtu.be/wmiIUN-7qhE',
+                    posterUrl:
+                        'https://images-na.ssl-images-amazon.com/images/I/714hR8KCqaL._AC_SL1308_.jpg',
+                    spokenLanguage: mongoose.Types.ObjectId(),
+                    subtitleLanguage: mongoose.Types.ObjectId(),
+                    country: countryId
+                }
+            ]);
+
+            const res = await exec();
+            const { items } = res.body.data;
+
+            expect(res.status).toBe(200);
+            expect(
+                items.some((m) => m._id === '5f867dafee5d303788cfbb90')
+            ).toBeTruthy();
+            expect(
+                items.some((m) => m._id === '5f867f6526b4c50090a9cf83')
+            ).toBeTruthy();
+            expect(items.some((m) => m.title === 'Spider man')).toBeTruthy();
+            expect(items.some((m) => m.title === 'Toy Story')).toBeTruthy();
+            expect(items.some((m) => m.genres !== undefined)).toBeTruthy();
+            expect(items.some((m) => m.movieType !== undefined)).toBeTruthy();
+            expect(
+                items.some((m) => m.spokenLanguage !== undefined)
+            ).toBeTruthy();
+            expect(
+                items.some((m) => m.subtitleLanguage !== undefined)
+            ).toBeTruthy();
+            expect(items.some((m) => m.country !== undefined)).toBeTruthy();
+            expect(items).toHaveLength(2);
+        });
+    });
+
     describe('GET /api/v1/movies/:id', () => {
         let movie;
         let movieId;
