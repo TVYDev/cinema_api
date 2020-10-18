@@ -14,7 +14,11 @@ const {
 const validateRequestBody = require('../middlewares/validateRequestBody');
 const listJsonResponse = require('../middlewares/listJsonResponse');
 const validateReferences = require('../middlewares/validateReferences');
+const moviesRouter = require('./movies');
 const router = express.Router();
+
+//Re-route to other route resource
+router.use('/:countryId/movies', moviesRouter);
 
 router
     .route('/')

@@ -14,7 +14,12 @@ const {
     updateLanguage,
     deleteLanguage
 } = require('../controllers/languages');
+const moviesRouter = require('./movies');
 const router = express.Router();
+
+// Re-route to other route resouces
+router.use('/spoken/:spokenLanguageId/movies', moviesRouter);
+router.use('/subtitle/:subtitleLanguageId/movies', moviesRouter);
 
 router
     .route('/')

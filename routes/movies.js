@@ -34,9 +34,30 @@ router
                 field: 'movieType',
                 param: 'movieTypeId',
                 model: MovieType
+            },
+            {
+                field: 'spokenLanguage',
+                param: 'spokenLanguageId',
+                model: Language
+            },
+            {
+                field: 'subtitleLanguage',
+                param: 'subtitleLanguage',
+                model: Language
+            },
+            {
+                field: 'country',
+                param: 'countryId',
+                model: Country
             }
         ]),
-        listJsonResponse(Movie, ['genres', 'movieType']),
+        listJsonResponse(Movie, [
+            'genres',
+            'movieType',
+            'spokenLanguage',
+            'subtitleLanguage',
+            'country'
+        ]),
         getMovies
     )
     .post(
