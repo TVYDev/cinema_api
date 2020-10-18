@@ -14,6 +14,78 @@ describe('Countries', () => {
         await Country.deleteMany();
     });
 
+    describe('GET /api/v1/countries', () => {
+        it('should return 200, return all the countries if request is valid', async () => {
+            await Country.create([
+                {
+                    name: 'Cambodia',
+                    code: 'KH'
+                },
+                {
+                    name: 'Japan',
+                    code: 'JP'
+                }
+            ]);
+
+            const res = await request(server).get('/api/v1/countries');
+            const { items } = res.body.data;
+
+            expect(res.status).toBe(200);
+            expect(items.some((c) => c.name === 'Cambodia')).toBeTruthy();
+            expect(items.some((c) => c.name === 'Japan')).toBeTruthy();
+            expect(items.some((c) => c.code === 'KH')).toBeTruthy();
+            expect(items.some((c) => c.code === 'JP')).toBeTruthy();
+            expect(items).toHaveLength(2);
+        });
+    });
+
+    describe('GET /api/v1/countries/:id', () => {
+        let country;
+        let countryId;
+
+        beforeEach(async () => {
+            country = await Country.create({
+                name: 'Cambodia',
+                code: 'KH'
+            });
+
+            countryId = country._id;
+        });
+        afterEach(async () => {
+            await country.remove();
+        });
+
+        const exec = () =>
+            request(server).get(`/api/v1/countries/${countryId}`);
+
+        it('should return 404 if object ID is not valid', async () => {
+            countryId = 1;
+            const res = await exec();
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 404 if object ID of country does not exist', async () => {
+            countryId = mongoose.Types.ObjectId();
+            const res = await exec();
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 200, and return the country if object ID is valid and exists', async () => {
+            const res = await exec();
+
+            expect(res.status).toBe(200);
+            expect(res.body.data).toHaveProperty(
+                '_id',
+                countryId.toHexString()
+            );
+            expect(res.body.data).toHaveProperty('name', 'Cambodia');
+            expect(res.body.data).toHaveProperty('code', 'KH');
+            expect(res.body.data).toHaveProperty('createdAt');
+        });
+    });
+
     describe('POST /api/v1/countries', () => {
         const data = {
             name: 'Cambodia',
