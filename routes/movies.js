@@ -17,6 +17,8 @@ const {
 } = require('../models/Movie');
 const { Genre } = require('../models/Genre');
 const { MovieType } = require('../models/MovieType');
+const { Language } = require('../models/Language');
+const { Country } = require('../models/Country');
 const router = express.Router({ mergeParams: true });
 
 router
@@ -32,9 +34,30 @@ router
                 field: 'movieType',
                 param: 'movieTypeId',
                 model: MovieType
+            },
+            {
+                field: 'spokenLanguage',
+                param: 'spokenLanguageId',
+                model: Language
+            },
+            {
+                field: 'subtitleLanguage',
+                param: 'subtitleLanguageId',
+                model: Language
+            },
+            {
+                field: 'country',
+                param: 'countryId',
+                model: Country
             }
         ]),
-        listJsonResponse(Movie, ['genres', 'movieType']),
+        listJsonResponse(Movie, [
+            'genres',
+            'movieType',
+            'spokenLanguage',
+            'subtitleLanguage',
+            'country'
+        ]),
         getMovies
     )
     .post(
@@ -51,6 +74,24 @@ router
                 field: '_id',
                 property: 'movieTypeId',
                 assignedProperty: 'movieType'
+            },
+            {
+                model: Language,
+                field: '_id',
+                property: 'spokenLanguageId',
+                assignedProperty: 'spokenLanguage'
+            },
+            {
+                model: Language,
+                field: '_id',
+                property: 'subtitleLanguageId',
+                assignedProperty: 'subtitleLanguage'
+            },
+            {
+                model: Country,
+                field: '_id',
+                property: 'countryId',
+                assignedProperty: 'country'
             }
         ]),
         createMovie
@@ -87,6 +128,24 @@ router
                 field: '_id',
                 property: 'movieTypeId',
                 assignedProperty: 'movieType'
+            },
+            {
+                model: Language,
+                field: '_id',
+                property: 'spokenLanguageId',
+                assignedProperty: 'spokenLanguage'
+            },
+            {
+                model: Language,
+                field: '_id',
+                property: 'subtitleLanguageId',
+                assignedProperty: 'subtitleLanguage'
+            },
+            {
+                model: Country,
+                field: '_id',
+                property: 'countryId',
+                assignedProperty: 'country'
             }
         ]),
         updateMovie

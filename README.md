@@ -37,9 +37,13 @@ APIs for cinema management including CRUD on cinemas, halls, movies, buying tick
 
 ### 🎬 Movies
 
--   ✅ [Admin] Create a movie (title, ticketPrice, durationInMinutes, genre ids, movie type id, release date => (for coming soon section) , ⏳ spoken language id, ⏳ subtitile language id, ⏳ country id, description, trailer url, banner url)
+-   ✅ [Admin] Create a movie (title, ticketPrice, durationInMinutes, genre ids, movie type id, release date => (for coming soon section) , spoken language id, subtitile language id, country id, description, trailer url, banner url)
 -   ✅ [Admin] Update a movie
 -   ✅ [Admin] Get all movies
+-   ✅ [Admin] Get all movies of a movie type
+-   ✅ [Admin] Get all movies of a spoken language
+-   ✅ [Admin] Get all movies of a subtitle language
+-   ✅ [Admin] Get all movies of a country
 -   ✅ [Admin] Get a single movie
 -   ✅ [Admin] Delete a movie
 
@@ -48,7 +52,6 @@ APIs for cinema management including CRUD on cinemas, halls, movies, buying tick
 -   ✅ [Admin] Create a movie type (name: 2D, 3D, 4D, description)
 -   ✅ [Admin] Update a movie type
 -   ✅ [Admin] Get all movie types
--   ✅ [Admin] Get all movies of a movie type
 -   ✅ [Admin] Get a single movie type
 -   ✅ [Admin] Delete a movie type
 
@@ -71,11 +74,11 @@ APIs for cinema management including CRUD on cinemas, halls, movies, buying tick
 
 ### 🚩 Countries
 
--   [ADMIN] Create a country (name, code)
--   [ADMIN] Update a country
--   [ADMIN] Get all country
--   [ADMIN] Get a single country
--   [ADMIN] Delete a country
+-   ✅ [ADMIN] Create a country (name, code)
+-   ✅ [ADMIN] Update a country
+-   ✅ [ADMIN] Get all country
+-   ✅ [ADMIN] Get a single country
+-   ✅ [ADMIN] Delete a country
 
 ### ⏲ Showtimes
 

@@ -15,6 +15,7 @@
         "test-genres": "jest --verbose --runInBand ./tests/integration/routes/genres.test.js",
         "test-movies": "jest --verbose --runInBand ./tests/integration/routes/movies.test.js",
         "test-languages": "jest --verbose --runInBand ./tests/integration/routes/languages.test.js",
+        "test-countries": "jest --verbose --runInBand ./tests/integration/routes/countries.test.js",
         "coverage": "jest --collectCoverage"
     },
     "repository": {

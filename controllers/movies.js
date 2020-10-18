@@ -158,6 +158,168 @@ const { Movie } = require('../models/Movie');
  *          500:
  *              description: Internal server error
  */
+/** @swagger
+ * /languages/spoken/{spokenLanguageId}/movies:
+ *  get:
+ *      tags:
+ *          - 🎬 Movies
+ *      summary: Get all movies of a spoken language
+ *      description: (PUBLIC) Get all movies of a spoken language with filtering, sorting & pagination
+ *      parameters:
+ *          -   in: path
+ *              name: spokenLanguageId
+ *              required: true
+ *              description: Object ID of spoken language
+ *              example: 5f8aecdacb03a10e6cb80dec
+ *          -   in: query
+ *              name: select
+ *              schema:
+ *                  type: string
+ *              description: Fields to be selected (Multiple fields separated by comma [,])
+ *              example: name,title
+ *          -   in: query
+ *              name: sort
+ *              schema:
+ *                  type: string
+ *              description: Sort by field (Prefix the field with minus [-] for descending ordering)
+ *              example: name,-createdAt
+ *          -   in: query
+ *              name: limit
+ *              schema:
+ *                  type: string
+ *              default: 20
+ *              description: Limit numbers of record for a page
+ *              example: 10
+ *          -   in: query
+ *              name: page
+ *              default: 1
+ *              schema:
+ *                  type: string
+ *              description: Certain page index for records to be retrieved
+ *              example: 1
+ *          -   in: query
+ *              name: paging
+ *              default: true
+ *              schema:
+ *                  type: string
+ *              description: Define whether need records in pagination
+ *              example: false
+ *      responses:
+ *          200:
+ *              description: OK
+ *          404:
+ *              description: Language is not found
+ *          500:
+ *              description: Internal server error
+ */
+/** @swagger
+ * /languages/subtitle/{subtitleLanguageId}/movies:
+ *  get:
+ *      tags:
+ *          - 🎬 Movies
+ *      summary: Get all movies of a subtitle language
+ *      description: (PUBLIC) Get all movies of a subtitle language with filtering, sorting & pagination
+ *      parameters:
+ *          -   in: path
+ *              name: subtitleLanguageId
+ *              required: true
+ *              description: Object ID of subtitle language
+ *              example: 5f8aecdacb03a10e6cb80dec
+ *          -   in: query
+ *              name: select
+ *              schema:
+ *                  type: string
+ *              description: Fields to be selected (Multiple fields separated by comma [,])
+ *              example: name,title
+ *          -   in: query
+ *              name: sort
+ *              schema:
+ *                  type: string
+ *              description: Sort by field (Prefix the field with minus [-] for descending ordering)
+ *              example: name,-createdAt
+ *          -   in: query
+ *              name: limit
+ *              schema:
+ *                  type: string
+ *              default: 20
+ *              description: Limit numbers of record for a page
+ *              example: 10
+ *          -   in: query
+ *              name: page
+ *              default: 1
+ *              schema:
+ *                  type: string
+ *              description: Certain page index for records to be retrieved
+ *              example: 1
+ *          -   in: query
+ *              name: paging
+ *              default: true
+ *              schema:
+ *                  type: string
+ *              description: Define whether need records in pagination
+ *              example: false
+ *      responses:
+ *          200:
+ *              description: OK
+ *          404:
+ *              description: Language is not found
+ *          500:
+ *              description: Internal server error
+ */
+/** @swagger
+ * /countries/{countryId}/movies:
+ *  get:
+ *      tags:
+ *          - 🎬 Movies
+ *      summary: Get all movies of a country
+ *      description: (PUBLIC) Get all movies of a country with filtering, sorting & pagination
+ *      parameters:
+ *          -   in: path
+ *              name: countryId
+ *              required: true
+ *              description: Object ID of country
+ *              example: 5f8b88d9c787db2fdc5e50c3
+ *          -   in: query
+ *              name: select
+ *              schema:
+ *                  type: string
+ *              description: Fields to be selected (Multiple fields separated by comma [,])
+ *              example: name,title
+ *          -   in: query
+ *              name: sort
+ *              schema:
+ *                  type: string
+ *              description: Sort by field (Prefix the field with minus [-] for descending ordering)
+ *              example: name,-createdAt
+ *          -   in: query
+ *              name: limit
+ *              schema:
+ *                  type: string
+ *              default: 20
+ *              description: Limit numbers of record for a page
+ *              example: 10
+ *          -   in: query
+ *              name: page
+ *              default: 1
+ *              schema:
+ *                  type: string
+ *              description: Certain page index for records to be retrieved
+ *              example: 1
+ *          -   in: query
+ *              name: paging
+ *              default: true
+ *              schema:
+ *                  type: string
+ *              description: Define whether need records in pagination
+ *              example: false
+ *      responses:
+ *          200:
+ *              description: OK
+ *          404:
+ *              description: Country is not found
+ *          500:
+ *              description: Internal server error
+ */
 exports.getMovies = asyncHandler(async (req, res, next) => {
     res.standard(200, true, 'Success', res.listJsonData);
 });
@@ -187,7 +349,10 @@ exports.getMovies = asyncHandler(async (req, res, next) => {
 exports.getMovie = asyncHandler(async (req, res, next) => {
     const movie = await Movie.findById(req.params.id)
         .populate('genres')
-        .populate('movieType');
+        .populate('movieType')
+        .populate('spokenLanguage')
+        .populate('subtitleLanguage')
+        .populate('country');
 
     res.standard(200, true, 'Success', movie);
 });
@@ -214,6 +379,9 @@ exports.getMovie = asyncHandler(async (req, res, next) => {
  *                      - releasedDate
  *                      - genreIds
  *                      - movieTypeId
+ *                      - spokenLanguageId
+ *                      - subtitleLanguageId
+ *                      - countryId
  *                  properties:
  *                      title:
  *                          type: string
@@ -240,6 +408,15 @@ exports.getMovie = asyncHandler(async (req, res, next) => {
  *                      movieTypeId:
  *                          type: string
  *                          example: 5f84030ea795143ed451ddbf
+ *                      spokenLanguageId:
+ *                          type: string
+ *                          example: 5f8aecdacb03a10e6cb80dec
+ *                      subtitleLanguageId:
+ *                          type: string
+ *                          example: 5f8aece3a156f43718873fe3
+ *                      countryId:
+ *                          type: string
+ *                          example: 5f8b88d9c787db2fdc5e50c3
  *                      trailerUrl:
  *                          type: string
  *                          example: https://youtu.be/dR3cjXncoSk
@@ -305,6 +482,15 @@ exports.createMovie = asyncHandler(async (req, res, next) => {
  *                      movieTypeId:
  *                          type: string
  *                          example: 5f84030ea795143ed451ddbf
+ *                      spokenLanguageId:
+ *                          type: string
+ *                          example: 5f8aecdacb03a10e6cb80dec
+ *                      subtitleLanguageId:
+ *                          type: string
+ *                          example: 5f8aece3a156f43718873fe3
+ *                      countryId:
+ *                          type: string
+ *                          example: 5f8b88d9c787db2fdc5e50c3
  *                      trailerUrl:
  *                          type: string
  *                          example: https://youtu.be/dR3cjXncoSk
