@@ -2,6 +2,8 @@ const request = require('supertest');
 const { Movie } = require('../../../models/Movie');
 const { Genre } = require('../../../models/Genre');
 const { MovieType } = require('../../../models/MovieType');
+const { Language } = require('../../../models/Language');
+const { Country } = require('../../../models/Country');
 const mongoose = require('mongoose');
 let server;
 
@@ -301,6 +303,9 @@ describe('Movies', () => {
         let genreAction;
         let genreHorror;
         let movieType;
+        let spokenLanguage;
+        let subtitleLanguage;
+        let country;
 
         const data = {
             title: 'Spider man',
@@ -329,13 +334,23 @@ describe('Movies', () => {
                 description: 'Simple 2D technology'
             });
 
+            spokenLanguage = await Language.create({ name: 'Khmer' });
+            subtitleLanguage = await Language.create({ name: 'English' });
+
+            country = await Country.create({ name: 'Cambodia', code: 'KH' });
+
             data.genreIds = [genreAction._id, genreHorror._id];
             data.movieTypeId = movieType._id;
+            data.spokenLanguageId = spokenLanguage._id;
+            data.subtitleLanguageId = subtitleLanguage._id;
+            data.countryId = country._id;
         });
 
         afterEach(async () => {
             await MovieType.deleteMany();
             await Genre.deleteMany();
+            await Language.deleteMany();
+            await Country.deleteMany();
         });
 
         const exec = () => request(server).post('/api/v1/movies');
@@ -584,13 +599,97 @@ describe('Movies', () => {
             expect(res.status).toBe(404);
         });
 
+        it('should return 400 if spokenLanguageId is not provided', async () => {
+            const curData = { ...data };
+            delete curData.spokenLanguageId;
+
+            const res = await exec().send(curData);
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 400 if spokenLanguageId is not a valid object Id', async () => {
+            const curData = { ...data };
+            curData.spokenLanguageId = 1;
+
+            const res = await exec().send(curData);
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 404 if spokenLanguageId does not exist', async () => {
+            const curData = { ...data };
+            curData.spokenLanguageId = mongoose.Types.ObjectId();
+
+            const res = await exec().send(curData);
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 400 if subtitleLanguageId is not provided', async () => {
+            const curData = { ...data };
+            delete curData.subtitleLanguageId;
+
+            const res = await exec().send(curData);
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 400 if subtitleLanguageId is not a valid object Id', async () => {
+            const curData = { ...data };
+            curData.subtitleLanguageId = 1;
+
+            const res = await exec().send(curData);
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 404 if subtitleLanguageId does not exist', async () => {
+            const curData = { ...data };
+            curData.subtitleLanguageId = mongoose.Types.ObjectId();
+
+            const res = await exec().send(curData);
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 400 if countryId is not provided', async () => {
+            const curData = { ...data };
+            delete curData.countryId;
+
+            const res = await exec().send(curData);
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 400 if countryId is not a valid object Id', async () => {
+            const curData = { ...data };
+            curData.countryId = 1;
+
+            const res = await exec().send(curData);
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 404 if countryId does not exist', async () => {
+            const curData = { ...data };
+            curData.countryId = mongoose.Types.ObjectId();
+
+            const res = await exec().send(curData);
+
+            expect(res.status).toBe(404);
+        });
+
         it('should return 201, and create the movie if the request is valid', async () => {
             const res = await exec().send(data);
 
             const movieInDb = await Movie.find({
                 name: 'Spider man',
                 movieTypes: movieType._id,
-                genres: [genreAction._id, genreHorror._id]
+                genres: [genreAction._id, genreHorror._id],
+                spokenLanguage: spokenLanguage._id,
+                subtitleLanguage: subtitleLanguage._id,
+                country: country._id
             });
 
             expect(res.status).toBe(201);
@@ -620,11 +719,25 @@ describe('Movies', () => {
                 'https://i.pinimg.com/originals/e6/a2/5a/e6a25a2855e741f7461fe1698db3153a.jpg'
             );
             expect(dt).toHaveProperty('createdAt');
+
             expect(dt).toHaveProperty('movieType', movieType._id.toHexString());
+
             expect(dt).toHaveProperty('genres');
             expect(dt.genres).toContain(genreAction._id.toHexString());
             expect(dt.genres).toContain(genreHorror._id.toHexString());
             expect(dt.genres).toHaveLength(2);
+
+            expect(dt).toHaveProperty(
+                'spokenLanguage',
+                spokenLanguage._id.toHexString()
+            );
+
+            expect(dt).toHaveProperty(
+                'subtitleLanguage',
+                subtitleLanguage._id.toHexString()
+            );
+
+            expect(dt).toHaveProperty('country', country._id.toHexString());
         });
     });
 
