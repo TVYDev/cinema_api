@@ -13,6 +13,7 @@ const { MovieType } = require('../models/MovieType');
 const { Genre } = require('../models/Genre');
 const { Movie } = require('../models/Movie');
 const { Language } = require('../models/Language');
+const { Country } = require('../models/Country');
 
 // Connect database
 mongoose.connect(process.env.MONGODB_URI, {
@@ -44,6 +45,9 @@ const movies = JSON.parse(
 const languages = JSON.parse(
     fs.readFileSync(`${__dirname}/data/languages.json`, 'utf-8')
 );
+const countries = JSON.parse(
+    fs.readFileSync(`${__dirname}/data/countries.json`, 'utf-8')
+);
 
 const importData = async () => {
     try {
@@ -53,6 +57,7 @@ const importData = async () => {
         await Hall.create(halls);
         await Genre.create(genres);
         await Language.create(languages);
+        await Country.create(countries);
         await Movie.create(movies);
 
         console.log('Data imported'.blue.inverse);
@@ -71,6 +76,7 @@ const destroyData = async () => {
         await Cinema.deleteMany();
         await Genre.deleteMany();
         await Language.deleteMany();
+        await Country.deleteMany();
 
         console.log('Data destroyed'.red.inverse);
         process.exit();
