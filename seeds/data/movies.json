@@ -9,7 +9,10 @@
         "genres": ["5f85b4bb8be19d2788193471", "5f85b58f15173c139c7476b7"],
         "movieType": "5f84030ea795143ed451ddbf",
         "trailerUrl": "https://youtu.be/dR3cjXncoSk",
-        "posterUrl": "https://i.pinimg.com/originals/e6/a2/5a/e6a25a2855e741f7461fe1698db3153a.jpg"
+        "posterUrl": "https://i.pinimg.com/originals/e6/a2/5a/e6a25a2855e741f7461fe1698db3153a.jpg",
+        "spokenLanguage": "5f8aecce057ac90d40beef63",
+        "subtitleLanguage": "5f8aecdacb03a10e6cb80dec",
+        "country": "5f8b88d9c787db2fdc5e50c3"
     },
     {
         "_id": "5f867f6526b4c50090a9cf83",
@@ -21,7 +24,10 @@
         "genres": ["5f85b59cca353939f0b98e78", "5f85b58f15173c139c7476b7"],
         "movieType": "5f8409065fc86e09e4752519",
         "trailerUrl": "https://youtu.be/wmiIUN-7qhE",
-        "posterUrl": "https://images-na.ssl-images-amazon.com/images/I/714hR8KCqaL._AC_SL1308_.jpg"
+        "posterUrl": "https://images-na.ssl-images-amazon.com/images/I/714hR8KCqaL._AC_SL1308_.jpg",
+        "spokenLanguage": "5f8aecce057ac90d40beef63",
+        "subtitleLanguage": "5f8aecdacb03a10e6cb80dec",
+        "country": "5f8b88d9c787db2fdc5e50c3"
     },
     {
         "_id": "5f8680aafc113a4648914a84",
@@ -33,6 +39,9 @@
         "genres": ["5f85b4bb8be19d2788193471"],
         "movieType": "5f84030ea795143ed451ddbf",
         "trailerUrl": "https://youtu.be/_BcYBFC6zfY",
-        "posterUrl": "https://images-na.ssl-images-amazon.com/images/I/71sAwnr37AL._AC_SL1069_.jpg"
+        "posterUrl": "https://images-na.ssl-images-amazon.com/images/I/71sAwnr37AL._AC_SL1069_.jpg",
+        "spokenLanguage": "5f8aecdacb03a10e6cb80dec",
+        "subtitleLanguage": "5f8aecce057ac90d40beef63",
+        "country": "5f8b8a1d4c13ed0fa414dd5d"
     }
 ]

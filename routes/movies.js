@@ -17,6 +17,8 @@ const {
 } = require('../models/Movie');
 const { Genre } = require('../models/Genre');
 const { MovieType } = require('../models/MovieType');
+const { Language } = require('../models/Language');
+const { Country } = require('../models/Country');
 const router = express.Router({ mergeParams: true });
 
 router
@@ -51,6 +53,24 @@ router
                 field: '_id',
                 property: 'movieTypeId',
                 assignedProperty: 'movieType'
+            },
+            {
+                model: Language,
+                field: '_id',
+                property: 'spokenLanguageId',
+                assignedProperty: 'spokenLanguage'
+            },
+            {
+                model: Language,
+                field: '_id',
+                property: 'subtitleLanguageId',
+                assignedProperty: 'subtitleLanguage'
+            },
+            {
+                model: Country,
+                field: '_id',
+                property: 'countryId',
+                assignedProperty: 'country'
             }
         ]),
         createMovie

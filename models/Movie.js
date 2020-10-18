@@ -54,6 +54,21 @@ const movieSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'MovieType',
         required: true
+    },
+    spokenLanguage: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Language',
+        required: true
+    },
+    subtitleLanguage: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Language',
+        required: true
+    },
+    country: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Country',
+        required: true
     }
 });
 
@@ -71,7 +86,10 @@ const validationSchema = {
     trailerUrl: Joi.string(),
     posterUrl: Joi.string(),
     genreIds: Joi.array().items(Joi.objectId()).min(1),
-    movieTypeId: Joi.objectId()
+    movieTypeId: Joi.objectId(),
+    spokenLanguageId: Joi.objectId(),
+    subtitleLanguageId: Joi.objectId(),
+    countryId: Joi.objectId()
 };
 
 function validateOnCreateMovie(movie) {
@@ -83,6 +101,9 @@ function validateOnCreateMovie(movie) {
     tmpValidationSchema.releasedDate = tmpValidationSchema.releasedDate.required();
     tmpValidationSchema.genreIds = tmpValidationSchema.genreIds.required();
     tmpValidationSchema.movieTypeId = tmpValidationSchema.movieTypeId.required();
+    tmpValidationSchema.spokenLanguageId = tmpValidationSchema.spokenLanguageId.required();
+    tmpValidationSchema.subtitleLanguageId = tmpValidationSchema.subtitleLanguageId.required();
+    tmpValidationSchema.countryId = tmpValidationSchema.countryId.required();
 
     const schema = Joi.object(tmpValidationSchema);
 
