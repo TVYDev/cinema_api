@@ -42,7 +42,7 @@ router
             },
             {
                 field: 'subtitleLanguage',
-                param: 'subtitleLanguage',
+                param: 'subtitleLanguageId',
                 model: Language
             },
             {
@@ -128,6 +128,24 @@ router
                 field: '_id',
                 property: 'movieTypeId',
                 assignedProperty: 'movieType'
+            },
+            {
+                model: Language,
+                field: '_id',
+                property: 'spokenLanguageId',
+                assignedProperty: 'spokenLanguage'
+            },
+            {
+                model: Language,
+                field: '_id',
+                property: 'subtitleLanguageId',
+                assignedProperty: 'subtitleLanguage'
+            },
+            {
+                model: Country,
+                field: '_id',
+                property: 'countryId',
+                assignedProperty: 'country'
             }
         ]),
         updateMovie

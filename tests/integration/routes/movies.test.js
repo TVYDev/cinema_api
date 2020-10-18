@@ -34,7 +34,10 @@ describe('Movies', () => {
                     movieType: '5f84030ea795143ed451ddbf',
                     trailerUrl: 'https://youtu.be/dR3cjXncoSk',
                     posterUrl:
-                        'https://i.pinimg.com/originals/e6/a2/5a/e6a25a2855e741f7461fe1698db3153a.jpg'
+                        'https://i.pinimg.com/originals/e6/a2/5a/e6a25a2855e741f7461fe1698db3153a.jpg',
+                    spokenLanguage: mongoose.Types.ObjectId(),
+                    subtitleLanguage: mongoose.Types.ObjectId(),
+                    country: mongoose.Types.ObjectId()
                 },
                 {
                     title: 'Toy Story',
@@ -49,7 +52,10 @@ describe('Movies', () => {
                     movieType: '5f8409065fc86e09e4752519',
                     trailerUrl: 'https://youtu.be/wmiIUN-7qhE',
                     posterUrl:
-                        'https://images-na.ssl-images-amazon.com/images/I/714hR8KCqaL._AC_SL1308_.jpg'
+                        'https://images-na.ssl-images-amazon.com/images/I/714hR8KCqaL._AC_SL1308_.jpg',
+                    spokenLanguage: mongoose.Types.ObjectId(),
+                    subtitleLanguage: mongoose.Types.ObjectId(),
+                    country: mongoose.Types.ObjectId()
                 }
             ]);
 
@@ -61,6 +67,13 @@ describe('Movies', () => {
             expect(items.some((m) => m.title === 'Toy Story')).toBeTruthy();
             expect(items.some((m) => m.genres !== undefined)).toBeTruthy();
             expect(items.some((m) => m.movieType !== undefined)).toBeTruthy();
+            expect(
+                items.some((m) => m.spokenLanguage !== undefined)
+            ).toBeTruthy();
+            expect(
+                items.some((m) => m.subtitleLanguage !== undefined)
+            ).toBeTruthy();
+            expect(items.some((m) => m.country !== undefined)).toBeTruthy();
             expect(items).toHaveLength(2);
         });
     });
@@ -111,7 +124,10 @@ describe('Movies', () => {
                     movieType: '5f84030ea795143ed451ddbf',
                     trailerUrl: 'https://youtu.be/dR3cjXncoSk',
                     posterUrl:
-                        'https://i.pinimg.com/originals/e6/a2/5a/e6a25a2855e741f7461fe1698db3153a.jpg'
+                        'https://i.pinimg.com/originals/e6/a2/5a/e6a25a2855e741f7461fe1698db3153a.jpg',
+                    spokenLanguage: mongoose.Types.ObjectId(),
+                    subtitleLanguage: mongoose.Types.ObjectId(),
+                    country: mongoose.Types.ObjectId()
                 },
                 {
                     _id: '5f867f6526b4c50090a9cf83',
@@ -124,7 +140,10 @@ describe('Movies', () => {
                     movieType: '5f8409065fc86e09e4752519',
                     trailerUrl: 'https://youtu.be/wmiIUN-7qhE',
                     posterUrl:
-                        'https://images-na.ssl-images-amazon.com/images/I/714hR8KCqaL._AC_SL1308_.jpg'
+                        'https://images-na.ssl-images-amazon.com/images/I/714hR8KCqaL._AC_SL1308_.jpg',
+                    spokenLanguage: mongoose.Types.ObjectId(),
+                    subtitleLanguage: mongoose.Types.ObjectId(),
+                    country: mongoose.Types.ObjectId()
                 }
             ]);
 
@@ -142,6 +161,13 @@ describe('Movies', () => {
             expect(items.some((m) => m.title === 'Toy Story')).toBeTruthy();
             expect(items.some((m) => m.genres !== undefined)).toBeTruthy();
             expect(items.some((m) => m.movieType !== undefined)).toBeTruthy();
+            expect(
+                items.some((m) => m.spokenLanguage !== undefined)
+            ).toBeTruthy();
+            expect(
+                items.some((m) => m.subtitleLanguage !== undefined)
+            ).toBeTruthy();
+            expect(items.some((m) => m.country !== undefined)).toBeTruthy();
             expect(items).toHaveLength(2);
         });
     });
@@ -192,7 +218,10 @@ describe('Movies', () => {
                     movieType: movieTypeId,
                     trailerUrl: 'https://youtu.be/dR3cjXncoSk',
                     posterUrl:
-                        'https://i.pinimg.com/originals/e6/a2/5a/e6a25a2855e741f7461fe1698db3153a.jpg'
+                        'https://i.pinimg.com/originals/e6/a2/5a/e6a25a2855e741f7461fe1698db3153a.jpg',
+                    spokenLanguage: mongoose.Types.ObjectId(),
+                    subtitleLanguage: mongoose.Types.ObjectId(),
+                    country: mongoose.Types.ObjectId()
                 },
                 {
                     _id: '5f867f6526b4c50090a9cf83',
@@ -205,7 +234,10 @@ describe('Movies', () => {
                     movieType: movieTypeId,
                     trailerUrl: 'https://youtu.be/wmiIUN-7qhE',
                     posterUrl:
-                        'https://images-na.ssl-images-amazon.com/images/I/714hR8KCqaL._AC_SL1308_.jpg'
+                        'https://images-na.ssl-images-amazon.com/images/I/714hR8KCqaL._AC_SL1308_.jpg',
+                    spokenLanguage: mongoose.Types.ObjectId(),
+                    subtitleLanguage: mongoose.Types.ObjectId(),
+                    country: mongoose.Types.ObjectId()
                 },
                 {
                     _id: '5f8680aafc113a4648914a84',
@@ -218,7 +250,10 @@ describe('Movies', () => {
                     movieType: mongoose.Types.ObjectId(),
                     trailerUrl: 'https://youtu.be/_BcYBFC6zfY',
                     posterUrl:
-                        'https://images-na.ssl-images-amazon.com/images/I/71sAwnr37AL._AC_SL1069_.jpg'
+                        'https://images-na.ssl-images-amazon.com/images/I/71sAwnr37AL._AC_SL1069_.jpg',
+                    spokenLanguage: mongoose.Types.ObjectId(),
+                    subtitleLanguage: mongoose.Types.ObjectId(),
+                    country: mongoose.Types.ObjectId()
                 }
             ]);
 
@@ -236,6 +271,13 @@ describe('Movies', () => {
             expect(items.some((m) => m.title === 'Toy Story')).toBeTruthy();
             expect(items.some((m) => m.genres !== undefined)).toBeTruthy();
             expect(items.some((m) => m.movieType !== undefined)).toBeTruthy();
+            expect(
+                items.some((m) => m.spokenLanguage !== undefined)
+            ).toBeTruthy();
+            expect(
+                items.some((m) => m.subtitleLanguage !== undefined)
+            ).toBeTruthy();
+            expect(items.some((m) => m.country !== undefined)).toBeTruthy();
             expect(items).toHaveLength(2);
         });
     });
@@ -258,7 +300,10 @@ describe('Movies', () => {
                     '5f85b4bb8be19d2788193471',
                     '5f85b58f15173c139c7476b7'
                 ],
-                movieType: '5f84030ea795143ed451ddbf'
+                movieType: '5f84030ea795143ed451ddbf',
+                spokenLanguage: mongoose.Types.ObjectId(),
+                subtitleLanguage: mongoose.Types.ObjectId(),
+                country: mongoose.Types.ObjectId()
             });
 
             movieId = movie._id;
@@ -295,6 +340,9 @@ describe('Movies', () => {
             );
             expect(res.body.data).toHaveProperty('genres');
             expect(res.body.data).toHaveProperty('movieType');
+            expect(res.body.data).toHaveProperty('spokenLanguage');
+            expect(res.body.data).toHaveProperty('subtitleLanguage');
+            expect(res.body.data).toHaveProperty('country');
             expect(res.body.data).toHaveProperty('createdAt');
         });
     });
@@ -748,6 +796,12 @@ describe('Movies', () => {
         let genreId;
         let movieType;
         let movieTypeId;
+        let spokenLanguage;
+        let spokenLanguageId;
+        let subtitleLanguage;
+        let subtitleLanguageId;
+        let country;
+        let countryId;
 
         beforeEach(async () => {
             movie = await Movie.create({
@@ -763,7 +817,10 @@ describe('Movies', () => {
                     '5f85b4bb8be19d2788193471',
                     '5f85b58f15173c139c7476b7'
                 ],
-                movieType: '5f84030ea795143ed451ddbf'
+                movieType: '5f84030ea795143ed451ddbf',
+                spokenLanguage: mongoose.Types.ObjectId(),
+                subtitleLanguage: mongoose.Types.ObjectId(),
+                country: mongoose.Types.ObjectId()
             });
 
             movieId = movie._id;
@@ -781,11 +838,23 @@ describe('Movies', () => {
             });
 
             movieTypeId = movieType._id;
+
+            spokenLanguage = await Language.create({ name: 'Khmer' });
+            spokenLanguageId = spokenLanguage._id;
+
+            subtitleLanguage = await Language.create({ name: 'English' });
+            subtitleLanguageId = subtitleLanguage._id;
+
+            country = await Country.create({ name: 'Cambodia', code: 'Kh' });
+            countryId = country._id;
         });
         afterEach(async () => {
             await movie.remove();
             await genre.remove();
             await movieType.remove();
+            await spokenLanguage.remove();
+            await subtitleLanguage.remove();
+            await country.remove();
         });
 
         const exec = () => request(server).put(`/api/v1/movies/${movieId}`);
@@ -931,12 +1000,57 @@ describe('Movies', () => {
             expect(res.status).toBe(404);
         });
 
+        it('should return 400 if spokenLanguageId is not a valid object Id', async () => {
+            const res = await exec().send({ spokenLanguageId: 1 });
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 404 if spokenLanguageId does not exist', async () => {
+            const res = await exec().send({
+                spokenLanguageId: mongoose.Types.ObjectId()
+            });
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 400 if subtitleLanguageId is not a valid object Id', async () => {
+            const res = await exec().send({ subtitleLanguageId: 1 });
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 404 if subtitleLanguageId does not exist', async () => {
+            const res = await exec().send({
+                subtitleLanguageId: mongoose.Types.ObjectId()
+            });
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 400 if countryId is not a valid object Id', async () => {
+            const res = await exec().send({ countryId: 1 });
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 404 if countryId does not exist', async () => {
+            const res = await exec().send({
+                countryId: mongoose.Types.ObjectId()
+            });
+
+            expect(res.status).toBe(404);
+        });
+
         it('should return 200, and update the movie if request is valid', async () => {
             const res = await exec().send({
                 title: 'qwe',
                 description: 'test qwe',
                 genreIds: [genreId],
-                movieTypeId
+                movieTypeId,
+                spokenLanguageId,
+                subtitleLanguageId,
+                countryId
             });
 
             const movieInDb = await Movie.findById(movieId);
@@ -954,6 +1068,18 @@ describe('Movies', () => {
                 movieTypeId.toHexString()
             );
 
+            expect(movieInDb.spokenLanguage.toHexString()).toBe(
+                spokenLanguageId.toHexString()
+            );
+
+            expect(movieInDb.subtitleLanguage.toHexString()).toBe(
+                subtitleLanguageId.toHexString()
+            );
+
+            expect(movieInDb.country.toHexString()).toBe(
+                countryId.toHexString()
+            );
+
             expect(movieInDb.updatedAt).not.toBeNull();
         });
 
@@ -962,7 +1088,10 @@ describe('Movies', () => {
                 title: 'qwe',
                 description: 'test qwe',
                 genreIds: [genreId],
-                movieTypeId
+                movieTypeId,
+                spokenLanguageId,
+                subtitleLanguageId,
+                countryId
             });
 
             const { data } = res.body;
@@ -973,6 +1102,9 @@ describe('Movies', () => {
             expect(data).toHaveProperty('description', 'test qwe');
             expect(data).toHaveProperty('genres');
             expect(data).toHaveProperty('movieType');
+            expect(data).toHaveProperty('spokenLanguage');
+            expect(data).toHaveProperty('subtitleLanguage');
+            expect(data).toHaveProperty('country');
             expect(data).toHaveProperty('updatedAt');
         });
     });
@@ -995,7 +1127,10 @@ describe('Movies', () => {
                     '5f85b4bb8be19d2788193471',
                     '5f85b58f15173c139c7476b7'
                 ],
-                movieType: '5f84030ea795143ed451ddbf'
+                movieType: '5f84030ea795143ed451ddbf',
+                spokenLanguage: mongoose.Types.ObjectId(),
+                subtitleLanguage: mongoose.Types.ObjectId(),
+                country: mongoose.Types.ObjectId()
             });
 
             movieId = movie._id;
