@@ -118,3 +118,76 @@ exports.createCountry = asyncHandler(async (req, res, next) => {
 
     res.standard(201, true, 'Country is created successfully', country);
 });
+
+/**
+ * @swagger
+ * /countries/{id}:
+ *  put:
+ *      tags:
+ *          - 🚩 Countries
+ *      summary: Update a country
+ *      description: (ADMIN) Update a country
+ *      parameters:
+ *          -   in: path
+ *              name: id
+ *              required: true
+ *              description: Object Id of country
+ *              example: 5f8b88d9c787db2fdc5e50c3
+ *          -   in: body
+ *              name: Country
+ *              description: Country data to be updated
+ *              schema:
+ *                  type: object
+ *                  propreties:
+ *                      name:
+ *                          type: string
+ *                          example: Cambodia
+ *                      code:
+ *                          type: string
+ *                          example: KH
+ *      responses:
+ *          200:
+ *              description: OK
+ *          400:
+ *              description: Validation error
+ *          404:
+ *              description: Country is not found
+ *          500:
+ *              description: Internal server error
+ */
+exports.updateCountry = asyncHandler(async (req, res, next) => {
+    const country = await Country.findByIdAndUpdate(req.params.id, req.body, {
+        new: true,
+        runValidators: true
+    });
+
+    res.standard(200, true, 'Country is updated successfully', country);
+});
+
+/**
+ * @swagger
+ * /countries/{id}:
+ *  delete:
+ *      tags:
+ *          - 🚩 Countries
+ *      summary: Delete a country
+ *      description: (ADMIN) Delete a country by its ID
+ *      parameters:
+ *          -   in: path
+ *              name: id
+ *              required: true
+ *              description: Object ID of country
+ *              example: 5f8b88d9c787db2fdc5e50c3
+ *      responses:
+ *          200:
+ *              description: OK
+ *          404:
+ *              description: Country is not found
+ *          500:
+ *              description: Internal server error
+ */
+exports.deleteCountry = asyncHandler(async (req, res, next) => {
+    const country = await Country.findByIdAndRemove(req.params.id);
+
+    res.standard(200, true, 'Country is deleted successfully', country);
+});

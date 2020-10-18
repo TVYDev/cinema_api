@@ -7,7 +7,9 @@ const {
 const {
     createCountry,
     getCountries,
-    getCountry
+    getCountry,
+    updateCountry,
+    deleteCountry
 } = require('../controllers/countries');
 const validateRequestBody = require('../middlewares/validateRequestBody');
 const listJsonResponse = require('../middlewares/listJsonResponse');
@@ -19,15 +21,38 @@ router
     .get(listJsonResponse(Country), getCountries)
     .post(validateRequestBody(validateOnCreateCountry), createCountry);
 
-router.route('/:id').get(
-    validateReferences([
-        {
-            model: Country,
-            field: '_id',
-            param: 'id'
-        }
-    ]),
-    getCountry
-);
+router
+    .route('/:id')
+    .get(
+        validateReferences([
+            {
+                model: Country,
+                field: '_id',
+                param: 'id'
+            }
+        ]),
+        getCountry
+    )
+    .put(
+        validateRequestBody(validateOnUpdateCountry),
+        validateReferences([
+            {
+                model: Country,
+                field: '_id',
+                param: 'id'
+            }
+        ]),
+        updateCountry
+    )
+    .delete(
+        validateReferences([
+            {
+                model: Country,
+                field: '_id',
+                param: 'id'
+            }
+        ]),
+        deleteCountry
+    );
 
 module.exports = router;
