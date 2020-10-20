@@ -1,4 +1,4 @@
-# Cinema APIs
+# Movieer APIs
 
 > 🏗 **Currently in development**
 
@@ -80,7 +80,7 @@ APIs for cinema management including CRUD on cinemas, halls, movies, buying tick
 -   ✅ [ADMIN] Get a single country
 -   ✅ [ADMIN] Delete a country
 
-### ⏲ Showtimes
+### ⌚ Showtimes
 
 -   [Admin] Add a movie showtime to a hall of a cinema
 -   [Admin] Update a showtime (movie id, showtime, cinema id)

@@ -1,0 +1,8 @@
+[
+    {
+        "_id": "5f8d4e8d5e67101d984f8d49",
+        "key": "min_minutes_interval_showtime",
+        "value": 30,
+        "type": "number"
+    }
+]
