@@ -39,26 +39,30 @@ showtimeSchema.pre('findOneAndUpdate', function () {
 
 // Added `endedDateTime` field
 showtimeSchema.pre('save', async function (next) {
-    const movie = await this.model('Movie').findById(this.movie);
-    const startDateTimeObj = new Date(this.startedDateTime);
-    this.endedDateTime = new Date(
-        startDateTimeObj.setMinutes(
-            startDateTimeObj.getMinutes() + movie.durationInMinutes
-        )
-    );
-
-    const isAvailable = await validateAvailabilityOfShowtime(this);
-
-    if (!isAvailable) {
-        return next(
-            new ErrorResponse(
-                'There is no available time for this showtime',
-                400
+    try {
+        const movie = await this.model('Movie').findById(this.movie);
+        const startDateTimeObj = new Date(this.startedDateTime);
+        this.endedDateTime = new Date(
+            startDateTimeObj.setMinutes(
+                startDateTimeObj.getMinutes() + movie.durationInMinutes
             )
         );
-    }
 
-    next();
+        const isAvailable = await validateAvailabilityOfShowtime(this);
+
+        if (!isAvailable) {
+            return next(
+                new ErrorResponse(
+                    'There is no available time for this showtime',
+                    400
+                )
+            );
+        }
+
+        next();
+    } catch (error) {
+        next(error);
+    }
 });
 
 const validationSchema = {
