@@ -33,17 +33,21 @@ const showtimeSchema = new mongoose.Schema({
 });
 
 showtimeSchema.pre('findOneAndUpdate', async function (next) {
-    const docToUpdate = await this.model.findOne(this.getFilter());
-    const updates = this.getUpdate();
-    for (key in updates) {
-        docToUpdate[key] = updates[key];
-    }
+    try {
+        const docToUpdate = await this.model.findOne(this.getFilter());
+        const updates = this.getUpdate();
+        for (key in updates) {
+            docToUpdate[key] = updates[key];
+        }
 
-    const endedDateTime = await validateDateTimeBeforeSaveOrUpdate(
-        docToUpdate,
-        next
-    );
-    this.set({ updatedAt: Date.now(), endedDateTime });
+        const endedDateTime = await validateDateTimeBeforeSaveOrUpdate(
+            docToUpdate,
+            next
+        );
+        this.set({ updatedAt: Date.now(), endedDateTime });
+    } catch (error) {
+        next(error);
+    }
 });
 
 showtimeSchema.pre('save', async function (next) {

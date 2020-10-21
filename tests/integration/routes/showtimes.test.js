@@ -266,4 +266,196 @@ describe('Showtimes', () => {
             expect(dt).toHaveProperty('createdAt');
         });
     });
+
+    describe('PUT /api/v1/showtimes/:id', () => {
+        let showtime;
+        let showtimeId;
+        let movie;
+        let hall;
+
+        beforeAll(async () => {
+            movie = await Movie.create({
+                title: 'Spider man',
+                description: 'Superhero with climbing abilities',
+                releasedDate: '2023-01-23',
+                ticketPrice: 2.5,
+                durationInMinutes: 120,
+                genres: [mongoose.Types.ObjectId()],
+                movieType: mongoose.Types.ObjectId(),
+                trailerUrl: 'https://youtu.be/dR3cjXncoSk',
+                posterUrl:
+                    'https://i.pinimg.com/originals/e6/a2/5a/e6a25a2855e741f7461fe1698db3153a.jpg',
+                spokenLanguage: mongoose.Types.ObjectId(),
+                subtitleLanguage: mongoose.Types.ObjectId(),
+                country: mongoose.Types.ObjectId()
+            });
+
+            hall = await Hall.create({
+                name: 'Hall One',
+                seatRows: ['A', 'B', 'C', 'D'],
+                seatColumns: [1, 2, 3, 4],
+                cinema: mongoose.Types.ObjectId(),
+                hallType: mongoose.Types.ObjectId()
+            });
+        });
+
+        beforeEach(async () => {
+            showtime = await Showtime.create({
+                startedDateTime: '2023-10-20 17:00',
+                movie: movie._id,
+                hall: hall._id
+            });
+
+            showtimeId = showtime._id;
+        });
+        afterEach(async () => {
+            await Showtime.deleteMany();
+        });
+        afterAll(async () => {
+            await movie.remove();
+            await hall.remove();
+        });
+
+        const exec = () =>
+            request(server).put(`/api/v1/showtimes/${showtimeId}`);
+
+        it('should return 404 if object ID of showtime is not valid', async () => {
+            showtimeId = 1;
+            const res = await exec().send({});
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 404 of object ID of showtime does not exist', async () => {
+            showtimeId = mongoose.Types.ObjectId();
+            const res = await exec().send({});
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 400 if startedDateTime is not a date string', async () => {
+            const res = await exec().send({ startedDateTime: true });
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 400 if startedDateTime is an empty string', async () => {
+            const res = await exec().send({ startedDateTime: '' });
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 400 if startedDateTime is not in valid ISO format', async () => {
+            const res = await exec().send({
+                startedDateTime: '20-10-20 17:00'
+            });
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 400 if movieId is not a valid object Id', async () => {
+            const res = await exec().send({ movieId: 1 });
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 404 if movieId does not exist', async () => {
+            const res = await exec().send({
+                movieId: mongoose.Types.ObjectId()
+            });
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 400 if hallId is not a valid object Id', async () => {
+            const res = await exec().send({ hallId: 1 });
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 404 if hallId does not exist', async () => {
+            const res = await exec().send({
+                hallId: mongoose.Types.ObjectId()
+            });
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 400 if showtime startedDateTime overlapping another showtime of same hall', async () => {
+            await Showtime.create({
+                startedDateTime: '2023-10-20 19:30',
+                movie: movie._id,
+                hall: hall._id
+            });
+
+            const res = await exec().send({
+                startedDateTime: '2023-10-20 19:50'
+            });
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 400 if showtime endedDateTime overlapping another showtime of same hall', async () => {
+            await Showtime.create({
+                startedDateTime: '2023-10-20 19:30',
+                movie: movie._id,
+                hall: hall._id
+            });
+
+            const res = await exec().send({
+                startedDateTime: '2023-10-20 18:30'
+            });
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 200, and update the showtime if request is valid', async () => {
+            const res = await exec().send({
+                startedDateTime: '2024-10-20 14:00',
+                movieId: movie._id,
+                hallId: hall._id
+            });
+
+            const showtimeInDb = await Showtime.findById(showtimeId);
+
+            expect(res.status).toBe(200);
+            expect(new Date(showtimeInDb.startedDateTime).toISOString()).toBe(
+                new Date('2024-10-20 14:00').toISOString()
+            );
+            expect(showtimeInDb.movie.toHexString()).toBe(
+                movie._id.toHexString()
+            );
+            expect(showtimeInDb.hall.toHexString()).toBe(
+                hall._id.toHexString()
+            );
+            expect(showtimeInDb.updatedAt).not.toBeNull();
+        });
+
+        it('should return 200, and return the updated showtime if request is valid', async () => {
+            const res = await exec().send({
+                startedDateTime: '2024-10-20 14:00',
+                movieId: movie._id,
+                hallId: hall._id
+            });
+
+            expect(res.status).toBe(200);
+            expect(res.body.data).toHaveProperty(
+                '_id',
+                showtimeId.toHexString()
+            );
+            expect(res.body.data).toHaveProperty('startedDateTime');
+            expect(new Date(res.body.data.startedDateTime).toISOString()).toBe(
+                new Date('2024-10-20 14:00').toISOString()
+            );
+            expect(res.body.data).toHaveProperty(
+                'movie',
+                movie._id.toHexString()
+            );
+            expect(res.body.data).toHaveProperty(
+                'hall',
+                hall._id.toHexString()
+            );
+            expect(res.body.data).toHaveProperty('updatedAt');
+        });
+    });
 });
