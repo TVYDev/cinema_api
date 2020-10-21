@@ -24,6 +24,170 @@ describe('Showtimes', () => {
         await Showtime.deleteMany();
     });
 
+    describe('GET /api/v1/showtimes', () => {
+        let movie;
+        let hall;
+
+        beforeAll(async () => {
+            movie = await Movie.create({
+                title: 'Spider man',
+                description: 'Superhero with climbing abilities',
+                releasedDate: '2023-01-23',
+                ticketPrice: 2.5,
+                durationInMinutes: 120,
+                genres: [mongoose.Types.ObjectId()],
+                movieType: mongoose.Types.ObjectId(),
+                trailerUrl: 'https://youtu.be/dR3cjXncoSk',
+                posterUrl:
+                    'https://i.pinimg.com/originals/e6/a2/5a/e6a25a2855e741f7461fe1698db3153a.jpg',
+                spokenLanguage: mongoose.Types.ObjectId(),
+                subtitleLanguage: mongoose.Types.ObjectId(),
+                country: mongoose.Types.ObjectId()
+            });
+
+            hall = await Hall.create({
+                name: 'Hall One',
+                seatRows: ['A', 'B', 'C', 'D'],
+                seatColumns: [1, 2, 3, 4],
+                cinema: mongoose.Types.ObjectId(),
+                hallType: mongoose.Types.ObjectId()
+            });
+        });
+
+        afterAll(async () => {
+            await movie.remove();
+            await hall.remove();
+        });
+
+        it('should return 200, and return all the showtimes if request is valid', async () => {
+            await Showtime.create([
+                {
+                    startedDateTime: '2023-10-20 17:00',
+                    movie: movie._id,
+                    hall: hall._id
+                },
+                {
+                    startedDateTime: '2023-10-20 10:50',
+                    movie: movie._id,
+                    hall: hall._id
+                }
+            ]);
+
+            const res = await request(server).get('/api/v1/showtimes');
+            const { items } = res.body.data;
+
+            expect(res.status).toBe(200);
+            expect(
+                items.some(
+                    (s) =>
+                        new Date(s.startedDateTime).toISOString() ===
+                        new Date('2023-10-20 17:00').toISOString()
+                )
+            ).toBeTruthy();
+            expect(
+                items.some(
+                    (s) =>
+                        new Date(s.startedDateTime).toISOString() ===
+                        new Date('2023-10-20 10:50').toISOString()
+                )
+            ).toBeTruthy();
+            expect(items).toHaveLength(2);
+        });
+    });
+
+    describe('GET /api/v1/showtimes/:id', () => {
+        let showtime;
+        let showtimeId;
+        let movie;
+        let hall;
+
+        beforeEach(async () => {
+            showtime = await Showtime.create({
+                startedDateTime: '2023-10-20 17:00',
+                movie: movie._id,
+                hall: hall._id
+            });
+
+            showtimeId = showtime._id;
+        });
+        afterEach(async () => {
+            await Showtime.deleteMany();
+        });
+
+        beforeAll(async () => {
+            movie = await Movie.create({
+                title: 'Spider man',
+                description: 'Superhero with climbing abilities',
+                releasedDate: '2023-01-23',
+                ticketPrice: 2.5,
+                durationInMinutes: 120,
+                genres: [mongoose.Types.ObjectId()],
+                movieType: mongoose.Types.ObjectId(),
+                trailerUrl: 'https://youtu.be/dR3cjXncoSk',
+                posterUrl:
+                    'https://i.pinimg.com/originals/e6/a2/5a/e6a25a2855e741f7461fe1698db3153a.jpg',
+                spokenLanguage: mongoose.Types.ObjectId(),
+                subtitleLanguage: mongoose.Types.ObjectId(),
+                country: mongoose.Types.ObjectId()
+            });
+
+            hall = await Hall.create({
+                name: 'Hall One',
+                seatRows: ['A', 'B', 'C', 'D'],
+                seatColumns: [1, 2, 3, 4],
+                cinema: mongoose.Types.ObjectId(),
+                hallType: mongoose.Types.ObjectId()
+            });
+        });
+
+        afterAll(async () => {
+            await movie.remove();
+            await hall.remove();
+        });
+
+        const exec = () =>
+            request(server).get(`/api/v1/showtimes/${showtimeId}`);
+
+        it('should return 404 if object ID of showtime is not valid', async () => {
+            showtimeId = 1;
+            const res = await exec();
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 404 of object ID of showtime does not exist', async () => {
+            showtimeId = mongoose.Types.ObjectId();
+            const res = await exec();
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 200, and return the showtime if object ID is valid and exist', async () => {
+            const res = await exec();
+
+            expect(res.status).toBe(200);
+            expect(res.body.data).toHaveProperty(
+                '_id',
+                showtimeId.toHexString()
+            );
+            expect(res.body.data).toHaveProperty('startedDateTime');
+            expect(new Date(res.body.data.startedDateTime).toISOString()).toBe(
+                new Date('2023-10-20 17:00').toISOString()
+            );
+            expect(res.body.data).toHaveProperty('movie');
+            expect(res.body.data.movie).toHaveProperty(
+                '_id',
+                movie._id.toHexString()
+            );
+            expect(res.body.data).toHaveProperty('hall');
+            expect(res.body.data.hall).toHaveProperty(
+                '_id',
+                hall._id.toHexString()
+            );
+            expect(res.body.data).toHaveProperty('endedDateTime');
+        });
+    });
+
     describe('POST /api/v1/showtimes', () => {
         let movie;
         let hall;
