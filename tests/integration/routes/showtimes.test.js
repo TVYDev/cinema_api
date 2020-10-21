@@ -95,6 +95,99 @@ describe('Showtimes', () => {
         });
     });
 
+    describe('GET /api/v1/movies/:movieId/showtimes', () => {
+        let movie;
+        let movieId;
+        let hall;
+        let hallId;
+
+        beforeEach(async () => {
+            movie = await Movie.create({
+                title: 'Spider man',
+                description: 'Superhero with climbing abilities',
+                releasedDate: '2023-01-23',
+                ticketPrice: 2.5,
+                durationInMinutes: 120,
+                genres: [mongoose.Types.ObjectId()],
+                movieType: mongoose.Types.ObjectId(),
+                trailerUrl: 'https://youtu.be/dR3cjXncoSk',
+                posterUrl:
+                    'https://i.pinimg.com/originals/e6/a2/5a/e6a25a2855e741f7461fe1698db3153a.jpg',
+                spokenLanguage: mongoose.Types.ObjectId(),
+                subtitleLanguage: mongoose.Types.ObjectId(),
+                country: mongoose.Types.ObjectId()
+            });
+
+            hall = await Hall.create({
+                name: 'Hall One',
+                seatRows: ['A', 'B', 'C', 'D'],
+                seatColumns: [1, 2, 3, 4],
+                cinema: mongoose.Types.ObjectId(),
+                hallType: mongoose.Types.ObjectId()
+            });
+
+            movieId = movie._id;
+            hallId = hall._id;
+
+            const showtimes = await Showtime.create([
+                {
+                    startedDateTime: '2023-10-20 17:00',
+                    movie: movieId,
+                    hall: hallId
+                },
+                {
+                    startedDateTime: '2023-08-20 10:50',
+                    movie: movieId,
+                    hall: hallId
+                }
+            ]);
+        });
+
+        afterEach(async () => {
+            await movie.remove();
+            await hall.remove();
+        });
+
+        const exec = () =>
+            request(server).get(`/api/v1/movies/${movieId}/showtimes`);
+
+        it('should return 404 if object ID of movie is not valid', async () => {
+            movieId = 1;
+            const res = await exec();
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 404 of object ID of movie does not exist', async () => {
+            movieId = mongoose.Types.ObjectId();
+            const res = await exec();
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 200, and return all the showtimes of the movie if request is valid', async () => {
+            const res = await exec();
+            const { items } = res.body.data;
+
+            expect(res.status).toBe(200);
+            expect(
+                items.some(
+                    (s) =>
+                        new Date(s.startedDateTime).toISOString() ===
+                        new Date('2023-10-20 17:00').toISOString()
+                )
+            ).toBeTruthy();
+            expect(
+                items.some(
+                    (s) =>
+                        new Date(s.startedDateTime).toISOString() ===
+                        new Date('2023-08-20 10:50').toISOString()
+                )
+            ).toBeTruthy();
+            expect(items).toHaveLength(2);
+        });
+    });
+
     describe('GET /api/v1/showtimes/:id', () => {
         let showtime;
         let showtimeId;

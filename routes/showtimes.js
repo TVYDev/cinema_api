@@ -16,11 +16,22 @@ const {
 const validateRequestBody = require('../middlewares/validateRequestBody');
 const validateReferences = require('../middlewares/validateReferences');
 const listJsonResponse = require('../middlewares/listJsonResponse');
-const router = express.Router();
+const pathParamsFilter = require('../middlewares/pathParamsFilter');
+const router = express.Router({ mergeParams: true });
 
 router
     .route('/')
-    .get(listJsonResponse(Showtime, ['movie', 'hall']), getShowtimes)
+    .get(
+        pathParamsFilter([
+            {
+                field: 'movie',
+                param: 'movieId',
+                model: Movie
+            }
+        ]),
+        listJsonResponse(Showtime, ['movie', 'hall']),
+        getShowtimes
+    )
     .post(
         validateRequestBody(validateOnCreateShowtime),
         validateReferences([
