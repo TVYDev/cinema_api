@@ -1,19 +1,19 @@
 [
     {
         "_id": "5f8e536d47915a3dc00eab39",
-        "startedDateTime": "2020-10-20 17:00",
+        "startedDateTime": "2023-10-20 17:00",
         "movie": "5f867f6526b4c50090a9cf83",
         "hall": "5f7e6fa36e1f822e0800184a"
     },
     {
         "_id": "5f8e537b93ff0e3fd813b21e",
-        "startedDateTime": "2020-10-20 18:50",
+        "startedDateTime": "2023-10-20 18:50",
         "movie": "5f867dafee5d303788cfbb90",
         "hall": "5f7e6fa36e1f822e0800184a"
     },
     {
         "_id": "5f8e5387ec33521c201f5219",
-        "startedDateTime": "2020-10-20 17:30",
+        "startedDateTime": "2023-10-20 17:30",
         "movie": "5f867f6526b4c50090a9cf83",
         "hall": "5f7e6fe396f1a141f0633a68"
     }

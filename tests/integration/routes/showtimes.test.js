@@ -245,7 +245,6 @@ describe('Showtimes', () => {
             const { startedDateTime, endedDateTime } = res.body.data;
 
             const minutesStartedDateTime = new Date(startedDateTime).getTime();
-            console.log(minutesStartedDateTime);
             const minutesEndedDateTime = new Date(endedDateTime).getTime();
             const calculatedMovieDuration =
                 (minutesEndedDateTime - minutesStartedDateTime) / 1000 / 60;

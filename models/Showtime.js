@@ -32,38 +32,46 @@ const showtimeSchema = new mongoose.Schema({
     }
 });
 
-// Create `updatedAt` field
-showtimeSchema.pre('findOneAndUpdate', function () {
-    this.set({ updatedAt: Date.now() });
+showtimeSchema.pre('findOneAndUpdate', async function (next) {
+    const docToUpdate = await this.model.findOne(this.getFilter());
+    const updates = this.getUpdate();
+    for (key in updates) {
+        docToUpdate[key] = updates[key];
+    }
+
+    const endedDateTime = await validateDateTimeBeforeSaveOrUpdate(
+        docToUpdate,
+        next
+    );
+    this.set({ updatedAt: Date.now(), endedDateTime });
 });
 
-// Added `endedDateTime` field
 showtimeSchema.pre('save', async function (next) {
-    try {
-        const movie = await this.model('Movie').findById(this.movie);
-        const startDateTimeObj = new Date(this.startedDateTime);
-        this.endedDateTime = new Date(
-            startDateTimeObj.setMinutes(
-                startDateTimeObj.getMinutes() + movie.durationInMinutes
+    await validateDateTimeBeforeSaveOrUpdate(this, next);
+});
+
+async function validateDateTimeBeforeSaveOrUpdate(showtimeObj, next) {
+    const movie = await showtimeObj.model('Movie').findById(showtimeObj.movie);
+    const startDateTimeObj = new Date(showtimeObj.startedDateTime);
+    showtimeObj.endedDateTime = new Date(
+        startDateTimeObj.setMinutes(
+            startDateTimeObj.getMinutes() + movie.durationInMinutes
+        )
+    );
+
+    const isAvailable = await validateAvailabilityOfShowtime(showtimeObj);
+
+    if (!isAvailable) {
+        return next(
+            new ErrorResponse(
+                'There is no available time for this showtime',
+                400
             )
         );
-
-        const isAvailable = await validateAvailabilityOfShowtime(this);
-
-        if (!isAvailable) {
-            return next(
-                new ErrorResponse(
-                    'There is no available time for this showtime',
-                    400
-                )
-            );
-        }
-
-        next();
-    } catch (error) {
-        next(error);
     }
-});
+
+    return showtimeObj.endedDateTime;
+}
 
 const validationSchema = {
     startedDateTime: Joi.date().iso().min('now'),
