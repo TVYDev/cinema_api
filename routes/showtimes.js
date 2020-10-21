@@ -10,7 +10,8 @@ const {
     getShowtimes,
     getShowtime,
     addShowtime,
-    updateShowtime
+    updateShowtime,
+    deleteShowtime
 } = require('../controllers/showtimes');
 const validateRequestBody = require('../middlewares/validateRequestBody');
 const validateReferences = require('../middlewares/validateReferences');
@@ -73,6 +74,16 @@ router
             }
         ]),
         updateShowtime
+    )
+    .delete(
+        validateReferences([
+            {
+                model: Showtime,
+                field: '_id',
+                param: 'id'
+            }
+        ]),
+        deleteShowtime
     );
 
 module.exports = router;

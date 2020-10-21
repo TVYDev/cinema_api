@@ -178,3 +178,31 @@ exports.updateShowtime = asyncHandler(async (req, res, next) => {
 
     res.standard(200, true, 'Showtime is updated successfully', showtime);
 });
+
+/**
+ * @swagger
+ * /showtimes/{id}:
+ *  delete:
+ *      tags:
+ *          - ⌚ Showtimes
+ *      summary: Delete a showtime by ID
+ *      descriptioin: (ADMIN) Delete a showtime by its ID
+ *      parameters:
+ *          -   in: path
+ *              name: id
+ *              required: true
+ *              description: Object ID of showtime
+ *              example: 5f8e536d47915a3dc00eab39
+ *      responses:
+ *          200:
+ *              description: OK
+ *          404:
+ *              description: Showtime is not found
+ *          500:
+ *              description: Internal server error
+ */
+exports.deleteShowtime = asyncHandler(async (req, res, next) => {
+    const showtime = await Showtime.findByIdAndRemove(req.params.id);
+
+    res.standard(200, true, 'Showtime is deleted successfully', showtime);
+});
