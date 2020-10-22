@@ -85,8 +85,7 @@ APIs for cinema management including CRUD on cinemas, halls, movies, buying tick
 -   ✅ [Admin] Add a movie showtime to a hall of a cinema
 -   ✅ [Admin] Update a showtime (movie id, startedDateTime, cinema id)
 -   ✅ [Public] Get all showtimes
--   [Public] Get all showtimes of a movie
--   [Public] Get all showtimes of a day
+-   ✅ [Public] Get all showtimes of a movie
 -   ✅ [Public] Get a showtime
 -   ✅ [Admin] Delete a showtime
 
