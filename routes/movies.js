@@ -20,6 +20,10 @@ const { MovieType } = require('../models/MovieType');
 const { Language } = require('../models/Language');
 const { Country } = require('../models/Country');
 const router = express.Router({ mergeParams: true });
+const showtimesRouter = require('./showtimes');
+
+// Re-route to other router resources
+router.use('/:movieId/showtimes', showtimesRouter);
 
 router
     .route('/')

@@ -10,6 +10,8 @@ const genres = require('../routes/genres');
 const movies = require('../routes/movies');
 const languages = require('../routes/languages');
 const countries = require('../routes/countries');
+const showtimes = require('../routes/showtimes');
+const settings = require('../routes/settings');
 
 module.exports = function (app) {
     app.use(express.json());
@@ -23,5 +25,7 @@ module.exports = function (app) {
     app.use('/api/v1/movies', movies);
     app.use('/api/v1/languages', languages);
     app.use('/api/v1/countries', countries);
+    app.use('/api/v1/showtimes', showtimes);
+    app.use('/api/v1/settings', settings);
     app.use(errorHandler);
 };
