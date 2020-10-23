@@ -49,6 +49,39 @@ annoucementSchema.pre('save', function (next) {
     next();
 });
 
+// Validate `startedDateTime`, `endedDateTime` fields when updating
+annoucementSchema.pre('findOneAndUpdate', async function (next) {
+    const announcementObj = await this.findOne(this.getFilter());
+    const updates = this.getUpdate();
+    let isValid = true;
+    if (updates.startedDateTime && updates.endedDateTime) {
+        if (
+            new Date(updates.endedDateTime) < new Date(updates.startedDateTime)
+        ) {
+            isValid = false;
+        }
+    } else {
+        if (
+            new Date(announcementObj.endedDateTime) <
+                new Date(updates.startedDateTime) ||
+            new Date(announcementObj.startedDateTime) >
+                new Date(updates.endedDateTime)
+        ) {
+            isValid = false;
+        }
+    }
+
+    if (!isValid) {
+        return next(
+            new ErrorResponse(
+                'endedDateTime must be greater or equal to startedDateTime',
+                400
+            )
+        );
+    }
+    next();
+});
+
 // Create `updatedAt` field
 annoucementSchema.pre('findOneAndUpdate', function () {
     this.set({ updatedAt: Date.now() });
