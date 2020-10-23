@@ -118,24 +118,12 @@ APIs for cinema management including CRUD on cinemas, halls, movies, buying tick
 
 ### 🔊 Announcements
 
--   [Admin] Add new announcement (title, description, image, start datetime, end datetime)
--   [Admin] Update an announcement (title, description, image, start datetime, end datetime)
--   [Public] Get all annoucements
--   [Public] Get a single annoucement
--   [Admin] Delete an annoucement
--   [Admin] Update sequence of annoucements
-
-### 👍 Recommendations
-
--   [Admin] Add an available movie to recommendation list
--   [Admin] Get all movies in recommendation list
--   [Admin] Delete a movie from recommendation list
-
-### 📐 Settings
-
--   [Admin] Configure minimum minutes between movie showtimes
--   [Admin] Configure whether discount if user buy tickets through mobile apps, and discount amount/percentage
--   [Admin] Configure amount of minutes for seats selection and purchase
+-   ✅ [Admin] Add new announcement (title, description, image, start datetime, end datetime)
+-   ✅ [Admin] Update an announcement (title, description, image, start datetime, end datetime)
+-   ✅ [Public] Get all annoucements
+-   ✅ [Public] Get a single annoucement
+-   ✅ [Admin] Delete an annoucement
+-   ✅ [Admin] Upload image of announcement
 
 ### 📑 Membership
 
@@ -169,6 +157,14 @@ APIs for cinema management including CRUD on cinemas, halls, movies, buying tick
 -   [Admin, Staff] Print movie tictets
 -   [Admin] Graph show movies tickets solved a period
 -   [Admin] Graph show current-showing movies tickets solved
+
+### 📐 Settings
+
+-   [Admin] Configure minimum minutes between movie showtimes
+-   [Admin] Configure whether discount if user buy tickets through mobile apps, and discount amount/percentage
+-   [Admin] Configure amount of minutes for seats selection and purchase
+-   [Admin] Configure sequence of announcements
+-   [Admin] Configure recommended list of movies
 
 #
 

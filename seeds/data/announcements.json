@@ -1,0 +1,23 @@
+[
+    {
+        "_id": "5f925a2c4716fa3994a5cab4",
+        "title": "Free Free",
+        "description": "Buy Ticket, Free Popcorn",
+        "startedDateTime": "2023-10-10 10:00",
+        "endedDateTime": "2023-12-12 10:00"
+    },
+    {
+        "_id": "5f925a35c8daa8479857b472",
+        "title": "Discount 20%",
+        "description": "Buy Ticket, Discount Popcorn 20%",
+        "startedDateTime": "2023-05-01 06:00",
+        "endedDateTime": "2023-06-01 10:00"
+    },
+    {
+        "_id": "5f925a3ce9e17436f8ca1896",
+        "title": "Buy 1 Get 1",
+        "description": "Buy 1 Ticket, Free 1 Ticket",
+        "startedDateTime": "2023-01-10 10:00",
+        "endedDateTime": "2023-01-12 10:00"
+    }
+]
