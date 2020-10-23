@@ -12,6 +12,7 @@ const languages = require('../routes/languages');
 const countries = require('../routes/countries');
 const showtimes = require('../routes/showtimes');
 const settings = require('../routes/settings');
+const announcements = require('../routes/announcements');
 
 module.exports = function (app) {
     app.use(express.json());
@@ -27,5 +28,6 @@ module.exports = function (app) {
     app.use('/api/v1/countries', countries);
     app.use('/api/v1/showtimes', showtimes);
     app.use('/api/v1/settings', settings);
+    app.use('/api/v1/announcements', announcements);
     app.use(errorHandler);
 };
