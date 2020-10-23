@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const request = require('supertest');
+const fs = require('fs');
 const { Announcement } = require('../../../models/Announcement');
 let server;
 
@@ -554,6 +555,87 @@ describe('Announcements', () => {
                 announcementId.toHexString()
             );
             expect(res.body.data).toHaveProperty('title', 'Free Free');
+        });
+    });
+
+    describe('PUT /api/v1/announcements/:id/image', () => {
+        let anncouncement;
+        let announcementId;
+        let imageFileUrl = './tests/test_files/test_image_valid.jpg';
+        let textFileUrl = './tests/test_files/test_text.txt';
+        let imageFileExceeds1MBUrl =
+            './tests/test_files/test_image_exceeds_1MB.jpg';
+        let createdFileUrl = undefined;
+
+        beforeEach(async () => {
+            announcement = await Announcement.create({
+                title: 'Free Free',
+                description: 'Buy Ticket, Free Popcorn',
+                startedDateTime: '2023-10-10 10:00',
+                endedDateTime: '2023-12-12 10:00'
+            });
+
+            announcementId = announcement._id;
+        });
+
+        afterEach(async () => {
+            if (createdFileUrl !== undefined) {
+                fs.unlinkSync(createdFileUrl);
+            }
+        });
+
+        const exec = () =>
+            request(server).put(
+                `/api/v1/announcements/${announcementId}/image`
+            );
+
+        it('should return 404 if object ID provided is invalid', async () => {
+            announcementId = 1;
+            const res = await exec().attach('file', imageFileUrl);
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 404 if cinema ID provided does not exists', async () => {
+            announcementId = mongoose.Types.ObjectId();
+            const res = await exec().attach('file', imageFileUrl);
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 400 if there is no uploaded file', async () => {
+            const res = await exec();
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 400 if uploaded file is not an image file', async () => {
+            const res = await exec().attach('file', textFileUrl);
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 400 if uploaded file exceed maximum size set in config', async () => {
+            const res = await exec().attach('file', imageFileExceeds1MBUrl);
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 200, and save the image file to uploads directory', async () => {
+            const res = await exec().attach('file', imageFileUrl);
+            createdFileUrl = `${process.env.FILE_UPLOAD_PATH}/${res.body.data.image}`;
+
+            expect(res.status).toBe(200);
+            expect(fs.existsSync(createdFileUrl)).toBeTruthy();
+        });
+
+        it('should return 200, and return the cinema with photo field with updated value', async () => {
+            const res = await exec().attach('file', imageFileUrl);
+            createdFileUrl = `${process.env.FILE_UPLOAD_PATH}/${res.body.data.image}`;
+
+            expect(res.status).toBe(200);
+            expect(res.body.data).toHaveProperty('image');
+            expect(res.body.data.image).not.toBe('no-photo.png');
         });
     });
 });

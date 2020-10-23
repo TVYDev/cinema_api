@@ -9,7 +9,8 @@ const {
     getAnnouncement,
     createAnnoucement,
     updateAnnouncement,
-    deleteAnnouncement
+    deleteAnnouncement,
+    uploadImageAnnouncement
 } = require('../controllers/annoucements');
 const listJsonResponse = require('../middlewares/listJsonResponse');
 const validateRequestBody = require('../middlewares/validateRequestBody');
@@ -54,5 +55,16 @@ router
         ]),
         deleteAnnouncement
     );
+
+router.route('/:id/image').put(
+    validateReferences([
+        {
+            model: Announcement,
+            field: '_id',
+            param: 'id'
+        }
+    ]),
+    uploadImageAnnouncement
+);
 
 module.exports = router;

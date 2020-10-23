@@ -1,5 +1,7 @@
 const asyncHandler = require('../middlewares/asyncHandler');
 const { Announcement } = require('../models/Announcement');
+const validateFileUpload = require('../helpers/validateFileUpload');
+const storeFileUpload = require('../helpers/storeFileUpload');
 
 /**
  * @swagger
@@ -220,6 +222,61 @@ exports.deleteAnnouncement = asyncHandler(async (req, res, next) => {
         200,
         true,
         'Announcement is deleted successfully',
+        announcement
+    );
+});
+
+/**
+ * @swagger
+ * /announcements/{id}/image:
+ *  put:
+ *      tags:
+ *          - 🔊 Announcements
+ *      summary: Upload image of announcement
+ *      description: (ADMIN) Upload image of announcement by its ID
+ *      parameters:
+ *          -   in: path
+ *              name: id
+ *              schema: string
+ *              required: true
+ *              description: Object ID of announcement
+ *              example: 5f925a2c4716fa3994a5cab4
+ *          -   in: formData
+ *              name: file
+ *              type: file
+ *              description: Image file to be uploaded as image of announcement
+ *      responses:
+ *          200:
+ *              description: OK
+ *          404:
+ *              description: Announcement is not found
+ *          400:
+ *              description: Validation error
+ *          500:
+ *              description: Unable to upload file | Internal server error
+ */
+exports.uploadImageAnnouncement = asyncHandler(async (req, res, next) => {
+    const announcementId = req.params.id;
+
+    const file = validateFileUpload(req, next, 'image');
+    const fileName = storeFileUpload(
+        'announcement_image',
+        announcementId,
+        file
+    );
+
+    const announcement = await Announcement.findByIdAndUpdate(
+        announcementId,
+        {
+            image: fileName
+        },
+        { new: true }
+    );
+
+    res.standard(
+        200,
+        true,
+        'Image of announcement is uploaded successfully',
         announcement
     );
 });
