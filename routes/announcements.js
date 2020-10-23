@@ -8,7 +8,8 @@ const {
     getAnnouncements,
     getAnnouncement,
     createAnnoucement,
-    updateAnnouncement
+    updateAnnouncement,
+    deleteAnnouncement
 } = require('../controllers/annoucements');
 const listJsonResponse = require('../middlewares/listJsonResponse');
 const validateRequestBody = require('../middlewares/validateRequestBody');
@@ -42,6 +43,16 @@ router
             }
         ]),
         updateAnnouncement
+    )
+    .delete(
+        validateReferences([
+            {
+                model: Announcement,
+                field: '_id',
+                param: 'id'
+            }
+        ]),
+        deleteAnnouncement
     );
 
 module.exports = router;

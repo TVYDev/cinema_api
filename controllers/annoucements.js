@@ -190,3 +190,36 @@ exports.updateAnnouncement = asyncHandler(async (req, res, next) => {
         announcement
     );
 });
+
+/**
+ * @swagger
+ * /announcements/{id}:
+ *  delete:
+ *      tags:
+ *          - 🔊 Announcements
+ *      summary: Delete an announcement by ID
+ *      description: (ADMIN) Delete an announcement by its ID
+ *      parameters:
+ *          -   in: path
+ *              name: id
+ *              required: true
+ *              description: Object ID of announcement
+ *              example: 5f925a2c4716fa3994a5cab4
+ *      responses:
+ *          200:
+ *              description: OK
+ *          404:
+ *              description: Announcement is not found
+ *          500:
+ *              description: Internal server error
+ */
+exports.deleteAnnouncement = asyncHandler(async (req, res, next) => {
+    const announcement = await Announcement.findByIdAndRemove(req.params.id);
+
+    res.standard(
+        200,
+        true,
+        'Announcement is deleted successfully',
+        announcement
+    );
+});

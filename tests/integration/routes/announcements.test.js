@@ -501,4 +501,59 @@ describe('Announcements', () => {
             expect(res.body.data).toHaveProperty('updatedAt');
         });
     });
+
+    describe('DELETE /api/v1/announcements/:id', () => {
+        let announcement;
+        let announcementId;
+
+        beforeEach(async () => {
+            announcement = await Announcement.create({
+                title: 'Free Free',
+                description: 'Buy Ticket, Free Popcorn',
+                startedDateTime: '2023-10-10 10:00',
+                endedDateTime: '2023-12-12 10:00'
+            });
+
+            announcementId = announcement._id;
+        });
+
+        const exec = () =>
+            request(server).delete(`/api/v1/announcements/${announcementId}`);
+
+        it('should return 404 if object ID of announcement is not valid', async () => {
+            announcementId = 1;
+            const res = await exec();
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 404 if object ID of announcement does not exist', async () => {
+            announcementId = mongoose.Types.ObjectId();
+            const res = await exec();
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 200, and delete the announcement if object ID is valid and exists', async () => {
+            const res = await exec();
+
+            const announcementInDb = await Announcement.findById(
+                announcementId
+            );
+
+            expect(res.status).toBe(200);
+            expect(announcementInDb).toBeNull();
+        });
+
+        it('should return 200, and return the deleted announcement if object ID is valid and exists', async () => {
+            const res = await exec();
+
+            expect(res.status).toBe(200);
+            expect(res.body.data).toHaveProperty(
+                '_id',
+                announcementId.toHexString()
+            );
+            expect(res.body.data).toHaveProperty('title', 'Free Free');
+        });
+    });
 });
