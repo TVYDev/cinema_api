@@ -14,6 +14,92 @@ describe('Announcements', () => {
         await Announcement.deleteMany();
     });
 
+    describe('GET /api/v1/announcements', () => {
+        it('should return 200, and return all the announcements if request is valid', async () => {
+            await Announcement.create([
+                {
+                    title: 'Free Free',
+                    description: 'Buy Ticket, Free Popcorn',
+                    startedDateTime: '2023-10-10 10:00',
+                    endedDateTime: '2023-12-12 10:00'
+                },
+                {
+                    title: 'Discount 20%',
+                    description: 'Buy Ticket, Discount Popcorn 20%',
+                    startedDateTime: '2023-05-01 06:00',
+                    endedDateTime: '2023-06-01 10:00'
+                }
+            ]);
+
+            const res = await request(server).get('/api/v1/announcements');
+            const { items } = res.body.data;
+
+            expect(res.status).toBe(200);
+            expect(items.some((a) => a.title === 'Free Free')).toBeTruthy();
+            expect(items.some((a) => a.title === 'Discount 20%')).toBeTruthy();
+            expect(
+                items.some((a) => a.description === 'Buy Ticket, Free Popcorn')
+            ).toBeTruthy();
+            expect(
+                items.some(
+                    (a) => a.description === 'Buy Ticket, Discount Popcorn 20%'
+                )
+            );
+            expect(items).toHaveLength(2);
+        });
+    });
+
+    describe('GET /api/v1/announcements/:id', () => {
+        let announcement;
+        let announcementId;
+
+        beforeEach(async () => {
+            announcement = await Announcement.create({
+                title: 'Free Free',
+                description: 'Buy Ticket, Free Popcorn',
+                startedDateTime: '2023-10-10 10:00',
+                endedDateTime: '2023-12-12 10:00'
+            });
+
+            announcementId = announcement._id;
+        });
+
+        const exec = () =>
+            request(server).get(`/api/v1/announcements/${announcementId}`);
+
+        it('should return 404 if object ID of announcement is not valid', async () => {
+            announcementId = 1;
+            const res = await exec();
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 404 if object ID of announcement does not exist', async () => {
+            announcementId = mongoose.Types.ObjectId();
+            const res = await exec();
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 200, and return the announcement if object ID is valid and exists', async () => {
+            const res = await exec();
+
+            expect(res.status).toBe(200);
+            expect(res.body.data).toHaveProperty(
+                '_id',
+                announcementId.toHexString()
+            );
+            expect(res.body.data).toHaveProperty('title', 'Free Free');
+            expect(res.body.data).toHaveProperty(
+                'description',
+                'Buy Ticket, Free Popcorn'
+            );
+            expect(res.body.data).toHaveProperty('startedDateTime');
+            expect(res.body.data).toHaveProperty('endedDateTime');
+            expect(res.body.data).toHaveProperty('createdAt');
+        });
+    });
+
     describe('POST /api/v1/announcements', () => {
         const data = {
             title: 'Free Free',

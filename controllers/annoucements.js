@@ -4,6 +4,86 @@ const { Announcement } = require('../models/Announcement');
 /**
  * @swagger
  * /announcements:
+ *  get:
+ *      tags:
+ *          - 🔊 Announcements
+ *      summary: Get all announcements
+ *      description: (PUBLIC) Retrieve all announcements with filtering, sorting and pagination
+ *      parameters:
+ *          -   in: query
+ *              name: select
+ *              schema:
+ *                  type: string
+ *              description: Fields to be selected (Multiple fields separated by comma [,])
+ *              example: title,description
+ *          -   in: query
+ *              name: sort
+ *              schema:
+ *                  type: string
+ *              description: Sort by field (Prefix the field with minus [-] for descending ordering)
+ *              example: name,-createdAt
+ *          -   in: query
+ *              name: limit
+ *              schema:
+ *                  type: string
+ *              default: 20
+ *              description: Limit numbers of record for a page
+ *              example: 10
+ *          -   in: query
+ *              name: page
+ *              default: 1
+ *              schema:
+ *                  type: string
+ *              description: Certain page index for records to be retrieved
+ *              example: 1
+ *          -   in: query
+ *              name: paging
+ *              default: true
+ *              schema:
+ *                  type: string
+ *              description: Define whether need records in pagination
+ *              example: false
+ *      responses:
+ *          200:
+ *              description: OK
+ *          500:
+ *              description: Internal server error
+ */
+exports.getAnnouncements = asyncHandler(async (req, res, next) => {
+    res.standard(200, true, 'Success', res.listJsonData);
+});
+
+/**
+ * @swagger
+ * /announcements/{id}:
+ *  get:
+ *      tags:
+ *          - 🔊 Announcements
+ *      summary: Get a single announcement by ID
+ *      description: (PUBLIC) Get a single announcement by ID
+ *      parameters:
+ *          -   in: path
+ *              name: id
+ *              required: true
+ *              description: Object ID of announcement
+ *              example: 5f9263c8cc10423fdc7b1a15
+ *      responses:
+ *          200:
+ *              description: OK
+ *          404:
+ *              description: Announcement is not found
+ *          500:
+ *              description: Internal server error
+ */
+exports.getAnnouncement = asyncHandler(async (req, res, next) => {
+    const announcement = await Announcement.findById(req.params.id);
+
+    res.standard(200, true, 'Success', announcement);
+});
+
+/**
+ * @swagger
+ * /announcements:
  *  post:
  *      tags:
  *          - 🔊 Announcements
