@@ -267,18 +267,6 @@ describe('Announcements', () => {
 
             expect(res.status).toBe(201);
             expect(announcementInDb).not.toBeNull();
-            expect(announcementInDb.indexPosition).not.toBeNull();
-        });
-
-        it('should return 201, and set indexPosition correctly if request is valid', async () => {
-            const res1 = await exec().send(data);
-            const res2 = await exec().send(data);
-
-            expect(res1.status).toBe(201);
-            expect(res2.status).toBe(201);
-
-            expect(res1.body.data).toHaveProperty('indexPosition', 0);
-            expect(res2.body.data).toHaveProperty('indexPosition', 1);
         });
 
         it('should return 201, and set startedDateTime to now if startedDateTime is not provided', async () => {
@@ -310,7 +298,6 @@ describe('Announcements', () => {
             expect(new Date(dt.endedDateTime).toISOString()).toBe(
                 new Date('2021-07-10 06:00').toISOString()
             );
-            expect(dt).toHaveProperty('indexPosition', 0);
         });
     });
 

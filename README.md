@@ -118,11 +118,12 @@ APIs for cinema management including CRUD on cinemas, halls, movies, buying tick
 
 ### 🔊 Announcements
 
--   [Admin] Add new announcement (title, description, image, start datetime, end datetime)
--   [Admin] Update an announcement (title, description, image, start datetime, end datetime)
--   [Public] Get all annoucements
--   [Public] Get a single annoucement
--   [Admin] Delete an annoucement
+-   ✅ [Admin] Add new announcement (title, description, image, start datetime, end datetime)
+-   ✅ [Admin] Update an announcement (title, description, image, start datetime, end datetime)
+-   ✅ [Public] Get all annoucements
+-   ✅ [Public] Get a single annoucement
+-   ✅ [Admin] Delete an annoucement
+-   ✅ [Admin] Upload image of announcement
 -   [Admin] Update sequence of annoucements
 
 ### 👍 Recommendations

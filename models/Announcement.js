@@ -17,9 +17,6 @@ const annoucementSchema = new mongoose.Schema({
         type: String,
         default: 'no-photo.png'
     },
-    indexPosition: {
-        type: Number
-    },
     startedDateTime: {
         type: Date,
         default: Date.now
@@ -85,18 +82,6 @@ annoucementSchema.pre('findOneAndUpdate', async function (next) {
 // Create `updatedAt` field
 annoucementSchema.pre('findOneAndUpdate', function () {
     this.set({ updatedAt: Date.now() });
-});
-
-// Set `indexPosition` value
-annoucementSchema.pre('save', async function (next) {
-    const annoucementWithMaxIndex = await this.constructor.findOne().sort({
-        indexPosition: -1
-    });
-    const lastIndexPosition = annoucementWithMaxIndex
-        ? annoucementWithMaxIndex.indexPosition
-        : -1;
-    this.indexPosition = lastIndexPosition + 1;
-    next();
 });
 
 const validationSchema = {
