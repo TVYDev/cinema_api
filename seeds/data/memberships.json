@@ -1,0 +1,17 @@
+[
+    {
+        "_id": "5f9630d827bad03854c8cdfd",
+        "name": "Silver",
+        "description": "Free drinks every purchase"
+    },
+    {
+        "_id": "5f9631d270fe653ccc1f4bb4",
+        "name": "Platinum",
+        "description": "Free Thursday two tickets"
+    },
+    {
+        "_id": "5f9631d951d2441e78248d5a",
+        "name": "Gold",
+        "description": "An exclusive discount every weekend"
+    }
+]
