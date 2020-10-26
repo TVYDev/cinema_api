@@ -17,6 +17,7 @@ const { Country } = require('../models/Country');
 const { Showtime } = require('../models/Showtime');
 const { Setting } = require('../models/Setting');
 const { Announcement } = require('../models/Announcement');
+const { Membership } = require('../models/Membership');
 
 // Connect database
 mongoose.connect(process.env.MONGODB_URI, {
@@ -60,6 +61,9 @@ const settings = JSON.parse(
 const announcements = JSON.parse(
     fs.readFileSync(`${__dirname}/data/announcements.json`, 'utf-8')
 );
+const membershps = JSON.parse(
+    fs.readFileSync(`${__dirname}/data/memberships.json`, 'utf-8')
+);
 
 const importData = async () => {
     try {
@@ -74,6 +78,7 @@ const importData = async () => {
         await Movie.create(movies);
         await Showtime.create(showtimes);
         await Announcement.create(announcements);
+        await Membership.create(membershps);
 
         console.log('Data imported'.blue.inverse);
         process.exit();
@@ -95,6 +100,7 @@ const destroyData = async () => {
         await Showtime.deleteMany();
         await Setting.deleteMany();
         await Announcement.deleteMany();
+        await Membership.deleteMany();
 
         console.log('Data destroyed'.red.inverse);
         process.exit();

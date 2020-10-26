@@ -125,9 +125,9 @@ APIs for cinema management including CRUD on cinemas, halls, movies, buying tick
 -   ✅ [Admin] Delete an annoucement
 -   ✅ [Admin] Upload image of announcement
 
-### 📑 Membership
+### 📃 Membership
 
--   [Admin] Create a membership (name, level, description)
+-   [Admin] Create a membership (name, description)
 -   [Admin] Update a membership
 -   [Public] Get all memberships
 -   [Public] Get a single membership
@@ -165,6 +165,7 @@ APIs for cinema management including CRUD on cinemas, halls, movies, buying tick
 -   [Admin] Configure amount of minutes for seats selection and purchase
 -   [Admin] Configure sequence of announcements
 -   [Admin] Configure recommended list of movies
+-   [Admin] Configure sequence level of memberships
 
 #
 
