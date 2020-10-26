@@ -23,14 +23,14 @@ const userSchema = new mongoose.Schema({
     },
     role: {
         type: String,
-        enum: ['customer', 'staff', 'admin'],
+        enum: ['customer', 'staff'],
         default: 'customer'
     },
     password: {
+        select: false,
         type: String,
         required: [true, 'Please provide a password'],
-        minlength: 6,
-        select: false
+        minlength: 6
     },
     resetPasswordToken: String,
     resetPasswordExpireDateTime: Date,
@@ -47,6 +47,13 @@ const userSchema = new mongoose.Schema({
         required: true
     }
 });
+
+// Remove `password` field from toJSON() function
+userSchema.methods.toJSON = function () {
+    const user = this.toObject();
+    delete user.password;
+    return user;
+};
 
 // Hash password
 userSchema.pre('save', async function (next) {
@@ -68,8 +75,9 @@ userSchema.pre('findOneAndUpdate', function () {
 const validationSchema = {
     name: Joi.string().trim().max(50),
     email: Joi.string().trim().email(),
-    role: Joi.string().valid('customer', 'staff', 'admin'),
-    password: Joi.string().min(6)
+    role: Joi.string().valid('customer', 'staff'),
+    password: Joi.string().min(6),
+    membershipId: Joi.objectId()
 };
 
 function validateOnCreateUser(user) {
@@ -78,6 +86,7 @@ function validateOnCreateUser(user) {
     tmpValidationSchema.email = tmpValidationSchema.email.required();
     tmpValidationSchema.role = tmpValidationSchema.role.required();
     tmpValidationSchema.password = tmpValidationSchema.password.required();
+    tmpValidationSchema.membershipId = tmpValidationSchema.membershipId.required();
 
     const schema = Joi.object(tmpValidationSchema);
 
@@ -86,7 +95,6 @@ function validateOnCreateUser(user) {
 
 function validateOnUpdateUser(user) {
     const tmpValidationSchema = { ...validationSchema };
-    tmpValidationSchema.membershipId = Joi.objectId();
     delete tmpValidationSchema.password;
     delete tmpValidationSchema.role;
 
