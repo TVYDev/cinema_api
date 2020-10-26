@@ -18,6 +18,7 @@
         "test-countries": "jest --verbose --runInBand ./tests/integration/routes/countries.test.js",
         "test-showtimes": "jest --verbose --runInBand ./tests/integration/routes/showtimes.test.js",
         "test-announcements": "jest --verbose --runInBand ./tests/integration/routes/announcements.test.js",
+        "test-memberships": "jest --verbose --runInBand ./tests/integration/routes/memberships.test.js",
         "coverage": "jest --collectCoverage"
     },
     "repository": {

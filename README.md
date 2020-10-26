@@ -127,11 +127,11 @@ APIs for cinema management including CRUD on cinemas, halls, movies, buying tick
 
 ### 📃 Membership
 
--   [Admin] Create a membership (name, description)
--   [Admin] Update a membership
--   [Public] Get all memberships
--   [Public] Get a single membership
--   [Admin] Delete a membership
+-   ✅ [Admin] Create a membership (name, description)
+-   ✅ [Admin] Update a membership
+-   ✅ [Public] Get all memberships
+-   ✅ [Public] Get a single membership
+-   ✅ [Admin] Delete a membership
 
 ### 😀 User
 
