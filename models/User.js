@@ -105,7 +105,6 @@ function validateOnCreateUser(user) {
 function validateOnUpdateUser(user) {
     const tmpValidationSchema = { ...validationSchema };
     delete tmpValidationSchema.password;
-    delete tmpValidationSchema.role;
 
     const schema = Joi.object(tmpValidationSchema);
 

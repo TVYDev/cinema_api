@@ -4,7 +4,7 @@ const {
     validateOnCreateUser,
     validateOnUpdateUser
 } = require('../models/User');
-const { createUser } = require('../controllers/users');
+const { createUser, updateUser } = require('../controllers/users');
 const { Membership } = require('../models/Membership');
 const validateRequestBody = require('../middlewares/validateRequestBody');
 const validateReferences = require('../middlewares/validateReferences');
@@ -21,6 +21,24 @@ router.route('/').post(
         }
     ]),
     createUser
+);
+
+router.route('/:id').put(
+    validateRequestBody(validateOnUpdateUser),
+    validateReferences([
+        {
+            model: User,
+            field: '_id',
+            param: 'id'
+        },
+        {
+            model: Membership,
+            field: '_id',
+            property: 'membershipId',
+            assignedProperty: 'membership'
+        }
+    ]),
+    updateUser
 );
 
 module.exports = router;
