@@ -91,18 +91,18 @@ APIs for cinema management including CRUD on cinemas, halls, movies, buying tick
 
 ### 🎫 Purchases
 
--   [Private] Initiate a purchase request
+-   [Private] Initiate a purchase request (number of ticket, showtime id)
 -   [Private] Create a purchase request (user id => (Guest or Normal user), showtime id, bought seats, datetime)
 -   [Private] Execute a purchase request
 -   [Private] Get all my purchases
 -   [Private] Get my single purchases
 -   [Admin] Get all purchases
 -   [Admin] Get a single purchases
--   [Admin] Cancel a purchase
 
 > **Initiate purchase request**
 >
 > -   Reserve time for seats selection and purchase for the user
+> -   Real-time updates on seat-selection
 
 > **Create purchase request**
 >
@@ -150,14 +150,6 @@ APIs for cinema management including CRUD on cinemas, halls, movies, buying tick
 -   [Private] Get profile user
 -   [Private] Logout user
 
-### 💻 Admin/Staff Panel
-
-> Note: Admin/Staff can purchase ticket(s) for a customer
-
--   [Admin, Staff] Print movie tictets
--   [Admin] Graph show movies tickets solved a period
--   [Admin] Graph show current-showing movies tickets solved
-
 ### 📐 Settings
 
 -   [Admin] Configure minimum minutes between movie showtimes
@@ -169,7 +161,7 @@ APIs for cinema management including CRUD on cinemas, halls, movies, buying tick
 
 #
 
-## II. Technlogies Using
+## II. Technologies Using
 
 <br />
 <img src="https://icon-library.com/images/nodejs-icon/nodejs-icon-24.jpg" height=50/>
