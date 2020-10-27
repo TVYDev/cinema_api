@@ -15,6 +15,90 @@ describe('Users', () => {
         await User.deleteMany();
     });
 
+    describe('GET /api/v1/users', () => {
+        it('should return 200, and return all the users', async () => {
+            await User.create([
+                {
+                    name: 'Linee Grandee',
+                    email: 'linee@mail.com',
+                    role: 'customer',
+                    membership: mongoose.Types.ObjectId(),
+                    password: '123456'
+                },
+                {
+                    name: 'Phonee Dellee',
+                    email: 'phonee@mail.com',
+                    role: 'staff',
+                    password: '123456'
+                }
+            ]);
+
+            const res = await request(server).get('/api/v1/users');
+            const { items } = res.body.data;
+
+            expect(res.status).toBe(200);
+            expect(items.some((u) => u.name === 'Linee Grandee')).toBeTruthy();
+            expect(items.some((u) => u.name === 'Phonee Dellee')).toBeTruthy();
+            expect(
+                items.some((u) => u.email === 'linee@mail.com')
+            ).toBeTruthy();
+            expect(
+                items.some((u) => u.email === 'phonee@mail.com')
+            ).toBeTruthy();
+            expect(items.some((u) => u.role === 'customer')).toBeTruthy();
+            expect(items.some((u) => u.role === 'staff')).toBeTruthy();
+            expect(items).toHaveLength(2);
+        });
+    });
+
+    describe('GET /api/v1/users/:id', () => {
+        let user;
+        let userId;
+
+        beforeEach(async () => {
+            user = await User.create({
+                name: 'qwe',
+                email: 'qwe@mail.com',
+                role: 'customer',
+                membership: mongoose.Types.ObjectId(),
+                password: '123456'
+            });
+
+            userId = user._id;
+        });
+
+        const exec = () => request(server).get(`/api/v1/users/${userId}`);
+
+        it('should return 404 if object ID of user is not valid', async () => {
+            userId = 1;
+
+            const res = await exec();
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 404 if object ID of user does not exist', async () => {
+            userId = mongoose.Types.ObjectId();
+
+            const res = await exec();
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 200, and return the user if request is valid', async () => {
+            const res = await exec();
+            const { data: dt } = res.body;
+
+            expect(res.status).toBe(200);
+            expect(dt).toHaveProperty('name', 'qwe');
+            expect(dt).toHaveProperty('email', 'qwe@mail.com');
+            expect(dt).toHaveProperty('role', 'customer');
+            expect(dt).toHaveProperty('membership');
+            expect(dt).toHaveProperty('createdAt');
+            expect(dt).not.toHaveProperty('password');
+        });
+    });
+
     describe('POST /api/v1/users', () => {
         let membership;
 
@@ -424,6 +508,59 @@ describe('Users', () => {
             expect(dt).toHaveProperty('role', 'staff');
             expect(dt).toHaveProperty('membership');
             expect(dt).toHaveProperty('updatedAt');
+        });
+    });
+
+    describe('DELETE /api/v1/users', () => {
+        let user;
+        let userId;
+
+        beforeEach(async () => {
+            user = await User.create({
+                name: 'qwe',
+                email: 'qwe@mail.com',
+                role: 'customer',
+                membership: mongoose.Types.ObjectId(),
+                password: '123456'
+            });
+
+            userId = user._id;
+        });
+
+        const exec = () => request(server).delete(`/api/v1/users/${userId}`);
+
+        it('should return 404 if object ID of user is not valid', async () => {
+            userId = 1;
+
+            const res = await exec();
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 404 if object ID of user does not exist', async () => {
+            userId = mongoose.Types.ObjectId();
+
+            const res = await exec();
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 200, and delete the user if request is valid', async () => {
+            const res = await exec();
+
+            const userInDb = await User.findById(userId);
+
+            expect(res.status).toBe(200);
+            expect(userInDb).toBeNull();
+        });
+
+        it('should return 200, and return the deleted user if request is valid', async () => {
+            const res = await exec();
+
+            expect(res.status).toBe(200);
+            expect(res.body.data).toHaveProperty('_id', userId.toHexString());
+            expect(res.body.data).toHaveProperty('name', 'qwe');
+            expect(res.body.data).toHaveProperty('email', 'qwe@mail.com');
         });
     });
 });
