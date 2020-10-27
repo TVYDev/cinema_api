@@ -135,11 +135,11 @@ APIs for cinema management including CRUD on cinemas, halls, movies, buying tick
 
 ### 😀 User
 
--   [Admin] Create a user (name, email, password, membership id)
--   [Admin] Update a user
--   [Admin] Get all users
--   [Admin] Get a single user
--   [Admin] Delete a user
+-   ✅ [Admin] Create a user (name, email, password, role, membership id, ⏳ reset password token, ⏳ reset password expire)
+-   ✅ [Admin] Update a user
+-   ✅ [Admin] Get all users
+-   ✅ [Admin] Get a single user
+-   ✅ [Admin] Delete a user
 
 ### 👨‍💻 Authentication
 

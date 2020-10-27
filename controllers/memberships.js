@@ -124,7 +124,7 @@ exports.createMembership = asyncHandler(async (req, res, next) => {
  * /membershps/{id}:
  *  put:
  *      tags:
- *          - 📃 Membershps
+ *          - 📃 Memberships
  *      summary: Update a membership
  *      description: (ADMIN) Update a membership by its ID
  *      parameters:

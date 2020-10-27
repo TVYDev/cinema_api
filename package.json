@@ -19,6 +19,7 @@
         "test-showtimes": "jest --verbose --runInBand ./tests/integration/routes/showtimes.test.js",
         "test-announcements": "jest --verbose --runInBand ./tests/integration/routes/announcements.test.js",
         "test-memberships": "jest --verbose --runInBand ./tests/integration/routes/memberships.test.js",
+        "test-users": "jest --verbose --runInBand ./tests/integration/routes/users.test.js",
         "coverage": "jest --collectCoverage"
     },
     "repository": {
@@ -40,6 +41,7 @@
     },
     "homepage": "https://github.com/TVYDev/movieer_api#readme",
     "dependencies": {
+        "bcryptjs": "^2.4.3",
         "colors": "^1.4.0",
         "dotenv": "^8.2.0",
         "express": "^4.17.1",
