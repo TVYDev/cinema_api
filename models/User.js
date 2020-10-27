@@ -43,8 +43,7 @@ const userSchema = new mongoose.Schema({
     },
     membership: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Membership',
-        required: true
+        ref: 'Membership'
     }
 });
 
@@ -72,6 +71,13 @@ userSchema.pre('findOneAndUpdate', function () {
     this.set({ updatedAt: Date.now() });
 });
 
+// Compare hashed password
+userSchema.methods.compareHashedPassword = async function (enteredPassword) {
+    console.log(this.password);
+    console.log(enteredPassword);
+    return await bcrypt.compare(enteredPassword, this.password);
+};
+
 const validationSchema = {
     name: Joi.string().trim().max(50),
     email: Joi.string().trim().email(),
@@ -86,7 +92,10 @@ function validateOnCreateUser(user) {
     tmpValidationSchema.email = tmpValidationSchema.email.required();
     tmpValidationSchema.role = tmpValidationSchema.role.required();
     tmpValidationSchema.password = tmpValidationSchema.password.required();
-    tmpValidationSchema.membershipId = tmpValidationSchema.membershipId.required();
+    tmpValidationSchema.membershipId = tmpValidationSchema.membershipId.when(
+        'role',
+        { is: 'customer', then: Joi.required(), otherwise: Joi.forbidden() }
+    );
 
     const schema = Joi.object(tmpValidationSchema);
 

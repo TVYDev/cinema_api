@@ -19,6 +19,7 @@
         "test-showtimes": "jest --verbose --runInBand ./tests/integration/routes/showtimes.test.js",
         "test-announcements": "jest --verbose --runInBand ./tests/integration/routes/announcements.test.js",
         "test-memberships": "jest --verbose --runInBand ./tests/integration/routes/memberships.test.js",
+        "test-users": "jest --verbose --runInBand ./tests/integration/routes/users.test.js",
         "coverage": "jest --collectCoverage"
     },
     "repository": {

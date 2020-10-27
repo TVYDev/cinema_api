@@ -20,7 +20,6 @@ const { User } = require('../models/User');
  *                      - email
  *                      - password
  *                      - role
- *                      - membershipId
  *                  properties:
  *                      name:
  *                          type: string
@@ -38,7 +37,7 @@ const { User } = require('../models/User');
  *                          example: customer
  *                      membershipId:
  *                          type: string
- *                          description: Object Id of membership
+ *                          description: Object Id of membership (Required for role "customer")
  *                          example: 5f9630d827bad03854c8cdfd
  *      responses:
  *          201:

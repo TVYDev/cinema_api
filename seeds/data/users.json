@@ -1,0 +1,21 @@
+[
+    {
+        "_id": "5f977747f5e80732e8cb6b75",
+        "name": "Linee Grandee",
+        "email": "linee@mail.com",
+        "role": "customer",
+        "membership": "5f9630d827bad03854c8cdfd"
+    },
+    {
+        "_id": "5f9777591afb5e3efc5685bb",
+        "name": "Phonee Dellee",
+        "email": "phonee@mail.com",
+        "role": "staff"
+    },
+    {
+        "_id": "5f977764ba79072f28960c0c",
+        "name": "Homee Livee",
+        "email": "homee@mail.com",
+        "role": "admin"
+    }
+]
