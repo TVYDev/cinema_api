@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Joi = require('joi');
+const ErrorResponse = require('../utils/ErrorResponse');
 Joi.objectId = require('joi-objectid')(Joi);
 
 const purchaseSchema = new mongoose.Schema({
@@ -9,9 +10,7 @@ const purchaseSchema = new mongoose.Schema({
         min: 1
     },
     chosenSeats: {
-        type: [String],
-        required: true,
-        validate: (v) => Array.isArray(v) && v.length > 0
+        type: [String]
     },
     status: {
         type: String,
@@ -19,19 +18,19 @@ const purchaseSchema = new mongoose.Schema({
         default: 'initiated'
     },
     originalAmount: {
-        type: Number,
-        required: true
+        type: Number
     },
     discount: {
-        required: true,
         type: {
             type: String,
             enum: ['flat', 'percent'],
-            required: true
+            required: true,
+            default: 'flat'
         },
         amount: {
             type: Number,
-            required: true
+            required: true,
+            default: 0
         }
     },
     paymentAmount: {
@@ -63,9 +62,74 @@ purchaseSchema.pre('findOneAndUpdate', function () {
     this.set({ updatedAt: Date.now() });
 });
 
+purchaseSchema.pre('save', async function (next) {
+    // Update `originalAmount` field
+    const showtime = await this.model('Showtime').findById(this.showtime);
+    const movie = await this.model('Movie').findById(showtime.movie);
+    this.originalAmount = movie.ticketPrice * this.numberTickets;
+
+    // Check for remaining seats for initiation
+    const hall = await this.model('Hall').findById(showtime.hall);
+    const numberTotalSeats = hall.seatRows.length * hall.seatColumns.length;
+
+    // -- Find number of seats, seat label already selected
+    const existingPurchases = await this.constructor.aggregate([
+        {
+            $group: {
+                _id: '$showtime',
+                numberTotalTickets: { $sum: '$numberTickets' },
+                seats: { $push: '$chosenSeats' }
+            }
+        },
+        {
+            $project: {
+                _id: '$showtime',
+                numberTotalTickets: '$numberTotalTickets',
+                chosenSeats: {
+                    $reduce: {
+                        input: '$seats',
+                        initialValue: [],
+                        in: {
+                            $concatArrays: ['$$this', '$$value']
+                        }
+                    }
+                }
+            }
+        }
+    ]);
+
+    if (numberTotalSeats - existingPurchases[0].numberTotalTickets < 0) {
+        return next(
+            new ErrorResponse(
+                'Not enough remaining seats in this showtime',
+                400
+            )
+        );
+    }
+
+    // If there are available seats, set chosenSeats with random remaining seats based on number of tickets
+    const tmpReservedSeats = [];
+    let tmpSeat;
+    let tmpNumberTickets = this.numberTickets;
+    for (row of hall.seatRows) {
+        for (col of hall.seatColumns) {
+            if (tmpNumberTickets == 0) {
+                break;
+            }
+
+            tmpSeat = `${row}${col}`;
+            if (!existingPurchases[0].chosenSeats.includes(tmpSeat)) {
+                tmpReservedSeats.push(tmpSeat);
+                tmpNumberTickets--;
+            }
+        }
+    }
+    this.chosenSeats = tmpReservedSeats;
+});
+
 const validationSchema = {
     numberTickets: Joi.number().min(1).integer(),
-    chosenSeats: Joi.array().items(Joi.string()),
+    chosenSeats: Joi.array().items(Joi.string()).min(1),
     showtimeId: Joi.objectId()
 };
 
