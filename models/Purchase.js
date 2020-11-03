@@ -67,13 +67,13 @@ purchaseSchema.pre('findOneAndUpdate', function () {
 
 purchaseSchema.pre('save', async function (next) {
     // Max number seats per ticket
-    const maxNumberSeatsPerTicket = await this.model('Setting').getValue(
-        'max_number_seats_per_ticket'
+    const maxNumberTicketsPerPurchase = await this.model('Setting').getValue(
+        'max_number_tickets_per_purchase'
     );
-    if (this.numberTickets > maxNumberSeatsPerTicket) {
+    if (this.numberTickets > maxNumberTicketsPerPurchase) {
         return next(
             new ErrorResponse(
-                `Exceeding maximum number of seats per ticket (Max=${maxNumberSeatsPerTicket})`,
+                `Exceeding maximum number of tickets per purchase (Max=${maxNumberTicketsPerPurchase})`,
                 400
             )
         );
@@ -120,8 +120,6 @@ purchaseSchema.pre('save', async function (next) {
             : 0;
     const existingChosenSeats =
         existingPurchases.length > 0 ? existingPurchases[0].chosenSeats : [];
-
-    console.log(existingNumberTotalTickets);
 
     if (
         numberTotalSeats - (existingNumberTotalTickets + this.numberTickets) <

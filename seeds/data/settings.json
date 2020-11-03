@@ -13,7 +13,7 @@
     },
     {
         "_id": "5fa0dd8f76d94e40dcedd3f2",
-        "key": "max_number_seats_per_ticket",
+        "key": "max_number_tickets_per_purchase",
         "value": 10,
         "type": "number"
     }
