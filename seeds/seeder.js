@@ -19,6 +19,7 @@ const { Setting } = require('../models/Setting');
 const { Announcement } = require('../models/Announcement');
 const { Membership } = require('../models/Membership');
 const { User } = require('../models/User');
+const { Purchase } = require('../models/Purchase');
 
 // Connect database
 mongoose.connect(process.env.MONGODB_URI, {
@@ -107,6 +108,7 @@ const destroyData = async () => {
         await Announcement.deleteMany();
         await User.deleteMany();
         await Membership.deleteMany();
+        await Purchase.deleteMany();
 
         console.log('Data destroyed'.red.inverse);
         process.exit();

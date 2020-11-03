@@ -50,6 +50,9 @@ const purchaseSchema = new mongoose.Schema({
     updatedAt: {
         type: Date
     },
+    expiredSeatSelectionAt: {
+        type: Date
+    },
     showtime: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Showtime',
@@ -63,6 +66,19 @@ purchaseSchema.pre('findOneAndUpdate', function () {
 });
 
 purchaseSchema.pre('save', async function (next) {
+    // Max number seats per ticket
+    const maxNumberSeatsPerTicket = await this.model('Setting').getValue(
+        'max_number_seats_per_ticket'
+    );
+    if (this.numberTickets > maxNumberSeatsPerTicket) {
+        return next(
+            new ErrorResponse(
+                `Exceeding maximum number of seats per ticket (Max=${maxNumberSeatsPerTicket})`,
+                400
+            )
+        );
+    }
+
     // Update `originalAmount` field
     const showtime = await this.model('Showtime').findById(this.showtime);
     const movie = await this.model('Movie').findById(showtime.movie);
@@ -98,7 +114,19 @@ purchaseSchema.pre('save', async function (next) {
         }
     ]);
 
-    if (numberTotalSeats - existingPurchases[0].numberTotalTickets < 0) {
+    const existingNumberTotalTickets =
+        existingPurchases.length > 0
+            ? existingPurchases[0].numberTotalTickets
+            : 0;
+    const existingChosenSeats =
+        existingPurchases.length > 0 ? existingPurchases[0].chosenSeats : [];
+
+    console.log(existingNumberTotalTickets);
+
+    if (
+        numberTotalSeats - (existingNumberTotalTickets + this.numberTickets) <
+        0
+    ) {
         return next(
             new ErrorResponse(
                 'Not enough remaining seats in this showtime',
@@ -118,13 +146,22 @@ purchaseSchema.pre('save', async function (next) {
             }
 
             tmpSeat = `${row}${col}`;
-            if (!existingPurchases[0].chosenSeats.includes(tmpSeat)) {
+            if (!existingChosenSeats.includes(tmpSeat)) {
                 tmpReservedSeats.push(tmpSeat);
                 tmpNumberTickets--;
             }
         }
     }
     this.chosenSeats = tmpReservedSeats;
+
+    // Set expired datetime for seat selection
+    const amountMinutesForSeatSelection = await this.model('Setting').getValue(
+        'amount_minutes_seat_selection'
+    );
+    const createdAtDateObj = new Date(this.createdAt);
+    this.expiredSeatSelectionAt = createdAtDateObj.setMinutes(
+        createdAtDateObj.getMinutes() + amountMinutesForSeatSelection
+    );
 });
 
 const validationSchema = {
