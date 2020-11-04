@@ -5,8 +5,10 @@ const {
     validateOnCreatePurchase
 } = require('../models/Purchase');
 const { Showtime } = require('../models/Showtime');
-const { Movie } = require('../models/Movie');
-const { initiatePurchase } = require('../controllers/purchases');
+const {
+    initiatePurchase,
+    createPurchase
+} = require('../controllers/purchases');
 const validateRequestBody = require('../middlewares/validateRequestBody');
 const validateReferences = require('../middlewares/validateReferences');
 const listJsonResponse = require('../middlewares/listJsonResponse');
@@ -24,6 +26,20 @@ router.post(
         }
     ]),
     initiatePurchase
+);
+
+router.put(
+    '/:id/create',
+    validateRequestBody(validateOnCreatePurchase),
+    validateReferences([
+        {
+            model: Purchase,
+            field: '_id',
+            param: 'id',
+            assignedRefResource: 'purchaseDoc'
+        }
+    ]),
+    createPurchase
 );
 
 module.exports = router;
