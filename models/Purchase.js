@@ -39,7 +39,7 @@ const purchaseSchema = new mongoose.Schema({
     paymentDate: {
         type: Date
     },
-    qrcodeImage: {
+    qrCodeImage: {
         type: String,
         default: 'no-photo.png'
     },

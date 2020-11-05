@@ -190,4 +190,233 @@ describe('Purchases', () => {
             expect(dt.chosenSeats).toHaveLength(2);
         });
     });
+
+    describe('PUT /api/v1/purchases/:id/create', () => {
+        let purchase;
+        let purchaseId;
+        let movie;
+        let hall;
+        let showtime;
+
+        const data = {
+            chosenSeats: ['A1', 'A2']
+        };
+
+        beforeEach(async () => {
+            movie = await Movie.create({
+                title: 'Spider man',
+                description: 'Superhero with climbing abilities',
+                releasedDate: '2020-01-23',
+                ticketPrice: 2.5,
+                durationInMinutes: 120,
+                genres: [mongoose.Types.ObjectId()],
+                movieType: mongoose.Types.ObjectId(),
+                trailerUrl: 'https://youtu.be/dR3cjXncoSk',
+                posterUrl:
+                    'https://i.pinimg.com/originals/e6/a2/5a/e6a25a2855e741f7461fe1698db3153a.jpg',
+                spokenLanguage: mongoose.Types.ObjectId(),
+                subtitleLanguage: mongoose.Types.ObjectId(),
+                country: mongoose.Types.ObjectId()
+            });
+
+            hall = await Hall.create({
+                name: 'Hall One',
+                seatRows: ['A', 'B', 'C', 'D'],
+                seatColumns: [1, 2, 3, 4],
+                cinema: mongoose.Types.ObjectId(),
+                hallType: mongoose.Types.ObjectId()
+            });
+
+            showtime = await Showtime.create({
+                startedDateTime: '2023-10-20 17:00',
+                movie: movie._id,
+                hall: hall._id
+            });
+
+            purchase = await Purchase.create({
+                numberTickets: 2,
+                chosenSeats: ['A1', 'A2'],
+                showtime: showtime._id,
+                status: 'initiated',
+                originalAmount: 5,
+                qrCodeImage: 'no-photo.png',
+                discount: {
+                    type: 'flat',
+                    amount: 0
+                }
+            });
+
+            purchaseId = purchase._id;
+        });
+
+        afterEach(async () => {
+            await Purchase.deleteMany();
+            await Showtime.deleteMany();
+            await Movie.deleteMany();
+            await Hall.deleteMany();
+        });
+
+        const exec = () =>
+            request(server).put(`/api/v1/purchases/${purchaseId}/create`);
+
+        it('should return 400 if chosenSeats is not provided', async () => {
+            const res = await exec().send({});
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 400 if chosenSeats is not an array', async () => {
+            const res = await exec().send({ chosenSeats: true });
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 400 if chosenSeats is an empty array', async () => {
+            const res = await exec().send({ chosenSeats: [] });
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 400 if chosenSeats is not an array of only string', async () => {
+            const res = await exec().send({ chosenSeats: [true, 'A1'] });
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 404 if object Id of purchase is not valid', async () => {
+            purchaseId = 1;
+            const res = await exec().send(data);
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 404 if object ID of purchase does not exist', async () => {
+            purchaseId = mongoose.Types.ObjectId();
+            const res = await exec().send(data);
+
+            expect(res.status).toBe(404);
+        });
+
+        it('should return 400 if purchase is not in initiated status', async () => {
+            const createdPurchase = await Purchase.create({
+                numberTickets: 2,
+                chosenSeats: ['A3', 'A4'],
+                showtime: showtime._id,
+                status: 'created',
+                originalAmount: 5,
+                qrCodeImage: 'no-photo.png',
+                discount: {
+                    type: 'flat',
+                    amount: 0
+                }
+            });
+
+            purchaseId = createdPurchase._id;
+
+            const res = await exec().send({ chosenSeats: ['B1', 'B2'] });
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 400 if expiredSeatSelection is already expired', async () => {
+            const createdPurchase = await Purchase.create({
+                numberTickets: 2,
+                chosenSeats: ['A3', 'A4'],
+                showtime: showtime._id,
+                status: 'created',
+                originalAmount: 5,
+                qrCodeImage: 'no-photo.png',
+                discount: {
+                    type: 'flat',
+                    amount: 0
+                },
+                createdAt: '2020-11-04 10:00:00'
+            });
+
+            purchaseId = createdPurchase._id;
+
+            const res = await exec().send({ chosenSeats: ['B1', 'B2'] });
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 400 if chosenSeats length is greater than number of tickets in initiated status', async () => {
+            const res = await exec().send({ chosenSeats: ['A1', 'A2', 'A3'] });
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 400 if chosenSeats length is less than number of tickets in initiated status', async () => {
+            const res = await exec().send({ chosenSeats: ['A1'] });
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 400 if chosenSeats has invalid seat label', async () => {
+            const res = await exec().send({ chosenSeats: ['Z1', 'A2'] });
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 400 if any of chosenSeats are already selected', async () => {
+            await Purchase.create({
+                numberTickets: 2,
+                chosenSeats: ['A3', 'A4'],
+                showtime: showtime._id,
+                status: 'initiated',
+                originalAmount: 5,
+                qrCodeImage: 'no-photo.png',
+                discount: {
+                    type: 'flat',
+                    amount: 0
+                }
+            });
+
+            const res = await exec().send({ chosenSeats: ['A1', 'A3'] });
+
+            expect(res.status).toBe(400);
+        });
+
+        it('should return 200, and update info of the purchase to be in created status if request is valid', async () => {
+            const res = await exec().send(data);
+
+            const purchaseInDb = await Purchase.findById(purchaseId);
+
+            expect(res.status).toBe(200);
+            expect(purchaseInDb.status).toBe('created');
+            expect(purchaseInDb.chosenSeats).toEqual(
+                expect.arrayContaining(['A1', 'A2'])
+            );
+        });
+
+        it('should return 200, and update info the purchase to be in created status if request is valid (case change chosenSeats', async () => {
+            const res = await exec().send({ chosenSeats: ['A3', 'A4'] });
+
+            const purchaseInDb = await Purchase.findById(purchaseId);
+
+            expect(res.status).toBe(200);
+            expect(purchaseInDb.status).toBe('created');
+            expect(purchaseInDb.chosenSeats).toEqual(
+                expect.arrayContaining(['A3', 'A4'])
+            );
+        });
+
+        it('should return 200, and return the created purchase if request is valid', async () => {
+            const res = await exec().send(data);
+            const { data: dt } = res.body;
+
+            expect(res.status).toBe(200);
+            expect(dt).toHaveProperty('_id', purchaseId.toHexString());
+            expect(dt).toHaveProperty('status', 'created');
+            expect(dt).toHaveProperty('chosenSeats');
+            expect(dt).toHaveProperty('originalAmount');
+            expect(dt).toHaveProperty('numberTickets');
+            expect(dt).toHaveProperty('showtime');
+            expect(dt).toHaveProperty('qrCodeImage');
+
+            expect(dt.chosenSeats).toEqual(
+                expect.arrayContaining(['A1', 'A2'])
+            );
+        });
+    });
 });

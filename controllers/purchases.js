@@ -163,7 +163,7 @@ exports.createPurchase = asyncHandler(async (req, res, next) => {
         }
     }
     if (numberCorrectSeatLabel !== purchaseDoc.numberTickets) {
-        return next(new ErrorResponse('Seat label is invalid'));
+        return next(new ErrorResponse('Seat label is invalid', 400));
     }
 
     const purchase = await Purchase.findByIdAndUpdate(

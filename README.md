@@ -91,8 +91,8 @@ APIs for cinema management including CRUD on cinemas, halls, movies, buying tick
 
 ### 🎫 Purchases
 
--   [Private] Initiate a purchase request (number of ticket, showtime id)
--   [Private] Create a purchase request (user id => (Guest or Normal user), showtime id, bought seats, datetime)
+-   ✅ [Private] Initiate a purchase request (number of ticket, showtime id)
+-   ✅ [Private] Create a purchase request (user id => (Guest or Normal user), chosen seats)
 -   [Private] Execute a purchase request
 -   [Private] Get all my purchases
 -   [Private] Get my single purchases
