@@ -174,3 +174,17 @@ exports.createPurchase = asyncHandler(async (req, res, next) => {
 
     res.standard(200, true, 'Purchase is created successfully', purchase);
 });
+
+exports.executePurchase = asyncHandler(async (req, res, next) => {
+    /**
+     * TODO:
+     * Update:
+     *  paymentDateTime
+     *  qrCodeImage
+     *  paymentAmount
+     *  status
+     */
+    const purchase = await Purchase.findByIdAndUpdate(req.params.id, {
+        status: 'executed'
+    });
+});

@@ -36,7 +36,7 @@ const purchaseSchema = new mongoose.Schema({
     paymentAmount: {
         type: Number
     },
-    paymentDate: {
+    paymentDateTime: {
         type: Date
     },
     qrCodeImage: {
