@@ -1,5 +1,10 @@
 const mongoose = require('mongoose');
-const { Purchase } = require('../models/Purchase');
+const {
+  Purchase,
+  STATUS_INITIATED,
+  STATUS_CREATED,
+  STATUS_EXECUTED
+} = require('../models/Purchase');
 const { Showtime } = require('../models/Showtime');
 const { Hall } = require('../models/Hall');
 const asyncHandler = require('../middlewares/asyncHandler');
@@ -42,9 +47,9 @@ const ErrorResponse = require('../utils/ErrorResponse');
  *              description: Internal server error
  */
 exports.initiatePurchase = asyncHandler(async (req, res, next) => {
-    const purchase = await Purchase.create(req.body);
+  const purchase = await Purchase.create(req.body);
 
-    res.standard(201, true, 'Purchase is initiated successfully', purchase);
+  res.standard(201, true, 'Purchase is initiated successfully', purchase);
 });
 
 /**
@@ -85,106 +90,139 @@ exports.initiatePurchase = asyncHandler(async (req, res, next) => {
  *              description: Internal server error
  */
 exports.createPurchase = asyncHandler(async (req, res, next) => {
-    const { purchaseDoc, chosenSeats } = req.body;
+  const { purchaseDoc, chosenSeats } = req.body;
 
-    if (purchaseDoc.status !== 'initiated') {
-        return next(
-            new ErrorResponse(
-                'Purchase with given ID is not in initiated status',
-                400
-            )
-        );
-    }
-
-    const expiredSelectionDateTime = new Date(
-        purchaseDoc.expiredSeatSelectionAt
+  if (purchaseDoc.status !== STATUS_INITIATED) {
+    return next(
+      new ErrorResponse(
+        'Purchase with given ID is not in initiated status',
+        400
+      )
     );
-    if (expiredSelectionDateTime.getTime() < new Date().getTime()) {
-        return next(
-            new ErrorResponse(
-                'Seats selection period had been already expired',
-                400
-            )
-        );
-    }
+  }
 
-    if (req.body.chosenSeats.length !== purchaseDoc.chosenSeats.length) {
-        return next(
-            new ErrorResponse('Number of chosen seats is not correct', 400)
-        );
-    }
-
-    // -- Find seat label already selected
-    const existingPurchases = await Purchase.aggregate([
-        {
-            $match: { _id: { $ne: new mongoose.Types.ObjectId(req.params.id) } }
-        },
-        {
-            $group: {
-                _id: '$showtime',
-                seats: { $push: '$chosenSeats' }
-            }
-        },
-        {
-            $project: {
-                _id: '$showtime',
-                chosenSeats: {
-                    $reduce: {
-                        input: '$seats',
-                        initialValue: [],
-                        in: {
-                            $concatArrays: ['$$this', '$$value']
-                        }
-                    }
-                }
-            }
-        }
-    ]);
-    if (
-        existingPurchases.length > 0 &&
-        chosenSeats.some(
-            (cs) => existingPurchases[0].chosenSeats.indexOf(cs) !== -1
-        )
-    ) {
-        return next(new ErrorResponse('Seat is already selected', 400));
-    }
-
-    // Check if seats label is correct
-    const showtime = await Showtime.findById(purchaseDoc.showtime);
-    const hall = await Hall.findById(showtime.hall);
-    let numberCorrectSeatLabel = 0;
-    for (row of hall.seatRows) {
-        for (col of hall.seatColumns) {
-            for (seats of chosenSeats) {
-                if (seats === `${row}${col}`) {
-                    numberCorrectSeatLabel++;
-                }
-            }
-        }
-    }
-    if (numberCorrectSeatLabel !== purchaseDoc.numberTickets) {
-        return next(new ErrorResponse('Seat label is invalid', 400));
-    }
-
-    const purchase = await Purchase.findByIdAndUpdate(
-        req.params.id,
-        { status: 'created', chosenSeats: req.body.chosenSeats },
-        { new: true, runValidators: true }
+  const expiredSelectionDateTime = new Date(purchaseDoc.expiredSeatSelectionAt);
+  if (expiredSelectionDateTime.getTime() < new Date().getTime()) {
+    return next(
+      new ErrorResponse('Seats selection period had been already expired', 400)
     );
+  }
 
-    res.standard(200, true, 'Purchase is created successfully', purchase);
+  if (req.body.chosenSeats.length !== purchaseDoc.chosenSeats.length) {
+    return next(
+      new ErrorResponse('Number of chosen seats is not correct', 400)
+    );
+  }
+
+  // -- Find seat label already selected
+  const existingPurchases = await Purchase.aggregate([
+    {
+      $match: { _id: { $ne: new mongoose.Types.ObjectId(req.params.id) } }
+    },
+    {
+      $group: {
+        _id: '$showtime',
+        seats: { $push: '$chosenSeats' }
+      }
+    },
+    {
+      $project: {
+        _id: '$showtime',
+        chosenSeats: {
+          $reduce: {
+            input: '$seats',
+            initialValue: [],
+            in: {
+              $concatArrays: ['$$this', '$$value']
+            }
+          }
+        }
+      }
+    }
+  ]);
+  if (
+    existingPurchases.length > 0 &&
+    chosenSeats.some(
+      (cs) => existingPurchases[0].chosenSeats.indexOf(cs) !== -1
+    )
+  ) {
+    return next(new ErrorResponse('Seat is already selected', 400));
+  }
+
+  // Check if seats label is correct
+  const showtime = await Showtime.findById(purchaseDoc.showtime);
+  const hall = await Hall.findById(showtime.hall);
+  let numberCorrectSeatLabel = 0;
+  for (row of hall.seatRows) {
+    for (col of hall.seatColumns) {
+      for (seats of chosenSeats) {
+        if (seats === `${row}${col}`) {
+          numberCorrectSeatLabel++;
+        }
+      }
+    }
+  }
+  if (numberCorrectSeatLabel !== purchaseDoc.numberTickets) {
+    return next(new ErrorResponse('Seat label is invalid', 400));
+  }
+
+  const purchase = await Purchase.findByIdAndUpdate(
+    req.params.id,
+    { status: STATUS_CREATED, chosenSeats: req.body.chosenSeats },
+    { new: true, runValidators: true }
+  );
+
+  res.standard(200, true, 'Purchase is created successfully', purchase);
 });
 
+/**
+ * @swagger
+ * /purchases/{id}/execute:
+ *  put:
+ *      tags:
+ *          - 🎫 Purchases
+ *      summary: Execute a purchase
+ *      description: (Private) Execute a purchase
+ *      parameters:
+ *          -   in: path
+ *              name: id
+ *              required: true
+ *              description: Object ID of purchase
+ *              example: 5fa251844a60234de83080de
+ *      responses:
+ *          200:
+ *              description: OK
+ *          404:
+ *              description: Purchase is not found
+ *          500:
+ *              description: Internal server error
+ */
 exports.executePurchase = asyncHandler(async (req, res, next) => {
-    /**
-     * TODO:
-     * Update:
-     *  paymentDateTime
-     *  qrCodeImage
-     *  paymentAmount
-     *  status
-     */
-    const purchase = await Purchase.findByIdAndUpdate(req.params.id, {
-        status: 'executed'
-    });
+  const { purchaseDoc } = req.body;
+
+  if (purchaseDoc.status !== STATUS_CREATED) {
+    return next(
+      new ErrorResponse('Purchase with given ID is not in created status', 400)
+    );
+  }
+
+  /**
+   * TODO:
+   * Update:
+   *  paymentDateTime -- DONE
+   *  qrCodeImage
+   *  paymentAmount -- DONE
+   *  status -- DONE
+   */
+  const purchase = await Purchase.findByIdAndUpdate(
+    req.params.id,
+    {
+      status: STATUS_EXECUTED,
+      paymentAmount: purchaseDoc.originalAmount,
+      paymentDateTime: Date.now()
+    },
+    { new: true, runValidators: true }
+  );
+
+  res.standard(200, true, 'Purchase is executed successfully', purchase);
 });
