@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Joi = require('joi');
 const ErrorResponse = require('../utils/ErrorResponse');
+const generateQrCode = require('../helpers/generateQrCode');
 Joi.objectId = require('joi-objectid')(Joi);
 
 const STATUS_INITIATED = 'initiated';
@@ -11,58 +12,65 @@ const purchaseSchema = new mongoose.Schema({
   numberTickets: {
     type: Number,
     required: [true, 'Please provide number of tickets'],
-    min: 1,
+    min: 1
   },
   chosenSeats: {
-    type: [String],
+    type: [String]
   },
   status: {
     type: String,
     enum: [STATUS_INITIATED, STATUS_CREATED, STATUS_EXECUTED],
-    default: 'initiated',
+    default: 'initiated'
   },
   originalAmount: {
-    type: Number,
+    type: Number
   },
   discount: {
     type: {
       type: String,
       enum: ['flat', 'percent'],
       required: true,
-      default: 'flat',
+      default: 'flat'
     },
     amount: {
       type: Number,
       required: true,
-      default: 0,
-    },
+      default: 0
+    }
   },
   paymentAmount: {
-    type: Number,
+    type: Number
   },
   paymentDateTime: {
-    type: Date,
+    type: Date
   },
   qrCodeImage: {
     type: String,
-    default: 'no-photo.png',
+    default: 'no-photo.png'
   },
   createdAt: {
     type: Date,
-    default: Date.now,
+    default: Date.now
   },
   updatedAt: {
-    type: Date,
+    type: Date
   },
   expiredSeatSelectionAt: {
-    type: Date,
+    type: Date
   },
   showtime: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Showtime',
-    required: true,
-  },
+    required: true
+  }
 });
+
+purchaseSchema.methods.generateQrCode = async function () {
+  const { _id: purchaseId } = this;
+  const name = `QR_purchase_${purchaseId}.svg`;
+  const result = await generateQrCode(name, purchaseId.toHexString());
+  return result ? name : false;
+};
 
 // Create `updatedAt` field
 purchaseSchema.pre('findOneAndUpdate', function () {
@@ -98,8 +106,8 @@ purchaseSchema.pre('save', async function (next) {
       $group: {
         _id: '$showtime',
         numberTotalTickets: { $sum: '$numberTickets' },
-        seats: { $push: '$chosenSeats' },
-      },
+        seats: { $push: '$chosenSeats' }
+      }
     },
     {
       $project: {
@@ -110,12 +118,12 @@ purchaseSchema.pre('save', async function (next) {
             input: '$seats',
             initialValue: [],
             in: {
-              $concatArrays: ['$$this', '$$value'],
-            },
-          },
-        },
-      },
-    },
+              $concatArrays: ['$$this', '$$value']
+            }
+          }
+        }
+      }
+    }
   ]);
 
   const existingNumberTotalTickets =
@@ -164,7 +172,7 @@ purchaseSchema.pre('save', async function (next) {
 const validationSchema = {
   numberTickets: Joi.number().min(1).integer(),
   chosenSeats: Joi.array().items(Joi.string()).min(1),
-  showtimeId: Joi.objectId(),
+  showtimeId: Joi.objectId()
 };
 
 function validateOnInitiatePurchase(purchase) {

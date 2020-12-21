@@ -206,20 +206,18 @@ exports.executePurchase = asyncHandler(async (req, res, next) => {
     );
   }
 
-  /**
-   * TODO:
-   * Update:
-   *  paymentDateTime -- DONE
-   *  qrCodeImage
-   *  paymentAmount -- DONE
-   *  status -- DONE
-   */
+  const qrCode = await purchaseDoc.generateQrCode();
+  if (!qrCode) {
+    return next(new ErrorResponse('Unable to create QR code', 500));
+  }
+
   const purchase = await Purchase.findByIdAndUpdate(
     req.params.id,
     {
       status: STATUS_EXECUTED,
       paymentAmount: purchaseDoc.originalAmount,
-      paymentDateTime: Date.now()
+      paymentDateTime: Date.now(),
+      qrCodeImage: qrCode
     },
     { new: true, runValidators: true }
   );
