@@ -64,6 +64,35 @@ exports.getPurchases = asyncHandler(async (req, res, next) => {
 
 /**
  * @swagger
+ * /purchases/{id}:
+ *  get:
+ *      tags:
+ *          - 🎫 Purchases
+ *      summary: Get a single purchase by id
+ *      description: (PUBLIC) Retrieve a single purchase by its ID
+ *      parameters:
+ *          -   in: path
+ *              name: id
+ *              schema: string
+ *              required: true
+ *              description: Object ID of cinema
+ *              example: 5fa251844a60234de83080de
+ *      responses:
+ *          200:
+ *              description: OK
+ *          404:
+ *              description: Purchase is not found
+ *          500:
+ *              description: Internal server error
+ */
+exports.getPurchase = asyncHandler(async (req, res, next) => {
+  const purchase = await Purchase.findById(req.params.id);
+
+  res.standard(200, true, 'Success', purchase);
+});
+
+/**
+ * @swagger
  * /purchases/initiate:
  *  post:
  *      tags:

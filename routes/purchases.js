@@ -7,6 +7,7 @@ const {
 const { Showtime } = require('../models/Showtime');
 const {
   getPurchases,
+  getPurchase,
   initiatePurchase,
   createPurchase,
   executePurchase
@@ -17,6 +18,17 @@ const listJsonResponse = require('../middlewares/listJsonResponse');
 const router = express.Router();
 
 router.route('/').get(listJsonResponse(Purchase), getPurchases);
+
+router.route('/:id').get(
+  validateReferences([
+    {
+      model: Purchase,
+      field: '_id',
+      param: 'id'
+    }
+  ]),
+  getPurchase
+);
 
 router.post(
   '/initiate',

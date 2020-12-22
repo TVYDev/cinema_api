@@ -124,6 +124,94 @@ describe('Purchases', () => {
     });
   });
 
+  describe('GET /api/v1/purchases/:id', () => {
+    let showtime;
+    let movie;
+    let hall;
+    let purchase;
+    let purchaseId;
+
+    beforeEach(async () => {
+      movie = await Movie.create({
+        title: 'Spider man',
+        description: 'Superhero with climbing abilities',
+        releasedDate: '2020-01-23',
+        ticketPrice: 2.5,
+        durationInMinutes: 120,
+        genres: [mongoose.Types.ObjectId()],
+        movieType: mongoose.Types.ObjectId(),
+        trailerUrl: 'https://youtu.be/dR3cjXncoSk',
+        posterUrl:
+          'https://i.pinimg.com/originals/e6/a2/5a/e6a25a2855e741f7461fe1698db3153a.jpg',
+        spokenLanguage: mongoose.Types.ObjectId(),
+        subtitleLanguage: mongoose.Types.ObjectId(),
+        country: mongoose.Types.ObjectId()
+      });
+
+      hall = await Hall.create({
+        name: 'Hall One',
+        seatRows: ['A', 'B', 'C', 'D'],
+        seatColumns: [1, 2, 3, 4],
+        cinema: mongoose.Types.ObjectId(),
+        hallType: mongoose.Types.ObjectId()
+      });
+
+      showtime = await Showtime.create({
+        startedDateTime: '2023-10-20 17:00',
+        movie: movie._id,
+        hall: hall._id
+      });
+
+      purchase = await Purchase.create({
+        numberTickets: 2,
+        chosenSeats: ['A1', 'A2'],
+        showtime: showtime._id,
+        status: STATUS_INITIATED,
+        originalAmount: 5,
+        qrCodeImage: 'no-photo.png',
+        discount: {
+          type: 'flat',
+          amount: 0
+        }
+      });
+
+      purchaseId = purchase._id;
+    });
+
+    afterEach(async () => {
+      await Showtime.deleteMany();
+      await Movie.deleteMany();
+      await Hall.deleteMany();
+      await Purchase.deleteMany();
+    });
+
+    const exec = () => request(server).get(`/api/v1/purchases/${purchaseId}`);
+
+    it('should return 404 if object Id is invalid', async () => {
+      purchaseId = 1;
+      const res = await exec();
+
+      expect(res.status).toBe(404);
+    });
+
+    it('should return 404 if object Id does not exist', async () => {
+      purchaseId = mongoose.Types.ObjectId();
+      const res = await exec();
+
+      expect(res.status).toBe(404);
+    });
+
+    it('should return 200, and return the purchase if object ID is valid and does exist', async () => {
+      const res = await exec();
+      const { data: dt } = res.body;
+
+      expect(res.status).toBe(200);
+      expect(dt).toHaveProperty('status', STATUS_INITIATED);
+      expect(dt).toHaveProperty('numberTickets', 2);
+      expect(dt).toHaveProperty('originalAmount', 5);
+    });
+  });
+
   describe('POST /api/v1/purchases/initiate', () => {
     let showtime;
     let movie;
