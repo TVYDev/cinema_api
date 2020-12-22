@@ -43,7 +43,88 @@ describe('Purchases', () => {
     await Purchase.deleteMany();
   });
 
-  describe('POST /api/v1/purchase/initiate', () => {
+  describe('GET /api/v1/purchases', () => {
+    let showtime;
+    let movie;
+    let hall;
+
+    beforeEach(async () => {
+      movie = await Movie.create({
+        title: 'Spider man',
+        description: 'Superhero with climbing abilities',
+        releasedDate: '2020-01-23',
+        ticketPrice: 2.5,
+        durationInMinutes: 120,
+        genres: [mongoose.Types.ObjectId()],
+        movieType: mongoose.Types.ObjectId(),
+        trailerUrl: 'https://youtu.be/dR3cjXncoSk',
+        posterUrl:
+          'https://i.pinimg.com/originals/e6/a2/5a/e6a25a2855e741f7461fe1698db3153a.jpg',
+        spokenLanguage: mongoose.Types.ObjectId(),
+        subtitleLanguage: mongoose.Types.ObjectId(),
+        country: mongoose.Types.ObjectId()
+      });
+
+      hall = await Hall.create({
+        name: 'Hall One',
+        seatRows: ['A', 'B', 'C', 'D'],
+        seatColumns: [1, 2, 3, 4],
+        cinema: mongoose.Types.ObjectId(),
+        hallType: mongoose.Types.ObjectId()
+      });
+
+      showtime = await Showtime.create({
+        startedDateTime: '2023-10-20 17:00',
+        movie: movie._id,
+        hall: hall._id
+      });
+    });
+
+    afterEach(async () => {
+      await Showtime.deleteMany();
+      await Movie.deleteMany();
+      await Hall.deleteMany();
+    });
+
+    it('should return 200, and return all purchases', async () => {
+      await Purchase.create([
+        {
+          numberTickets: 2,
+          chosenSeats: ['A1', 'A2'],
+          showtime: showtime._id,
+          status: STATUS_INITIATED,
+          originalAmount: 5,
+          qrCodeImage: 'no-photo.png',
+          discount: {
+            type: 'flat',
+            amount: 0
+          }
+        },
+        {
+          numberTickets: 2,
+          chosenSeats: ['A3', 'A4'],
+          showtime: showtime._id,
+          status: STATUS_CREATED,
+          originalAmount: 5,
+          qrCodeImage: 'no-photo.png',
+          discount: {
+            type: 'flat',
+            amount: 0
+          }
+        }
+      ]);
+
+      const res = await request(server).get('/api/v1/purchases');
+      const { items } = res.body.data;
+
+      expect(res.status).toBe(200);
+      expect(items.length).toBe(2);
+      expect(items.some((p) => p.status === STATUS_INITIATED)).toBeTruthy();
+      expect(items.some((p) => p.status === STATUS_CREATED)).toBeTruthy();
+    });
+  });
+
+  describe('POST /api/v1/purchases/initiate', () => {
     let showtime;
     let movie;
     let hall;
