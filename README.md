@@ -93,11 +93,11 @@ APIs for cinema management including CRUD on cinemas, halls, movies, buying tick
 
 -   ✅ [Private] Initiate a purchase request (number of ticket, showtime id)
 -   ✅ [Private] Create a purchase request (user id => (Guest or Normal user), chosen seats)
--   [Private] Execute a purchase request
+-   ✅ [Private] Execute a purchase request
 -   [Private] Get all my purchases
 -   [Private] Get my single purchases
--   [Admin] Get all purchases
--   [Admin] Get a single purchases
+-   ✅ [Admin] Get all purchases
+-   ✅  [Admin] Get a single purchases
 
 > **Initiate purchase request**
 >
