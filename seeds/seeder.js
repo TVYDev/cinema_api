@@ -19,6 +19,7 @@ const { Setting } = require('../models/Setting');
 const { Announcement } = require('../models/Announcement');
 const { Membership } = require('../models/Membership');
 const { User } = require('../models/User');
+const { Purchase } = require('../models/Purchase');
 
 // Connect database
 mongoose.connect(process.env.MONGODB_URI, {
@@ -68,6 +69,9 @@ const membershps = JSON.parse(
 const users = JSON.parse(
     fs.readFileSync(`${__dirname}/data/users.json`, 'utf-8')
 );
+const purchases = JSON.parse(
+    fs.readFileSync(`${__dirname}/data/purchases.json`, 'utf-8')
+);
 
 const importData = async () => {
     try {
@@ -84,8 +88,9 @@ const importData = async () => {
         await Announcement.create(announcements);
         await Membership.create(membershps);
         await User.create(users);
+        await Purchase.create(purchases);
 
-        console.log('Data imported'.blue.inverse);
+        console.log('Data are imported successfully!'.blue.inverse);
         process.exit();
     } catch (err) {
         console.log(err);
@@ -107,8 +112,9 @@ const destroyData = async () => {
         await Announcement.deleteMany();
         await User.deleteMany();
         await Membership.deleteMany();
+        await Purchase.deleteMany();
 
-        console.log('Data destroyed'.red.inverse);
+        console.log('Data are destroyed successfully!'.red.inverse);
         process.exit();
     } catch (err) {
         console.log(err);

@@ -52,7 +52,7 @@ const storeFileUpload = require('../helpers/storeFileUpload');
  *              description: Internal server error
  */
 exports.getAnnouncements = asyncHandler(async (req, res, next) => {
-    res.standard(200, true, 'Success', res.listJsonData);
+  res.standard(200, true, 'Success', res.listJsonData);
 });
 
 /**
@@ -78,9 +78,9 @@ exports.getAnnouncements = asyncHandler(async (req, res, next) => {
  *              description: Internal server error
  */
 exports.getAnnouncement = asyncHandler(async (req, res, next) => {
-    const announcement = await Announcement.findById(req.params.id);
+  const announcement = await Announcement.findById(req.params.id);
 
-    res.standard(200, true, 'Success', announcement);
+  res.standard(200, true, 'Success', announcement);
 });
 
 /**
@@ -124,14 +124,9 @@ exports.getAnnouncement = asyncHandler(async (req, res, next) => {
  *              description: Internal server error
  */
 exports.createAnnoucement = asyncHandler(async (req, res, next) => {
-    const announcement = await Announcement.create(req.body);
+  const announcement = await Announcement.create(req.body);
 
-    res.standard(
-        201,
-        true,
-        'Announcement is created successfully',
-        announcement
-    );
+  res.standard(201, true, 'Announcement is created successfully', announcement);
 });
 
 /**
@@ -179,18 +174,13 @@ exports.createAnnoucement = asyncHandler(async (req, res, next) => {
  *              description: Internal server error
  */
 exports.updateAnnouncement = asyncHandler(async (req, res, next) => {
-    const announcement = await Announcement.findByIdAndUpdate(
-        req.params.id,
-        req.body,
-        { new: true, runValidators: true }
-    );
+  const announcement = await Announcement.findByIdAndUpdate(
+    req.params.id,
+    req.body,
+    { new: true, runValidators: true }
+  );
 
-    res.standard(
-        200,
-        true,
-        'Announcement is updated successfully',
-        announcement
-    );
+  res.standard(200, true, 'Announcement is updated successfully', announcement);
 });
 
 /**
@@ -216,14 +206,9 @@ exports.updateAnnouncement = asyncHandler(async (req, res, next) => {
  *              description: Internal server error
  */
 exports.deleteAnnouncement = asyncHandler(async (req, res, next) => {
-    const announcement = await Announcement.findByIdAndRemove(req.params.id);
+  const announcement = await Announcement.findByIdAndRemove(req.params.id);
 
-    res.standard(
-        200,
-        true,
-        'Announcement is deleted successfully',
-        announcement
-    );
+  res.standard(200, true, 'Announcement is deleted successfully', announcement);
 });
 
 /**
@@ -256,27 +241,28 @@ exports.deleteAnnouncement = asyncHandler(async (req, res, next) => {
  *              description: Unable to upload file | Internal server error
  */
 exports.uploadImageAnnouncement = asyncHandler(async (req, res, next) => {
-    const announcementId = req.params.id;
+  const announcementId = req.params.id;
 
-    const file = validateFileUpload(req, next, 'image');
-    const fileName = storeFileUpload(
-        'announcement_image',
-        announcementId,
-        file
-    );
+  const file = validateFileUpload(req, next, 'image');
+  const fileName = storeFileUpload(
+    'announcement_image',
+    announcementId,
+    file,
+    next
+  );
 
-    const announcement = await Announcement.findByIdAndUpdate(
-        announcementId,
-        {
-            image: fileName
-        },
-        { new: true }
-    );
+  const announcement = await Announcement.findByIdAndUpdate(
+    announcementId,
+    {
+      image: fileName
+    },
+    { new: true }
+  );
 
-    res.standard(
-        200,
-        true,
-        'Image of announcement is uploaded successfully',
-        announcement
-    );
+  res.standard(
+    200,
+    true,
+    'Image of announcement is uploaded successfully',
+    announcement
+  );
 });

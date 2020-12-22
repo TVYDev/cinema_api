@@ -4,5 +4,17 @@
         "key": "min_minutes_interval_showtime",
         "value": 30,
         "type": "number"
+    },
+    {
+        "_id": "5fa0db6732be292538b8ea2a",
+        "key": "amount_minutes_seat_selection",
+        "value": 10,
+        "type": "number"
+    },
+    {
+        "_id": "5fa0dd8f76d94e40dcedd3f2",
+        "key": "max_number_tickets_per_purchase",
+        "value": 10,
+        "type": "number"
     }
 ]

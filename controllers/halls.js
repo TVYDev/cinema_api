@@ -166,7 +166,7 @@ const storeFileUpload = require('../helpers/storeFileUpload');
  *              description: Internal server error
  */
 exports.getHalls = asyncHandler(async (req, res, next) => {
-    res.standard(200, true, 'Success', res.listJsonData);
+  res.standard(200, true, 'Success', res.listJsonData);
 });
 
 /**
@@ -193,11 +193,11 @@ exports.getHalls = asyncHandler(async (req, res, next) => {
  *              description: Internal server error
  */
 exports.getHall = asyncHandler(async (req, res, next) => {
-    const hall = await Hall.findById(req.params.id)
-        .populate('cinema')
-        .populate('hallType');
+  const hall = await Hall.findById(req.params.id)
+    .populate('cinema')
+    .populate('hallType');
 
-    res.standard(200, true, 'Success', hall);
+  res.standard(200, true, 'Success', hall);
 });
 
 /**
@@ -254,9 +254,9 @@ exports.getHall = asyncHandler(async (req, res, next) => {
  *              description: Internal server error
  */
 exports.addHall = asyncHandler(async (req, res, next) => {
-    const hall = await Hall.create(req.body);
+  const hall = await Hall.create(req.body);
 
-    res.standard(201, true, 'Hall is added to cinema successfully', hall);
+  res.standard(201, true, 'Hall is added to cinema successfully', hall);
 });
 
 /**
@@ -304,12 +304,12 @@ exports.addHall = asyncHandler(async (req, res, next) => {
  *              description: Internal server error
  */
 exports.updateHall = asyncHandler(async (req, res, next) => {
-    const hall = await Hall.findByIdAndUpdate(req.params.id, req.body, {
-        new: true,
-        runValidators: true
-    });
+  const hall = await Hall.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+    runValidators: true
+  });
 
-    res.standard(200, true, 'Hall is updated successfully', hall);
+  res.standard(200, true, 'Hall is updated successfully', hall);
 });
 
 /**
@@ -337,9 +337,9 @@ exports.updateHall = asyncHandler(async (req, res, next) => {
  *              description: Internal server error
  */
 exports.deleteHall = asyncHandler(async (req, res, next) => {
-    const hall = await Hall.findByIdAndRemove(req.params.id);
+  const hall = await Hall.findByIdAndRemove(req.params.id);
 
-    res.standard(200, true, 'Hall is deleted succesfully', hall);
+  res.standard(200, true, 'Hall is deleted succesfully', hall);
 });
 
 /**
@@ -373,23 +373,23 @@ exports.deleteHall = asyncHandler(async (req, res, next) => {
  *              description: Internal server error
  */
 exports.uploadLocationImageHall = asyncHandler(async (req, res, next) => {
-    const hallId = req.params.id;
+  const hallId = req.params.id;
 
-    const file = validateFileUpload(req, next, 'image');
-    const fileName = storeFileUpload('hall_location_image', hallId, file);
+  const file = validateFileUpload(req, next, 'image');
+  const fileName = storeFileUpload('hall_location_image', hallId, file, next);
 
-    const hall = await Hall.findByIdAndUpdate(
-        hallId,
-        {
-            locationImage: fileName
-        },
-        { new: true }
-    );
+  const hall = await Hall.findByIdAndUpdate(
+    hallId,
+    {
+      locationImage: fileName
+    },
+    { new: true }
+  );
 
-    res.standard(
-        200,
-        true,
-        'Location image of hall is uploaded successfully',
-        hall
-    );
+  res.standard(
+    200,
+    true,
+    'Location image of hall is uploaded successfully',
+    hall
+  );
 });

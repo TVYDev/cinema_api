@@ -1,0 +1,28 @@
+[
+    {
+        "_id": "5fa251844a60234de83080de",
+        "numberTickets": 2,
+        "chosenSeats": ["A1", "A2"],
+        "showtime": "5f8e536d47915a3dc00eab39",
+        "status": "initiated",
+        "originalAmount": 4,
+        "qrcodeImage": "no-photo.png",
+        "discount": {
+            "type": "flat",
+            "amount": 0
+        }
+    },
+    {
+        "_id": "5fa25e4d4edc993f8040273e",
+        "numberTickets": 2,
+        "chosenSeats": ["B1", "B2"],
+        "showtime": "5f8e536d47915a3dc00eab39",
+        "status": "initiated",
+        "originalAmount": 4,
+        "qrcodeImage": "no-photo.png",
+        "discount": {
+            "type": "flat",
+            "amount": 0
+        }
+    }
+]

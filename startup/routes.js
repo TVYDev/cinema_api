@@ -15,6 +15,7 @@ const settings = require('../routes/settings');
 const announcements = require('../routes/announcements');
 const memberships = require('../routes/memberships');
 const users = require('../routes/users');
+const purchases = require('../routes/purchases');
 
 module.exports = function (app) {
     app.use(express.json());
@@ -33,5 +34,6 @@ module.exports = function (app) {
     app.use('/api/v1/announcements', announcements);
     app.use('/api/v1/memberships', memberships);
     app.use('/api/v1/users', users);
+    app.use('/api/v1/purchases', purchases);
     app.use(errorHandler);
 };

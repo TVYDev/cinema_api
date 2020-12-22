@@ -236,7 +236,7 @@ exports.uploadPhotoCinema = asyncHandler(async (req, res, next) => {
     const cinemaId = req.params.id;
 
     const file = validateFileUpload(req, next, 'image');
-    const fileName = storeFileUpload('cinema_photo', cinemaId, file);
+    const fileName = storeFileUpload('cinema_photo', cinemaId, file, next);
 
     const cinema = await Cinema.findByIdAndUpdate(
         cinemaId,
@@ -282,7 +282,7 @@ exports.uploadLayoutImageCinema = asyncHandler(async (req, res, next) => {
     const cinemaId = req.params.id;
 
     const file = validateFileUpload(req, next, 'image');
-    const fileName = storeFileUpload('cinema_layout_image', cinemaId, file);
+    const fileName = storeFileUpload('cinema_layout_image', cinemaId, file, next);
 
     const cinema = await Cinema.findByIdAndUpdate(
         cinemaId,

@@ -1,62 +1,64 @@
 {
-    "name": "movieer_api",
-    "version": "1.0.0",
-    "description": "Node.js backend APIs for managing cinema, halls, movies, tickets",
-    "main": "server.js",
-    "scripts": {
-        "dev": "nodemon server.js",
-        "start": "node server.js",
-        "test": "jest --verbose --runInBand",
-        "test-w": "jest --verbose --runInBand --watchAll",
-        "test-cinemas": "jest --verbose --runInBand ./tests/integration/routes/cinemas.test.js",
-        "test-halls": "jest --verbose --runInBand ./tests/integration/routes/halls.test.js",
-        "test-hall-types": "jest --verbose --runInBand ./tests/integration/routes/hallTypes.test.js",
-        "test-movie-types": "jest --verbose --runInBand ./tests/integration/routes/movieTypes.test.js",
-        "test-genres": "jest --verbose --runInBand ./tests/integration/routes/genres.test.js",
-        "test-movies": "jest --verbose --runInBand ./tests/integration/routes/movies.test.js",
-        "test-languages": "jest --verbose --runInBand ./tests/integration/routes/languages.test.js",
-        "test-countries": "jest --verbose --runInBand ./tests/integration/routes/countries.test.js",
-        "test-showtimes": "jest --verbose --runInBand ./tests/integration/routes/showtimes.test.js",
-        "test-announcements": "jest --verbose --runInBand ./tests/integration/routes/announcements.test.js",
-        "test-memberships": "jest --verbose --runInBand ./tests/integration/routes/memberships.test.js",
-        "test-users": "jest --verbose --runInBand ./tests/integration/routes/users.test.js",
-        "coverage": "jest --collectCoverage"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/TVYDev/movieer_api.git"
-    },
-    "keywords": [
-        "cinema"
-    ],
-    "config": {
-        "mongodbMemoryServer": {
-            "version": "latest"
-        }
-    },
-    "author": "Vannyou TANG",
-    "license": "ISC",
-    "bugs": {
-        "url": "https://github.com/TVYDev/movieer_api/issues"
-    },
-    "homepage": "https://github.com/TVYDev/movieer_api#readme",
-    "dependencies": {
-        "bcryptjs": "^2.4.3",
-        "colors": "^1.4.0",
-        "dotenv": "^8.2.0",
-        "express": "^4.17.1",
-        "express-fileupload": "^1.2.0",
-        "joi": "^17.2.1",
-        "joi-objectid": "^3.0.1",
-        "mongoose": "^5.10.7",
-        "morgan": "^1.10.0",
-        "node-geocoder": "^3.27.0",
-        "swagger-jsdoc": "^4.2.0",
-        "swagger-ui-express": "^4.1.4"
-    },
-    "devDependencies": {
-        "jest": "^26.4.2",
-        "nodemon": "^2.0.4",
-        "supertest": "^5.0.0"
+  "name": "movieer_api",
+  "version": "1.0.0",
+  "description": "Node.js backend APIs for managing cinema, halls, movies, tickets",
+  "main": "server.js",
+  "scripts": {
+    "dev": "nodemon server.js",
+    "start": "node server.js",
+    "test": "jest --verbose --runInBand",
+    "test-w": "jest --verbose --runInBand --watchAll",
+    "test-cinemas": "jest --verbose --runInBand ./tests/integration/routes/cinemas.test.js",
+    "test-halls": "jest --verbose --runInBand ./tests/integration/routes/halls.test.js",
+    "test-hall-types": "jest --verbose --runInBand ./tests/integration/routes/hallTypes.test.js",
+    "test-movie-types": "jest --verbose --runInBand ./tests/integration/routes/movieTypes.test.js",
+    "test-genres": "jest --verbose --runInBand ./tests/integration/routes/genres.test.js",
+    "test-movies": "jest --verbose --runInBand ./tests/integration/routes/movies.test.js",
+    "test-languages": "jest --verbose --runInBand ./tests/integration/routes/languages.test.js",
+    "test-countries": "jest --verbose --runInBand ./tests/integration/routes/countries.test.js",
+    "test-showtimes": "jest --verbose --runInBand ./tests/integration/routes/showtimes.test.js",
+    "test-announcements": "jest --verbose --runInBand ./tests/integration/routes/announcements.test.js",
+    "test-memberships": "jest --verbose --runInBand ./tests/integration/routes/memberships.test.js",
+    "test-users": "jest --verbose --runInBand ./tests/integration/routes/users.test.js",
+    "test-purchases": "jest --verbose --runInBand ./tests/integration/routes/purchases.test.js",
+    "coverage": "jest --collectCoverage"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TVYDev/movieer_api.git"
+  },
+  "keywords": [
+    "cinema"
+  ],
+  "config": {
+    "mongodbMemoryServer": {
+      "version": "latest"
     }
+  },
+  "author": "Vannyou TANG",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/TVYDev/movieer_api/issues"
+  },
+  "homepage": "https://github.com/TVYDev/movieer_api#readme",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "colors": "^1.4.0",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-fileupload": "^1.2.0",
+    "joi": "^17.2.1",
+    "joi-objectid": "^3.0.1",
+    "mongoose": "^5.10.7",
+    "morgan": "^1.10.0",
+    "node-geocoder": "^3.27.0",
+    "qrcode": "^1.4.4",
+    "swagger-jsdoc": "^4.2.0",
+    "swagger-ui-express": "^4.1.4"
+  },
+  "devDependencies": {
+    "jest": "^26.4.2",
+    "nodemon": "^2.0.4",
+    "supertest": "^5.0.0"
+  }
 }

@@ -25,6 +25,10 @@ const validateReferences = (references) => async (req, res, next) => {
                             )
                         );
                     }
+
+                    if (ref.assignedRefResource) {
+                        req.body[ref.assignedRefResource] = refResource;
+                    }
                 } else {
                     for (p of property) {
                         refResource = await ref.model.findOne({

@@ -73,8 +73,6 @@ userSchema.pre('findOneAndUpdate', function () {
 
 // Compare hashed password
 userSchema.methods.compareHashedPassword = async function (enteredPassword) {
-    console.log(this.password);
-    console.log(enteredPassword);
     return await bcrypt.compare(enteredPassword, this.password);
 };
 
