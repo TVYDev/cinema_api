@@ -8,7 +8,6 @@ module.exports = function (prefix, id, file, next) {
   // Move file to store directory
   file.mv(`${process.env.FILE_UPLOAD_PATH}/${fileName}`, async (error) => {
     if (error) {
-      console.log(error);
       return next(new ErrorResponse('Problem with file upload', 500));
     }
   });
