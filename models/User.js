@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const Joi = require('joi');
 Joi.objectId = require('joi-objectid')(Joi);
 
@@ -30,7 +31,6 @@ const userSchema = new mongoose.Schema({
     default: 'customer'
   },
   password: {
-    select: false,
     type: String,
     required: [true, 'Please provide a password'],
     minlength: 6
@@ -49,6 +49,15 @@ const userSchema = new mongoose.Schema({
     ref: 'Membership'
   }
 });
+
+userSchema.methods.generateJwtToken = function () {
+  const privateKey = process.env.JWT_PRIVATE_KEY;
+  const expiresIn = parseInt(process.env.JWT_EXPIRES_IN_SECONDS);
+  const token = jwt.sign({ id: this._id, role: this.role }, privateKey, {
+    expiresIn
+  });
+  return token;
+};
 
 // Remove `password` field from toJSON() function
 userSchema.methods.toJSON = function () {
@@ -125,9 +134,23 @@ function validateOnRegisterUser(user) {
   return schema.validate(user);
 }
 
+function validateOnLoginUser(user) {
+  const tmpValidationSchema = { ...validationSchema };
+  tmpValidationSchema.email = tmpValidationSchema.email.required();
+  tmpValidationSchema.password = Joi.string().required();
+  delete tmpValidationSchema.name;
+  delete tmpValidationSchema.role;
+  delete tmpValidationSchema.membershipId;
+
+  const schema = Joi.object(tmpValidationSchema);
+
+  return schema.validate(user);
+}
+
 exports.User = mongoose.model('User', userSchema);
 exports.ROLE_CUSTOMER = ROLE_CUSTOMER;
 exports.ROLE_STAFF = ROLE_STAFF;
 exports.validateOnCreateUser = validateOnCreateUser;
 exports.validateOnUpdateUser = validateOnUpdateUser;
 exports.validateOnRegisterUser = validateOnRegisterUser;
+exports.validateOnLoginUser = validateOnLoginUser;

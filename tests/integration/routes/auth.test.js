@@ -176,4 +176,110 @@ describe('Authentication', () => {
       expect(dt).not.toHaveProperty('password');
     });
   });
+
+  describe('POST /api/v1/auth/login', () => {
+    const data = {
+      email: 'tvy@mail.com',
+      password: '123456'
+    };
+
+    beforeEach(async () => {
+      await User.create({
+        name: 'tvy',
+        email: data.email,
+        password: data.password
+      });
+    });
+
+    const exec = () => request(server).post('/api/v1/auth/login');
+
+    it('should return 400 if email is not provided', async () => {
+      const curData = { ...data };
+      delete curData.email;
+
+      const res = await exec().send(curData);
+
+      expect(res.status).toBe(400);
+    });
+
+    it('should return 400 if email is not a string', async () => {
+      const curData = { ...data };
+      curData.email = 1;
+
+      const res = await exec().send(curData);
+
+      expect(res.status).toBe(400);
+    });
+
+    it('should return 400 if email is an empty string', async () => {
+      const curData = { ...data };
+      curData.email = '';
+
+      const res = await exec().send(curData);
+
+      expect(res.status).toBe(400);
+    });
+
+    it('should return 400 if email is not valid', async () => {
+      const curData = { ...data };
+      curData.email = 'tvymail.com';
+
+      const res = await exec().send(curData);
+
+      expect(res.status).toBe(400);
+    });
+
+    it('should return 400 if password is not provided', async () => {
+      const curData = { ...data };
+      delete curData.password;
+
+      const res = await exec().send(curData);
+
+      expect(res.status).toBe(400);
+    });
+
+    it('should return 400 if password is not a string', async () => {
+      const curData = { ...data };
+      curData.password = 1;
+
+      const res = await exec().send(curData);
+
+      expect(res.status).toBe(400);
+    });
+
+    it('should return 400 if password is an empty string', async () => {
+      const curData = { ...data };
+      curData.password = '';
+
+      const res = await exec().send(curData);
+
+      expect(res.status).toBe(400);
+    });
+
+    it('should return 400 if email does not exist', async () => {
+      const curData = { ...data };
+      curData.email = 'tvy2@mail.com';
+
+      const res = await exec().send(curData);
+
+      expect(res.status).toBe(400);
+    });
+
+    it('should return 400 if password is not correct', async () => {
+      const curData = { ...data };
+      curData.password = '123455';
+
+      const res = await exec().send(curData);
+
+      expect(res.status).toBe(400);
+    });
+
+    it('should return 200, and return the token if request is valid', async () => {
+      const res = await exec().send(data);
+
+      expect(res.status).toBe(200);
+      expect(res.body.data).toHaveProperty('token');
+      expect(res.body.data).toHaveProperty('tokenExpiresAt');
+    });
+  });
 });
