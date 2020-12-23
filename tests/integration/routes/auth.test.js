@@ -282,4 +282,124 @@ describe('Authentication', () => {
       expect(res.body.data).toHaveProperty('tokenExpiresAt');
     });
   });
+
+  describe('POST /api/v1/auth/change-password', () => {
+    let token;
+    let user;
+
+    const data = {
+      oldPassword: '123456',
+      newPassword: '123457'
+    };
+
+    beforeEach(async () => {
+      user = await User.create({
+        name: 'tvy',
+        email: 'tvy@mail.com',
+        password: data.oldPassword
+      });
+
+      token = user.generateJwtToken();
+    });
+
+    const exec = () =>
+      request(server)
+        .post('/api/v1/auth/change-password')
+        .set('Authorization', `Bearer ${token}`);
+
+    it('should return 400 if oldPassword is not provided', async () => {
+      const curData = { ...data };
+      delete curData.oldPassword;
+
+      const res = await exec().send(curData);
+
+      expect(res.status).toBe(400);
+    });
+
+    it('should return 400 if oldPassword is not a string', async () => {
+      const curData = { ...data };
+      curData.oldPassword = 1;
+
+      const res = await exec().send(curData);
+
+      expect(res.status).toBe(400);
+    });
+
+    it('should return 400 if oldPassword is an empty string', async () => {
+      const curData = { ...data };
+      curData.oldPassword = '';
+
+      const res = await exec().send(curData);
+
+      expect(res.status).toBe(400);
+    });
+
+    it('should return 400 if newPassword is not provided', async () => {
+      const curData = { ...data };
+      delete curData.newPassword;
+
+      const res = await exec().send(curData);
+
+      expect(res.status).toBe(400);
+    });
+
+    it('should return 400 if newPassword is not a string', async () => {
+      const curData = { ...data };
+      curData.newPassword = 1;
+
+      const res = await exec().send(curData);
+
+      expect(res.status).toBe(400);
+    });
+
+    it('should return 400 if newPassword is an empty string', async () => {
+      const curData = { ...data };
+      curData.newPassword = '';
+
+      const res = await exec().send(curData);
+
+      expect(res.status).toBe(400);
+    });
+
+    it('should return 400 if newPassword has fewer than 6 characters', async () => {
+      const curData = { ...data };
+      curData.newPassword = '12345';
+
+      const res = await exec().send(curData);
+
+      expect(res.status).toBe(400);
+    });
+
+    it('should return 400 if old and new password are the same', async () => {
+      const curData = { ...data };
+      curData.newPassword = curData.oldPassword;
+
+      const res = await exec().send(curData);
+
+      expect(res.status).toBe(400);
+    });
+
+    it('should return 400 if old password is not correct', async () => {
+      const curData = { ...data };
+      curData.oldPassword = '123123';
+
+      const res = await exec().send(curData);
+
+      expect(res.status).toBe(400);
+    });
+
+    it('should return 200, and update the password if request is valid', async () => {
+      const res = await exec().send(data);
+
+      expect(res.status).toBe(200);
+      expect(user.compareHashedPassword(data.newPassword)).toBeTruthy();
+    });
+
+    it('should return 200, and return data null if request is valid', async () => {
+      const res = await exec().send(data);
+
+      expect(res.status).toBe(200);
+      expect(res.body.data).toBeNull();
+    });
+  });
 });
