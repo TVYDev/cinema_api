@@ -21,6 +21,7 @@
     "test-memberships": "jest --verbose --runInBand ./tests/integration/routes/memberships.test.js",
     "test-users": "jest --verbose --runInBand ./tests/integration/routes/users.test.js",
     "test-purchases": "jest --verbose --runInBand ./tests/integration/routes/purchases.test.js",
+    "test-auth": "jest --verbose --runInBand ./tests/integration/routes/auth.test.js",
     "coverage": "jest --collectCoverage"
   },
   "repository": {
