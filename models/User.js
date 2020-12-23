@@ -147,6 +147,24 @@ function validateOnLoginUser(user) {
   return schema.validate(user);
 }
 
+function validateOnChangeUserPassword(user) {
+  const tmpValidationSchema = {
+    oldPassword: Joi.string().required(),
+    newPassword: Joi.string()
+      .disallow(Joi.ref('oldPassword'))
+      .min(6)
+      .required()
+      .options({
+        messages: {
+          'any.invalid': 'New and old password must not be the same'
+        }
+      })
+  };
+  const schema = Joi.object(tmpValidationSchema);
+
+  return schema.validate(user);
+}
+
 exports.User = mongoose.model('User', userSchema);
 exports.ROLE_CUSTOMER = ROLE_CUSTOMER;
 exports.ROLE_STAFF = ROLE_STAFF;
@@ -154,3 +172,4 @@ exports.validateOnCreateUser = validateOnCreateUser;
 exports.validateOnUpdateUser = validateOnUpdateUser;
 exports.validateOnRegisterUser = validateOnRegisterUser;
 exports.validateOnLoginUser = validateOnLoginUser;
+exports.validateOnChangeUserPassword = validateOnChangeUserPassword;

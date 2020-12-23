@@ -103,3 +103,51 @@ exports.login = asyncHandler(async (req, res, next) => {
 
   res.standard(200, true, 'User is logged in successfully', data);
 });
+
+/**
+ * @swagger
+ * /auth/change-password:
+ *  post:
+ *    tags:
+ *      - 👨‍💻 Authentication
+ *    summary: Change a user password
+ *    description: (Private) Change a user password
+ *    parameters:
+ *      - in: body
+ *        name: password
+ *        description: Password to be changed
+ *        schema:
+ *          type: object
+ *          required:
+ *            - oldPassword
+ *            - newPassword
+ *          properties:
+ *            oldPassword:
+ *              type: string
+ *              example: 123456
+ *            newPassword:
+ *              type: string
+ *              example: 123457
+ *    responses:
+ *      200:
+ *        description: OK
+ *      400:
+ *        description: Validation error
+ *      500:
+ *        description: Internal server error
+ */
+exports.changePassword = asyncHandler(async (req, res, next) => {
+  const { user } = req;
+
+  const isOldPasswordCorrect = await user.compareHashedPassword(
+    req.body.oldPassword
+  );
+  if (!isOldPasswordCorrect) {
+    return next(new ErrorResponse('Incorrect password', 400));
+  }
+
+  user.password = req.body.newPassword;
+  await user.save();
+
+  res.standard(200, true, 'Password is changed successfully', null);
+});
