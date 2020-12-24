@@ -143,11 +143,11 @@ APIs for cinema management including CRUD on cinemas, halls, movies, buying tick
 
 ### 👨‍💻 Authentication
 
--   [Public] Register a user (name, email, password)
--   [Public] Login a user
--   [Private] Change password of a user
+-   ✅ [Public] Register a user (name, email, password)
+-   ✅ [Public] Login a user
+-   ✅ [Private] Change password of a user
 -   [Public] Reset password of a user
--   [Private] Get profile user
+-   ✅ [Private] Get profile user
 -   [Private] Logout user
 
 ### 📐 Settings

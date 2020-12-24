@@ -4,7 +4,7 @@ const {
   validateOnLoginUser,
   validateOnChangeUserPassword
 } = require('../models/User');
-const { register, login, changePassword } = require('../controllers/auth');
+const { register, login, changePassword, me } = require('../controllers/auth');
 const validateRequestBody = require('../middlewares/validateRequestBody');
 const authenticate = require('../middlewares/authenticate');
 const router = express.Router();
@@ -17,5 +17,6 @@ router.post(
   validateRequestBody(validateOnChangeUserPassword),
   changePassword
 );
+router.get('/me', authenticate, me);
 
 module.exports = router;

@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const request = require('supertest');
 const { User, ROLE_CUSTOMER } = require('../../../models/User');
+const { Membership } = require('../../../models/Membership');
 let server;
 
 describe('Authentication', () => {
@@ -400,6 +401,67 @@ describe('Authentication', () => {
 
       expect(res.status).toBe(200);
       expect(res.body.data).toBeNull();
+    });
+  });
+
+  describe('GET /api/v1/auth/me', () => {
+    let token;
+    let user;
+
+    beforeEach(async () => {
+      user = await User.create({
+        name: 'tvy',
+        email: 'tvy@mail.com',
+        password: '123456'
+      });
+
+      token = user.generateJwtToken();
+    });
+
+    const exec = () =>
+      request(server)
+        .get('/api/v1/auth/me')
+        .set('Authorization', `Bearer ${token}`);
+
+    it('should return 200, and return the user if request is valid', async () => {
+      const res = await exec();
+      const { data: dt } = res.body;
+
+      expect(res.status).toBe(200);
+      expect(dt).toHaveProperty('_id', user._id.toHexString());
+      expect(dt).toHaveProperty('name', 'tvy');
+      expect(dt).toHaveProperty('email', 'tvy@mail.com');
+      expect(dt).toHaveProperty('role', ROLE_CUSTOMER);
+    });
+
+    it('should return 200, and return the user with populated membership if request is valid', async () => {
+      const membership = await Membership.create({
+        name: 'Silver',
+        description: 'Free drinks every purchase'
+      });
+      const user2 = await User.create({
+        name: 'qwe',
+        email: 'qwe@mail.com',
+        password: '123456',
+        membership: membership._id
+      });
+      token = user2.generateJwtToken();
+
+      const res = await exec();
+      const { data: dt } = res.body;
+
+      expect(res.status).toBe(200);
+      expect(dt).toHaveProperty('_id', user2._id.toHexString());
+      expect(dt).toHaveProperty('name', 'qwe');
+      expect(dt).toHaveProperty('email', 'qwe@mail.com');
+      expect(dt).toHaveProperty('role', ROLE_CUSTOMER);
+      expect(dt).toHaveProperty('membership');
+      expect(dt.membership).toHaveProperty('_id', membership._id.toHexString());
+      expect(dt.membership).toHaveProperty('name', 'Silver');
+      expect(dt.membership).toHaveProperty(
+        'description',
+        'Free drinks every purchase'
+      );
     });
   });
 });

@@ -1,6 +1,8 @@
 const asyncHandler = require('../middlewares/asyncHandler');
 const ErrorResponse = require('../utils/ErrorResponse');
 const { User, ROLE_CUSTOMER } = require('../models/User');
+const { Membership } = require('../models/Membership');
+const { response } = require('express');
 
 /**
  * @swagger
@@ -113,6 +115,13 @@ exports.login = asyncHandler(async (req, res, next) => {
  *    summary: Change a user password
  *    description: (Private) Change a user password
  *    parameters:
+ *      - in: header
+ *        name: Authorization
+ *        schema:
+ *          type: string
+ *          format: Bearer token
+ *        required: true
+ *        example: Bearer TOKEN
  *      - in: body
  *        name: password
  *        description: Password to be changed
@@ -150,4 +159,33 @@ exports.changePassword = asyncHandler(async (req, res, next) => {
   await user.save();
 
   res.standard(200, true, 'Password is changed successfully', null);
+});
+
+/**
+ * @swagger
+ * /api/v1/auth/me:
+ *  get:
+ *    tags:
+ *      - 👨‍💻 Authentication
+ *    summary: Get user profile
+ *    description: (Private) Get user profile
+ *    parameters:
+ *      - in: header
+ *        name: Authorization
+ *        schema:
+ *          type: string
+ *          format: Bearer token
+ *        required: true
+ *        example: Bearer TOKEN
+ *    responses:
+ *      200:
+ *        description: OK
+ *      400:
+ *        description: Validation error
+ *      500:
+ *        description: Internal server error
+ */
+exports.me = asyncHandler(async (req, res, next) => {
+  const user = await User.findById(req.user._id).populate('membership');
+  res.standard(200, true, 'Success', user);
 });
